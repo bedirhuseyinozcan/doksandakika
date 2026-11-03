@@ -42,7 +42,7 @@ export function doesPlayerMatchBingoTile(player: ILightPlayer, tile: IBingoTile)
     case 'ageUnder23':
       return !player.isLegend && (player.age ?? 25) <= 23;
     case 'ageOver30':
-      return !player.isLegend && (player.age ?? 25) >= 30;
+      return Boolean(player.isLegend) || (player.age ?? 25) >= 30;
     case 'shirt1to11': {
       if (player.isLegend) return false;
       const num = player.shirtNumber ?? 0;

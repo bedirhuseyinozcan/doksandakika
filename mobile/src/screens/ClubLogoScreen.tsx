@@ -143,12 +143,11 @@ export const ClubLogoScreen: React.FC<IClubLogoScreenProps> = React.memo(
 
     const navTitle = isDaily ? 'Günün Arması' : `Seviye ${currentLevel}`;
     const isRevealed = gameStatus !== 'playing';
-    const blurRadius = isRevealed
-      ? 0
-      : Math.max(4, (maxAttempts - guesses.length) * 5);
+    const remainingRatio = Math.max(0, (maxAttempts - guesses.length) / maxAttempts);
+    const blurRadius = isRevealed ? 0 : Math.round(remainingRatio * 10);
     const clarityPercent = isRevealed
       ? 100
-      : Math.min(90, Math.round(((guesses.length + 1) / maxAttempts) * 85));
+      : Math.min(95, Math.round(40 + (1 - remainingRatio) * 55));
 
     return (
       <SafeAreaView style={styles.safeArea}>
@@ -172,8 +171,14 @@ export const ClubLogoScreen: React.FC<IClubLogoScreenProps> = React.memo(
           )}
 
           <Animated.View style={[styles.heroCard, animatedStyle]}>
-            <View style={styles.clarityBadge}>
-              <Text style={styles.clarityText}>🔍 Netlik: %{clarityPercent}</Text>
+            <View style={[styles.clarityBadge, isRevealed && styles.clarityBadgeSolved]}>
+              <Text style={[styles.clarityText, isRevealed && styles.clarityTextSolved]}>
+                {gameStatus === 'won'
+                  ? '✓ BİLDİNİZ! • %100 NETLİK'
+                  : isRevealed
+                  ? '🏁 HEDEF ARMA • %100 NETLİK'
+                  : `🔍 Netlik: %${clarityPercent}`}
+              </Text>
             </View>
 
             <View style={styles.crestCircle}>
@@ -192,7 +197,7 @@ export const ClubLogoScreen: React.FC<IClubLogoScreenProps> = React.memo(
                   style={[
                     styles.crestImage,
                     !isRevealed && {
-                      transform: [{ scale: 1 + (maxAttempts - guesses.length) * 0.08 }],
+                      transform: [{ scale: 1 + remainingRatio * 0.05 }],
                     },
                     Platform.OS === 'web' && blurRadius > 0
                       ? ({
@@ -210,9 +215,11 @@ export const ClubLogoScreen: React.FC<IClubLogoScreenProps> = React.memo(
               )}
             </View>
 
-            <Text style={styles.heroCaption}>
-              {isRevealed
-                ? `🛡️ ${targetClubName}`
+            <Text style={[styles.heroCaption, isRevealed && styles.heroCaptionSolved]}>
+              {gameStatus === 'won'
+                ? `🛡️ TEBRİKLER! BİLDİNİZ: ${targetClubName.toUpperCase()}`
+                : isRevealed
+                ? `🛡️ HEDEF KULÜP: ${targetClubName.toUpperCase()}`
                 : 'Her yanlış tahminde kulüp arması biraz daha netleşir!'}
             </Text>
           </Animated.View>
@@ -286,7 +293,25 @@ export const ClubLogoScreen: React.FC<IClubLogoScreenProps> = React.memo(
             maxAttempts={maxAttempts}
             onOpenResultModal={() => setIsResultModalVisible(true)}
           />
-        ) : null}
+        ) : (
+          <View style={styles.solvedActionBanner}>
+            <View>
+              <Text style={styles.solvedActionTitle}>
+                {gameStatus === 'won' ? '✓ BİLDİNİZ!' : '🏁 OYUN BİTTİ'}
+              </Text>
+              <Text style={styles.solvedActionSubtitle}>
+                {targetClubName} • {guesses.length}/{maxAttempts} Deneme
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={styles.reopenModalBtn}
+              onPress={() => setIsResultModalVisible(true)}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.reopenModalBtnText}>📊 Sonuç Ekranı</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
         <OfflineClubSearchModal
           visible={isSearchModalVisible}
@@ -377,11 +402,19 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
     marginBottom: Spacing.md,
   },
+  clarityBadgeSolved: {
+    backgroundColor: Colors.accentPrimary,
+    borderColor: Colors.accentPrimary,
+  },
   clarityText: {
     ...Typography.monoMeta,
     color: Colors.accentPrimary,
     fontSize: 11,
     fontWeight: '700',
+  },
+  clarityTextSolved: {
+    color: '#090909',
+    fontWeight: '800',
   },
   crestCircle: {
     width: 148,
@@ -405,6 +438,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 10,
     letterSpacing: 0.6,
+  },
+  heroCaptionSolved: {
+    color: Colors.accentPrimary,
+    fontWeight: '800',
   },
   hintContainer: {
     paddingHorizontal: Spacing.md,
@@ -509,5 +546,43 @@ const styles = StyleSheet.create({
     fontSize: 13,
     letterSpacing: 0.8,
     fontWeight: '800',
+  },
+  solvedActionBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm + 2,
+    marginHorizontal: Spacing.md,
+    marginBottom: Platform.OS === 'android' ? 44 : Spacing.md,
+    backgroundColor: Colors.surface,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
+    borderRadius: BorderRadius.sharp,
+  },
+  solvedActionTitle: {
+    ...Typography.statBadge,
+    color: Colors.accentPrimary,
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  solvedActionSubtitle: {
+    ...Typography.caption,
+    color: Colors.textMuted,
+    fontSize: 11,
+    marginTop: 2,
+  },
+  reopenModalBtn: {
+    backgroundColor: Colors.surfaceLight,
+    borderWidth: Borders.thin,
+    borderColor: Colors.borderLight,
+    paddingVertical: 6,
+    paddingHorizontal: Spacing.sm,
+    borderRadius: BorderRadius.sharp,
+  },
+  reopenModalBtnText: {
+    ...Typography.statBadge,
+    color: Colors.textPrimary,
+    fontSize: 11,
   },
 });

@@ -71,7 +71,7 @@ export function doesPlayerMatchCriterion(player: ILightPlayer, criterion: IGridC
     case 'positionGroup':
       return getPlayerPositionGroup(player.position) === criterion.value;
     case 'ageGroup': {
-      if (player.isLegend) return false;
+      if (player.isLegend) return criterion.value === 'o30';
       const age = player.age ?? 25;
       if (criterion.value === 'u24') return age <= 24;
       if (criterion.value === 'o30') return age >= 30;

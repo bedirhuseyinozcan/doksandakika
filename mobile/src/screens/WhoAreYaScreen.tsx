@@ -134,10 +134,17 @@ export const WhoAreYaScreen: React.FC<IWhoAreYaScreenProps> = React.memo(
         )}
 
         <BlurredImageHero
-          imageUrl={currentBlurImageUrl || challengeData?.imageUrl}
-          hasServerBlur={Boolean(currentBlurImageUrl)}
-          currentAttempt={guesses.length}
+          imageUrl={
+            gameStatus !== 'playing'
+              ? challengeData?.imageUrl || blurImages[blurImages.length - 1]
+              : currentBlurImageUrl || challengeData?.imageUrl
+          }
+          hasServerBlur={gameStatus === 'playing' && Boolean(currentBlurImageUrl)}
+          currentAttempt={gameStatus !== 'playing' ? maxAttempts : guesses.length}
           maxAttempts={maxAttempts}
+          isSolved={gameStatus === 'won'}
+          isGameOver={gameStatus !== 'playing'}
+          solvedPlayerName={challengeData?.playerName}
         />
 
         <View style={styles.hintContainer}>
@@ -171,7 +178,25 @@ export const WhoAreYaScreen: React.FC<IWhoAreYaScreenProps> = React.memo(
             maxAttempts={maxAttempts}
             onOpenResultModal={() => setIsResultModalVisible(true)}
           />
-        ) : null}
+        ) : (
+          <View style={styles.solvedActionBanner}>
+            <View>
+              <Text style={styles.solvedActionTitle}>
+                {gameStatus === 'won' ? '✓ BİLDİNİZ!' : '🏁 OYUN BİTTİ'}
+              </Text>
+              <Text style={styles.solvedActionSubtitle}>
+                {challengeData?.playerName} • {guesses.length}/{maxAttempts} Deneme
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={styles.reopenModalBtn}
+              onPress={() => setIsResultModalVisible(true)}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.reopenModalBtnText}>📊 Sonuç Ekranı</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
         <OfflinePlayerSearchModal
           visible={isSearchModalVisible}
@@ -272,5 +297,43 @@ const styles = StyleSheet.create({
     fontSize: 13,
     letterSpacing: 0.8,
     fontWeight: '800',
+  },
+  solvedActionBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm + 2,
+    marginHorizontal: Spacing.md,
+    marginBottom: Platform.OS === 'android' ? 44 : Spacing.md,
+    backgroundColor: Colors.surface,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
+    borderRadius: BorderRadius.sharp,
+  },
+  solvedActionTitle: {
+    ...Typography.statBadge,
+    color: Colors.accentPrimary,
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  solvedActionSubtitle: {
+    ...Typography.caption,
+    color: Colors.textMuted,
+    fontSize: 11,
+    marginTop: 2,
+  },
+  reopenModalBtn: {
+    backgroundColor: Colors.surfaceLight,
+    borderWidth: Borders.thin,
+    borderColor: Colors.borderLight,
+    paddingVertical: 6,
+    paddingHorizontal: Spacing.sm,
+    borderRadius: BorderRadius.sharp,
+  },
+  reopenModalBtnText: {
+    ...Typography.statBadge,
+    color: Colors.textPrimary,
+    fontSize: 11,
   },
 });

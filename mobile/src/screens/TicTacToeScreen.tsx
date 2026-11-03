@@ -140,18 +140,26 @@ export const TicTacToeScreen: React.FC<ITicTacToeScreenProps> = React.memo(
                 Doldurulan: <Text style={styles.progressHighlight}>{filledCount}/9</Text>
               </Text>
             </View>
+            <View style={styles.attemptsPill}>
+              <Text style={styles.attemptsText}>
+                Kalan Hak: <Text style={styles.attemptsHighlight}>{attemptsLeft}</Text>
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.actionContainer}>
             <TouchableOpacity
-              style={styles.jokerSearchBtn}
+              style={styles.directSearchBtn}
               activeOpacity={0.8}
               onPress={openGeneralSearch}
               disabled={gameStatus !== 'playing'}
             >
-              <Text style={styles.jokerSearchText}>⚡ Serbest Oyuncu Ara</Text>
+              <Text style={styles.directSearchText}>🔍 FUTBOLCU ARA & DOLDUR</Text>
+              <Text style={styles.directSearchSubtext}>
+                Tek aramada uyan tüm açık kutuları (1-3 kutu) birden doldurur
+              </Text>
             </TouchableOpacity>
           </View>
-          <Text style={styles.rulesHintSub}>
-            Kutu seçebilir veya yukarıdan bir futbolcu aratarak birden fazla kutuyu birden doldurabilirsin!
-          </Text>
 
           {lastFeedback && (
             <View style={styles.feedbackBanner}>
@@ -286,31 +294,50 @@ const styles = StyleSheet.create({
     color: Colors.accentPrimary,
     fontWeight: '800',
   },
-  rulesHint: {
-    ...Typography.statBadge,
-    color: Colors.textMuted,
-    fontSize: 9.5,
+  attemptsPill: {
+    backgroundColor: Colors.surface,
+    paddingVertical: 3,
+    paddingHorizontal: Spacing.sm,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
   },
-  rulesHintSub: {
-    ...Typography.caption,
+  attemptsText: {
+    ...Typography.monoMeta,
     color: Colors.textMuted,
     fontSize: 11,
+  },
+  attemptsHighlight: {
+    color: Colors.textPrimary,
+    fontWeight: '800',
+  },
+  actionContainer: {
     paddingHorizontal: Spacing.md,
+    marginTop: Spacing.xs,
     marginBottom: Spacing.xs,
   },
-  jokerSearchBtn: {
+  directSearchBtn: {
     backgroundColor: Colors.surfaceLight,
     borderWidth: Borders.thin,
     borderColor: Colors.accentPrimary,
-    paddingVertical: 5,
-    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.sm + 2,
+    paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.sharp,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  jokerSearchText: {
+  directSearchText: {
     ...Typography.statBadge,
     color: Colors.accentPrimary,
-    fontWeight: '700',
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+  },
+  directSearchSubtext: {
+    ...Typography.caption,
+    color: Colors.textMuted,
     fontSize: 10,
+    marginTop: 2,
   },
   feedbackBanner: {
     backgroundColor: Colors.surfaceLight,

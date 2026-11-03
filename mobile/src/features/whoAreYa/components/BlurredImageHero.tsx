@@ -9,10 +9,21 @@ interface IBlurredImageHeroProps {
   hasServerBlur?: boolean;
   currentAttempt: number;
   maxAttempts: number;
+  isSolved?: boolean;
+  isGameOver?: boolean;
+  solvedPlayerName?: string;
 }
 
 export const BlurredImageHero = React.memo<IBlurredImageHeroProps>(
-  ({ imageUrl, hasServerBlur = false, currentAttempt, maxAttempts }) => {
+  ({
+    imageUrl,
+    hasServerBlur = false,
+    currentAttempt,
+    maxAttempts,
+    isSolved = false,
+    isGameOver = false,
+    solvedPlayerName,
+  }) => {
     const [imageError, setImageError] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
 
@@ -22,10 +33,11 @@ export const BlurredImageHero = React.memo<IBlurredImageHeroProps>(
     }, [imageUrl]);
 
     const blurRadius = useMemo(() => {
+      if (isSolved || isGameOver) return 0;
       if (hasServerBlur) return 0;
       const remaining = Math.max(0, maxAttempts - currentAttempt - 1);
       return Math.round((remaining / Math.max(1, maxAttempts - 1)) * 26);
-    }, [hasServerBlur, currentAttempt, maxAttempts]);
+    }, [isSolved, isGameOver, hasServerBlur, currentAttempt, maxAttempts]);
 
     return (
       <View style={styles.card}>
@@ -74,15 +86,23 @@ export const BlurredImageHero = React.memo<IBlurredImageHeroProps>(
             </View>
           )}
 
-          <View style={styles.levelBadge}>
-            <Text style={styles.levelBadgeText}>
-              NETLİK: {Math.min(currentAttempt + 1, maxAttempts)}/{maxAttempts}
+          <View style={[styles.levelBadge, isSolved && styles.levelBadgeSolved]}>
+            <Text style={[styles.levelBadgeText, isSolved && styles.levelBadgeTextSolved]}>
+              {isSolved
+                ? '✓ BİLDİNİZ! • %100'
+                : isGameOver
+                ? '✕ OYUN BİTTİ'
+                : `NETLİK: ${Math.min(currentAttempt + 1, maxAttempts)}/${maxAttempts}`}
             </Text>
           </View>
         </View>
 
-        <Text style={styles.subtext}>
-          HER YANLIŞ TAHMİNDE GÖRSEL BİR KADEME NETLEŞİR
+        <Text style={[styles.subtext, isSolved && styles.subtextSolved]}>
+          {isSolved && solvedPlayerName
+            ? `TEBRİKLER! BİLDİNİZ: ${solvedPlayerName.toUpperCase()}`
+            : isGameOver && solvedPlayerName
+            ? `HEDEF OYUNCU: ${solvedPlayerName.toUpperCase()}`
+            : 'HER YANLIŞ TAHMİNDE GÖRSEL BİR KADEME NETLEŞİR'}
         </Text>
       </View>
     );
@@ -151,6 +171,18 @@ const styles = StyleSheet.create({
     borderWidth: Borders.thin,
     borderColor: Colors.border,
     zIndex: 2,
+  },
+  levelBadgeSolved: {
+    backgroundColor: Colors.accentPrimary,
+    borderColor: Colors.accentPrimary,
+  },
+  levelBadgeTextSolved: {
+    color: '#090909',
+    fontWeight: '800',
+  },
+  subtextSolved: {
+    color: Colors.accentPrimary,
+    fontWeight: '700',
   },
   levelBadgeText: {
     ...Typography.monoMeta,

@@ -74,6 +74,7 @@ export const ContextinhoScreen: React.FC<IContextinhoScreenProps> = React.memo(
     });
 
     const { showInterstitialIfDue } = useInterstitialAd();
+    const [isHardMode, setIsHardMode] = useState(false);
     const [hintUnlocked, setHintUnlocked] = useState(false);
     const [hintText, setHintText] = useState('');
     const [isResultModalVisible, setIsResultModalVisible] = useState(false);
@@ -141,7 +142,7 @@ export const ContextinhoScreen: React.FC<IContextinhoScreenProps> = React.memo(
               <Text style={styles.playerSub}>
                 {item.player.club} • {item.player.position} • {item.player.nationality}
               </Text>
-              {item.sharedTags.length > 0 && (
+              {(!isHardMode || item.rank === 1) && item.sharedTags.length > 0 && (
                 <View style={styles.tagRow}>
                   {item.sharedTags.map((tag) => (
                     <View key={tag} style={styles.sharedTagPill}>
@@ -205,6 +206,32 @@ export const ContextinhoScreen: React.FC<IContextinhoScreenProps> = React.memo(
               <Text style={[styles.legendPill, { color: '#EF4444' }]}>❄️ #201+ Soğuk</Text>
             </View>
           </View>
+
+          <View style={styles.modeToggleContainer}>
+            <TouchableOpacity
+              style={[styles.modeTab, !isHardMode && styles.modeTabActive]}
+              onPress={() => setIsHardMode(false)}
+              activeOpacity={0.8}
+            >
+              <Text style={[styles.modeTabText, !isHardMode && styles.modeTabTextActive]}>
+                💡 İPUÇLU (NORMAL)
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.modeTab, isHardMode && styles.modeTabActive]}
+              onPress={() => setIsHardMode(true)}
+              activeOpacity={0.8}
+            >
+              <Text style={[styles.modeTabText, isHardMode && styles.modeTabTextActive]}>
+                ⚡ İPUÇSUZ (ZOR)
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {isHardMode && (
+            <Text style={styles.hardModeNotice}>
+              ⚡ Zor Mod Aktif: Aynı lig, mevki, yaş benzerlikleri gizlenir; yalnızca sıralama gösterilir.
+            </Text>
+          )}
 
           <View style={styles.hintContainer}>
             <HintWithAdButton
@@ -366,6 +393,47 @@ const styles = StyleSheet.create({
   legendPill: {
     ...Typography.statBadge,
     fontSize: 10,
+  },
+  modeToggleContainer: {
+    flexDirection: 'row',
+    marginHorizontal: Spacing.md,
+    marginTop: Spacing.sm,
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
+    padding: 3,
+    gap: 4,
+  },
+  modeTab: {
+    flex: 1,
+    paddingVertical: 7,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: BorderRadius.sharp,
+  },
+  modeTabActive: {
+    backgroundColor: Colors.surfaceHighlight,
+    borderWidth: Borders.thin,
+    borderColor: Colors.accentPrimary,
+  },
+  modeTabText: {
+    ...Typography.statBadge,
+    color: Colors.textMuted,
+    fontSize: 10,
+    letterSpacing: 0.6,
+  },
+  modeTabTextActive: {
+    color: Colors.accentPrimary,
+    fontWeight: '800',
+  },
+  hardModeNotice: {
+    ...Typography.caption,
+    color: Colors.warning,
+    fontSize: 10,
+    marginHorizontal: Spacing.md,
+    marginTop: 4,
+    marginBottom: Spacing.xs,
   },
   hintContainer: {
     paddingHorizontal: Spacing.md,
