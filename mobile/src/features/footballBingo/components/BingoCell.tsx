@@ -3,7 +3,7 @@ import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import { IBingoTile } from '../types';
 import { ClubLogo } from '../../../components/common/ClubLogo';
 import { Colors } from '../../../theme/colors';
-import { BorderRadius } from '../../../theme/spacing';
+import { BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
 
 interface IBingoCellProps {
@@ -31,7 +31,7 @@ export const BingoCell: React.FC<IBingoCellProps> = React.memo(
         {isMatched && matchedPlayer ? (
           <View style={styles.matchedContent}>
             <View style={styles.matchedBadgeRow}>
-              <Text style={styles.checkIcon}>✅</Text>
+              <Text style={styles.checkIcon}>✓</Text>
               <ClubLogo
                 logoUrl={matchedPlayer.logoUrl || matchedPlayer.logo}
                 clubName={matchedPlayer.club}
@@ -52,7 +52,7 @@ export const BingoCell: React.FC<IBingoCellProps> = React.memo(
               <ClubLogo
                 logoUrl={tile.logoUrl}
                 clubName={tile.value}
-                size={22}
+                size={20}
                 fallbackEmoji={emoji}
               />
             ) : (
@@ -78,20 +78,21 @@ const styles = StyleSheet.create({
     flex: 1,
     aspectRatio: 1,
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.md,
-    borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 3,
   },
   matchedCell: {
-    backgroundColor: 'rgba(34, 197, 94, 0.16)',
+    backgroundColor: Colors.surfaceLight,
     borderColor: Colors.success,
   },
   wrongFlashCell: {
-    backgroundColor: 'rgba(239, 68, 68, 0.25)',
-    borderColor: '#EF4444',
+    backgroundColor: Colors.surfaceLight,
+    borderColor: Colors.danger,
+    borderWidth: Borders.thick,
   },
   unmatchedContent: {
     alignItems: 'center',
@@ -103,14 +104,14 @@ const styles = StyleSheet.create({
     marginBottom: 1,
   },
   tileTitle: {
-    ...Typography.captionBold,
+    ...Typography.statBadge,
     color: Colors.textPrimary,
-    fontSize: 9.5,
+    fontSize: 9,
     textAlign: 'center',
     lineHeight: 11,
   },
   tileSubtitle: {
-    ...Typography.caption,
+    ...Typography.monoMeta,
     color: Colors.textMuted,
     fontSize: 7.5,
     textAlign: 'center',
@@ -125,17 +126,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 4,
+    gap: 3,
     marginBottom: 2,
   },
   checkIcon: {
-    fontSize: 12,
+    fontSize: 11,
+    color: Colors.success,
+    fontWeight: '900',
     marginBottom: 1,
   },
   matchedPlayerName: {
-    ...Typography.captionBold,
+    ...Typography.bodyBold,
     color: Colors.success,
-    fontSize: 9.5,
+    fontSize: 9,
     textAlign: 'center',
     lineHeight: 11,
   },

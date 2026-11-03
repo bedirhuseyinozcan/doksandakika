@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Colors } from '../../../theme/colors';
-import { Spacing, BorderRadius } from '../../../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
 
 interface IHomeGameCardProps {
@@ -21,8 +21,8 @@ export const HomeGameCard: React.FC<IHomeGameCardProps> = React.memo(
     emoji,
     title,
     subtitle,
-    dailyBtnText = '📅 Günün Sorusu',
-    careerBtnText = '🗺️ Seviyeler & Kariyer',
+    dailyBtnText = 'GÜNÜN SORUSU',
+    careerBtnText = 'SEVİYELER & KARİYER',
     themePrimaryColor,
     themeBorderColor,
     onPressDaily,
@@ -32,9 +32,11 @@ export const HomeGameCard: React.FC<IHomeGameCardProps> = React.memo(
       themePrimaryColor === '#FBBF24' ||
       themePrimaryColor === '#FFFFFF' ||
       themePrimaryColor === '#F4F4F5' ||
-      themePrimaryColor === '#EAB308';
+      themePrimaryColor === '#EAB308' ||
+      themePrimaryColor === '#00D084';
 
-    const careerTextColor = isLightPrimary ? '#0B0E14' : '#FFFFFF';
+    const careerTextColor = isLightPrimary ? '#090909' : '#FFFFFF';
+    const activeAccent = themePrimaryColor || Colors.accentPrimary;
 
     return (
       <View
@@ -43,14 +45,16 @@ export const HomeGameCard: React.FC<IHomeGameCardProps> = React.memo(
           themeBorderColor
             ? {
                 borderColor: themeBorderColor,
-                borderLeftWidth: 4,
-                borderLeftColor: themePrimaryColor || themeBorderColor,
+                borderLeftWidth: Borders.thick + 1,
+                borderLeftColor: activeAccent,
               }
             : null,
         ]}
       >
         <View style={styles.cardHeader}>
-          <Text style={styles.cardEmoji}>{emoji}</Text>
+          <View style={styles.emojiBox}>
+            <Text style={styles.cardEmoji}>{emoji}</Text>
+          </View>
           <View style={styles.cardTitleCol}>
             <Text style={styles.cardTitle}>{title}</Text>
             <Text style={styles.cardSubtitle}>{subtitle}</Text>
@@ -71,7 +75,7 @@ export const HomeGameCard: React.FC<IHomeGameCardProps> = React.memo(
             <Text
               style={[
                 styles.dailyBtnText,
-                themePrimaryColor ? { color: themePrimaryColor } : null,
+                { color: activeAccent },
               ]}
             >
               {dailyBtnText}
@@ -82,7 +86,7 @@ export const HomeGameCard: React.FC<IHomeGameCardProps> = React.memo(
             style={[
               styles.gameActionBtn,
               styles.careerBtn,
-              themePrimaryColor ? { backgroundColor: themePrimaryColor } : null,
+              { backgroundColor: activeAccent },
             ]}
             activeOpacity={0.8}
             onPress={onPressCareer}
@@ -103,10 +107,10 @@ HomeGameCard.displayName = 'HomeGameCard';
 const styles = StyleSheet.create({
   gameCard: {
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+    borderRadius: BorderRadius.sharp,
     padding: Spacing.md,
     marginBottom: Spacing.md,
-    borderWidth: 1,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
   },
   cardHeader: {
@@ -114,9 +118,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Spacing.md,
   },
-  cardEmoji: {
-    fontSize: 34,
+  emojiBox: {
+    width: 44,
+    height: 44,
+    backgroundColor: Colors.surfaceLight,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
+    borderRadius: BorderRadius.sharp,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: Spacing.md,
+  },
+  cardEmoji: {
+    fontSize: 24,
   },
   cardTitleCol: {
     flex: 1,
@@ -124,11 +138,13 @@ const styles = StyleSheet.create({
   cardTitle: {
     ...Typography.h2,
     color: Colors.textPrimary,
+    letterSpacing: -0.3,
   },
   cardSubtitle: {
     ...Typography.caption,
-    color: Colors.textSecondary,
+    color: Colors.textMuted,
     marginTop: 2,
+    lineHeight: 16,
   },
   btnRow: {
     flexDirection: 'row',
@@ -136,28 +152,31 @@ const styles = StyleSheet.create({
   },
   gameActionBtn: {
     flex: 1,
-    minHeight: 46,
-    paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.md,
+    minHeight: 44,
+    paddingVertical: Spacing.sm + 2,
+    borderRadius: BorderRadius.sharp,
     alignItems: 'center',
     justifyContent: 'center',
   },
   dailyBtn: {
     backgroundColor: Colors.surfaceLight,
-    borderWidth: 1,
-    borderColor: Colors.accent,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
   },
   dailyBtnText: {
-    ...Typography.bodyBold,
-    color: Colors.accent,
-    fontSize: 13,
+    ...Typography.statBadge,
+    fontSize: 11,
+    letterSpacing: 0.6,
   },
   careerBtn: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.accentPrimary,
+    borderWidth: Borders.thin,
+    borderColor: 'transparent',
   },
   careerBtnText: {
-    ...Typography.bodyBold,
-    color: '#FFFFFF',
-    fontSize: 13,
+    ...Typography.statBadge,
+    fontSize: 11,
+    letterSpacing: 0.6,
+    fontWeight: '800',
   },
 });

@@ -22,7 +22,7 @@ import { useChallengeDataLoader } from '../hooks/useChallengeDataLoader';
 import { getAuthoritativeUtcDate } from '../services/authoritativeTime';
 import { shareService } from '../services/shareService';
 import { Colors } from '../theme/colors';
-import { Spacing, BorderRadius } from '../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../theme/spacing';
 import { Typography } from '../theme/typography';
 
 interface ITicTacToeScreenProps {
@@ -273,22 +273,23 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
     paddingVertical: 3,
     paddingHorizontal: Spacing.sm,
-    borderRadius: BorderRadius.sm,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
   },
   progressText: {
-    ...Typography.caption,
-    color: Colors.textSecondary,
+    ...Typography.monoMeta,
+    color: Colors.textMuted,
+    fontSize: 11,
   },
   progressHighlight: {
-    color: Colors.primary,
-    fontWeight: '700',
+    color: Colors.accentPrimary,
+    fontWeight: '800',
   },
   rulesHint: {
-    ...Typography.caption,
+    ...Typography.statBadge,
     color: Colors.textMuted,
-    fontSize: 10,
+    fontSize: 9.5,
   },
   rulesHintSub: {
     ...Typography.caption,
@@ -298,34 +299,35 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   jokerSearchBtn: {
-    backgroundColor: 'rgba(59, 130, 246, 0.18)',
-    borderWidth: 1,
-    borderColor: 'rgba(59, 130, 246, 0.5)',
+    backgroundColor: Colors.surfaceLight,
+    borderWidth: Borders.thin,
+    borderColor: Colors.accentPrimary,
     paddingVertical: 5,
     paddingHorizontal: Spacing.sm,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.sharp,
   },
   jokerSearchText: {
-    ...Typography.caption,
-    color: '#60A5FA',
+    ...Typography.statBadge,
+    color: Colors.accentPrimary,
     fontWeight: '700',
-    fontSize: 11,
+    fontSize: 10,
   },
   feedbackBanner: {
     backgroundColor: Colors.surfaceLight,
-    paddingVertical: 5,
+    paddingVertical: 6,
     paddingHorizontal: Spacing.md,
     marginHorizontal: Spacing.md,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.sharp,
     marginBottom: Spacing.xs,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
   },
   feedbackBannerText: {
-    ...Typography.captionBold,
+    ...Typography.statBadge,
     color: Colors.textPrimary,
     textAlign: 'center',
     fontSize: 11,
+    letterSpacing: 0.5,
   },
   hintContainer: {
     paddingHorizontal: Spacing.md,

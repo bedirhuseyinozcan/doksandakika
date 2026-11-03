@@ -5,7 +5,7 @@ import { TicTacToeCell } from './TicTacToeCell';
 import { ClubLogo } from '../../../components/common/ClubLogo';
 import { useFeedbackAnimation } from '../../../hooks/useFeedbackAnimation';
 import { Colors } from '../../../theme/colors';
-import { Spacing, BorderRadius } from '../../../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
 
 interface ITicTacToeBoardProps {
@@ -44,7 +44,7 @@ export const TicTacToeBoard: React.FC<ITicTacToeBoardProps> = React.memo(
                 <ClubLogo
                   logoUrl={col.logoUrl}
                   clubName={col.label || col.value}
-                  size={24}
+                  size={22}
                   fallbackEmoji={col.badgeText}
                 />
               ) : (
@@ -68,7 +68,7 @@ export const TicTacToeBoard: React.FC<ITicTacToeBoardProps> = React.memo(
                 <ClubLogo
                   logoUrl={rowCrit.logoUrl}
                   clubName={rowCrit.label || rowCrit.value}
-                  size={24}
+                  size={22}
                   fallbackEmoji={rowCrit.badgeText}
                 />
               ) : (
@@ -120,14 +120,14 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.03)',
-    borderRadius: BorderRadius.md,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
   },
   cornerIcon: {
-    fontSize: 22,
-    opacity: 0.7,
+    fontSize: 18,
+    opacity: 0.5,
   },
   colHeader: {
     flex: 1,
@@ -135,10 +135,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.surfaceLight,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.sharp,
     padding: 3,
-    borderWidth: 1,
-    borderColor: 'rgba(59, 130, 246, 0.2)',
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
   },
   rowHeader: {
     width: '26%',
@@ -146,26 +146,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.surfaceLight,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.sharp,
     padding: 3,
-    borderWidth: 1,
-    borderColor: 'rgba(59, 130, 246, 0.2)',
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
   },
   headerEmoji: {
-    fontSize: 14,
+    fontSize: 13,
     marginBottom: 1,
   },
   headerTitle: {
-    ...Typography.captionBold,
+    ...Typography.statBadge,
     color: Colors.textPrimary,
-    fontSize: 10,
+    fontSize: 9,
     textAlign: 'center',
-    lineHeight: 12,
+    lineHeight: 11,
   },
   headerSubtitle: {
-    ...Typography.caption,
+    ...Typography.monoMeta,
     color: Colors.textMuted,
-    fontSize: 8,
+    fontSize: 7.5,
     textAlign: 'center',
     marginTop: 1,
   },

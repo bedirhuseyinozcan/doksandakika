@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors } from '../../../theme/colors';
-import { Spacing, BorderRadius } from '../../../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
 import { TOTAL_LEVELS } from '../hooks/useLevelMap';
 
@@ -18,19 +18,21 @@ export const LevelMapHeader: React.FC<ILevelMapHeaderProps> = React.memo(
     return (
       <View style={styles.headerCard}>
         <View style={styles.titleRow}>
-          <Text style={styles.titleEmoji}>{gameEmoji}</Text>
+          <View style={styles.emojiBox}>
+            <Text style={styles.titleEmoji}>{gameEmoji}</Text>
+          </View>
           <View style={styles.titleCol}>
             <Text style={styles.gameTitle}>{gameTitle}</Text>
-            <Text style={styles.leagueText}>{leagueLabel} • Yol Haritası</Text>
+            <Text style={styles.leagueText}>{leagueLabel.toUpperCase()} • SEVİYE HARİTASI</Text>
           </View>
         </View>
 
         {/* Progress Bar */}
         <View style={styles.progressContainer}>
           <View style={styles.progressTextRow}>
-            <Text style={styles.progressLabel}>İlerleme Durumu</Text>
+            <Text style={styles.progressLabel}>İLERLEME DURUMU</Text>
             <Text style={styles.progressVal}>
-              {completedCount} / {TOTAL_LEVELS} Seviye (%{progressPercent})
+              {completedCount} / {TOTAL_LEVELS} SEVİYE (%{progressPercent})
             </Text>
           </View>
           <View style={styles.progressBarBg}>
@@ -47,9 +49,9 @@ LevelMapHeader.displayName = 'LevelMapHeader';
 const styles = StyleSheet.create({
   headerCard: {
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+    borderRadius: BorderRadius.sharp,
     padding: Spacing.md,
-    borderWidth: 1,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
     marginBottom: Spacing.lg,
   },
@@ -58,9 +60,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Spacing.md,
   },
-  titleEmoji: {
-    fontSize: 34,
+  emojiBox: {
+    width: 44,
+    height: 44,
+    borderRadius: BorderRadius.sharp,
+    backgroundColor: Colors.surfaceLight,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: Spacing.sm,
+  },
+  titleEmoji: {
+    fontSize: 24,
   },
   titleCol: {
     flex: 1,
@@ -68,11 +80,14 @@ const styles = StyleSheet.create({
   gameTitle: {
     ...Typography.h2,
     color: Colors.textPrimary,
+    letterSpacing: -0.3,
   },
   leagueText: {
-    ...Typography.caption,
-    color: Colors.textSecondary,
+    ...Typography.statBadge,
+    color: Colors.textMuted,
     marginTop: 2,
+    fontSize: 10,
+    letterSpacing: 0.6,
   },
   progressContainer: {
     marginTop: Spacing.xs,
@@ -83,24 +98,25 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   progressLabel: {
-    ...Typography.caption,
-    color: Colors.textSecondary,
-    fontWeight: '600',
+    ...Typography.statBadge,
+    color: Colors.textMuted,
+    fontSize: 10,
   },
   progressVal: {
-    ...Typography.caption,
-    color: Colors.primary,
+    ...Typography.monoMeta,
+    color: Colors.accentPrimary,
     fontWeight: '700',
+    fontSize: 11,
   },
   progressBarBg: {
-    height: 8,
-    backgroundColor: Colors.surfaceLight,
-    borderRadius: 4,
+    height: 4,
+    backgroundColor: Colors.surfaceHighlight,
+    borderRadius: BorderRadius.none,
     overflow: 'hidden',
   },
   progressBarFill: {
     height: '100%',
-    backgroundColor: Colors.primary,
-    borderRadius: 4,
+    backgroundColor: Colors.accentPrimary,
+    borderRadius: BorderRadius.none,
   },
 });

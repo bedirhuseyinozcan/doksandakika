@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform, StatusBar } from 'react-native';
 import { Colors } from '../../../theme/colors';
-import { Spacing, BorderRadius } from '../../../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
 
 interface ILevelMapNavbarProps {
@@ -20,7 +20,7 @@ export const LevelMapNavbar: React.FC<ILevelMapNavbarProps> = React.memo(
           activeOpacity={0.7}
           hitSlop={{ top: 16, bottom: 16, left: 16, right: 20 }}
         >
-          <Text style={styles.backBtnText}>‹ Ana Menü</Text>
+          <Text style={styles.backBtnText}>‹ ANA MENÜ</Text>
         </TouchableOpacity>
 
         <View style={styles.navCurrency}>
@@ -47,7 +47,8 @@ const styles = StyleSheet.create({
     paddingTop:
       Platform.OS === 'android' ? (StatusBar.currentHeight || 24) + Spacing.xs : Spacing.sm,
     paddingBottom: Spacing.sm,
-    borderBottomWidth: 1,
+    backgroundColor: Colors.background,
+    borderBottomWidth: Borders.thin,
     borderBottomColor: Colors.border,
     minHeight: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) + 54 : 54,
   },
@@ -59,9 +60,10 @@ const styles = StyleSheet.create({
     paddingRight: Spacing.sm,
   },
   backBtnText: {
-    ...Typography.bodyBold,
-    color: Colors.primary,
-    fontSize: 16,
+    ...Typography.statBadge,
+    color: Colors.accentPrimary,
+    fontSize: 12,
+    letterSpacing: 0.8,
   },
   navCurrency: {
     flexDirection: 'row',
@@ -69,29 +71,31 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
   },
   coinBadge: {
-    backgroundColor: 'rgba(245, 158, 11, 0.15)',
+    backgroundColor: Colors.surface,
     paddingHorizontal: Spacing.sm,
     paddingVertical: 4,
-    borderRadius: BorderRadius.full,
-    borderWidth: 1,
-    borderColor: 'rgba(245, 158, 11, 0.4)',
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
   },
   coinText: {
-    ...Typography.caption,
-    color: Colors.accent,
+    ...Typography.monoMeta,
+    color: Colors.accentPrimary,
     fontWeight: '700',
+    fontSize: 11,
   },
   xpBadge: {
-    backgroundColor: 'rgba(59, 130, 246, 0.15)',
+    backgroundColor: Colors.surface,
     paddingHorizontal: Spacing.sm,
     paddingVertical: 4,
-    borderRadius: BorderRadius.full,
-    borderWidth: 1,
-    borderColor: 'rgba(59, 130, 246, 0.4)',
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
   },
   xpText: {
-    ...Typography.caption,
-    color: Colors.secondary,
+    ...Typography.monoMeta,
+    color: Colors.info,
     fontWeight: '700',
+    fontSize: 11,
   },
 });

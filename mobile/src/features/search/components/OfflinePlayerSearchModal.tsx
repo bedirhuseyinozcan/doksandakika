@@ -16,7 +16,7 @@ import { PlayerSearchItem } from './PlayerSearchItem';
 import { ILightPlayer } from '../../../services/searchEngine';
 import { hapticsService } from '../../../services/hapticsService';
 import { Colors } from '../../../theme/colors';
-import { Spacing, BorderRadius } from '../../../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
 
 interface IOfflinePlayerSearchModalProps {
@@ -130,7 +130,7 @@ OfflinePlayerSearchModal.displayName = 'OfflinePlayerSearchModal';
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(5, 8, 17, 0.28)',
+    backgroundColor: 'rgba(9, 9, 9, 0.65)',
     justifyContent: 'flex-end',
   },
   topPeekArea: {
@@ -139,21 +139,16 @@ const styles = StyleSheet.create({
   sheet: {
     height: '55%',
     backgroundColor: Colors.background,
-    borderTopLeftRadius: BorderRadius.lg + 6,
-    borderTopRightRadius: BorderRadius.lg + 6,
-    borderTopWidth: 1.5,
-    borderTopColor: Colors.primary,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -6 },
-    shadowOpacity: 0.45,
-    shadowRadius: 12,
-    elevation: 16,
+    borderTopLeftRadius: BorderRadius.none,
+    borderTopRightRadius: BorderRadius.none,
+    borderTopWidth: Borders.thick,
+    borderTopColor: Colors.accentPrimary,
   },
   dragHandle: {
-    width: 42,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: Colors.border,
+    width: 32,
+    height: 2,
+    borderRadius: BorderRadius.none,
+    backgroundColor: Colors.borderLight,
     alignSelf: 'center',
     marginTop: 8,
   },
@@ -163,21 +158,23 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
-    borderBottomWidth: 1,
+    borderBottomWidth: Borders.thin,
     borderBottomColor: Colors.border,
   },
   title: {
-    ...Typography.h3,
+    ...Typography.statBadge,
+    fontSize: 12,
     color: Colors.textPrimary,
+    letterSpacing: 0.6,
   },
   closeBtn: {
     paddingVertical: 4,
     paddingHorizontal: 8,
   },
   closeText: {
-    ...Typography.bodyBold,
-    color: Colors.primary,
-    fontSize: 14,
+    ...Typography.statBadge,
+    color: Colors.accentPrimary,
+    fontSize: 11,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -185,15 +182,16 @@ const styles = StyleSheet.create({
     margin: Spacing.sm,
     paddingHorizontal: Spacing.md,
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.md,
-    borderWidth: 1,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
   },
   input: {
     flex: 1,
     color: Colors.textPrimary,
     paddingVertical: 11,
-    fontSize: 15,
+    fontSize: 14,
+    fontFamily: Typography.body.fontFamily,
   },
   clearBtn: {
     marginLeft: Spacing.xs,
@@ -201,8 +199,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
   },
   clearBtnText: {
-    color: Colors.primary,
-    fontSize: 12,
+    color: Colors.accentPrimary,
+    fontSize: 11,
     fontWeight: '700',
   },
   emptyContainer: {
@@ -211,8 +209,8 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     ...Typography.caption,
-    color: Colors.textSecondary,
+    color: Colors.textMuted,
     textAlign: 'center',
-    fontSize: 13,
+    fontSize: 12,
   },
 });

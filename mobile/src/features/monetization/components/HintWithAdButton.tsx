@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { useRewardedAd } from '../hooks/useRewardedAd';
 import { Colors } from '../../../theme/colors';
-import { Spacing, BorderRadius } from '../../../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
 
 interface IHintWithAdButtonProps {
@@ -39,7 +39,7 @@ export const HintWithAdButton = React.memo<IHintWithAdButtonProps>(
           disabled={isLoading}
         >
           <Text style={styles.adBtnText}>
-            🎬 Reklam İzle & İpucunu Aç {isLoading ? '...' : ''}
+            🎬 REKLAM İZLE & İPUCUNU AÇ {isLoading ? '...' : ''}
           </Text>
         </TouchableOpacity>
       </View>
@@ -56,34 +56,34 @@ const styles = StyleSheet.create({
   },
   adBtn: {
     width: '100%',
-    backgroundColor: Colors.surfaceLight,
-    borderColor: Colors.primary,
-    borderWidth: 1.5,
+    backgroundColor: Colors.surface,
+    borderColor: Colors.borderLight,
+    borderWidth: Borders.thin,
     paddingVertical: Spacing.sm + 2,
     paddingHorizontal: Spacing.md,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.sharp,
     alignItems: 'center',
     justifyContent: 'center',
   },
   adBtnText: {
-    ...Typography.bodyBold,
-    color: Colors.primary,
-    fontSize: 13,
-    letterSpacing: 0.3,
+    ...Typography.statBadge,
+    color: Colors.accentPrimary,
+    fontSize: 11,
+    letterSpacing: 0.6,
   },
   unlockedContainer: {
-    backgroundColor: 'rgba(34, 197, 94, 0.14)',
-    borderColor: Colors.success,
-    borderWidth: 1,
-    borderRadius: BorderRadius.md,
+    backgroundColor: Colors.surfaceLight,
+    borderColor: Colors.accentPrimary,
+    borderWidth: Borders.thin,
+    borderRadius: BorderRadius.sharp,
     paddingVertical: Spacing.sm + 2,
     paddingHorizontal: Spacing.md,
     alignItems: 'center',
   },
   unlockedText: {
     ...Typography.bodyBold,
-    color: Colors.success,
-    fontSize: 13,
+    color: Colors.accentPrimary,
+    fontSize: 12,
     textAlign: 'center',
   },
 });

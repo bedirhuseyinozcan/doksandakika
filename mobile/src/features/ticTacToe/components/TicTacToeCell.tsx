@@ -3,7 +3,7 @@ import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import { ITicTacToeCellState } from '../types';
 import { ClubLogo } from '../../../components/common/ClubLogo';
 import { Colors } from '../../../theme/colors';
-import { BorderRadius } from '../../../theme/spacing';
+import { BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
 
 interface ITicTacToeCellProps {
@@ -31,7 +31,7 @@ export const TicTacToeCell: React.FC<ITicTacToeCellProps> = React.memo(
         {isFilled && guessedPlayer ? (
           <View style={styles.filledContent}>
             <View style={styles.filledBadgeRow}>
-              <Text style={styles.checkIcon}>✅</Text>
+              <Text style={styles.checkIcon}>✓</Text>
               <ClubLogo
                 logoUrl={guessedPlayer.logoUrl || guessedPlayer.logo}
                 clubName={guessedPlayer.club}
@@ -57,7 +57,7 @@ export const TicTacToeCell: React.FC<ITicTacToeCellProps> = React.memo(
               {isSelected ? '🎯' : '+'}
             </Text>
             <Text style={styles.cellSubtext}>
-              {isSelected ? 'Seçildi' : 'Doldur'}
+              {isSelected ? 'SEÇİLDİ' : 'DOLDUR'}
             </Text>
           </View>
         )}
@@ -73,21 +73,21 @@ const styles = StyleSheet.create({
     flex: 1,
     aspectRatio: 1,
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.md,
-    borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 4,
+    padding: 3,
   },
   selectedCell: {
-    borderColor: Colors.primary,
-    backgroundColor: 'rgba(59, 130, 246, 0.15)',
-    transform: [{ scale: 1.02 }],
+    borderColor: Colors.accentPrimary,
+    backgroundColor: Colors.surfaceElevated,
+    borderWidth: Borders.thick,
   },
   filledCell: {
     borderColor: Colors.success,
-    backgroundColor: 'rgba(34, 197, 94, 0.14)',
+    backgroundColor: Colors.surfaceLight,
   },
   filledContent: {
     alignItems: 'center',
@@ -102,34 +102,37 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   rarityBadge: {
-    backgroundColor: 'rgba(234, 179, 8, 0.18)',
+    backgroundColor: Colors.surface,
     paddingHorizontal: 4,
     paddingVertical: 1,
-    borderRadius: 4,
+    borderRadius: BorderRadius.sharp,
     marginTop: 2,
-    borderWidth: 0.5,
-    borderColor: 'rgba(234, 179, 8, 0.45)',
+    borderWidth: Borders.thin,
+    borderColor: Colors.warning,
   },
   rarityText: {
-    fontSize: 9,
-    fontWeight: '700',
-    color: '#FACC15',
+    ...Typography.monoMeta,
+    fontSize: 8.5,
+    fontWeight: '800',
+    color: Colors.warning,
   },
   checkIcon: {
-    fontSize: 14,
-    marginBottom: 2,
+    fontSize: 12,
+    color: Colors.success,
+    fontWeight: '900',
+    marginBottom: 1,
   },
   playerName: {
-    ...Typography.captionBold,
+    ...Typography.bodyBold,
     color: Colors.textPrimary,
-    fontSize: 11,
+    fontSize: 10,
     textAlign: 'center',
-    lineHeight: 13,
+    lineHeight: 12,
   },
   playerClub: {
     ...Typography.caption,
-    color: Colors.textSecondary,
-    fontSize: 9,
+    color: Colors.textMuted,
+    fontSize: 8.5,
     textAlign: 'center',
     marginTop: 1,
   },
@@ -138,17 +141,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   plusIcon: {
-    fontSize: 20,
+    fontSize: 18,
     color: Colors.textMuted,
     fontWeight: '700',
   },
   selectedPlus: {
-    color: Colors.primary,
+    color: Colors.accentPrimary,
   },
   cellSubtext: {
-    ...Typography.caption,
+    ...Typography.statBadge,
     color: Colors.textMuted,
-    fontSize: 9,
+    fontSize: 8.5,
     marginTop: 2,
+    letterSpacing: 0.5,
   },
 });

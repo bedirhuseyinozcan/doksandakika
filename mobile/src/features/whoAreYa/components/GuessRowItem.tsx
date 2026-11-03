@@ -4,7 +4,7 @@ import { IWhoAreYaGuess } from '../types';
 import { AnimatedAttributeTile } from './AnimatedAttributeTile';
 import { ClubLogo } from '../../../components/common/ClubLogo';
 import { Colors } from '../../../theme/colors';
-import { Spacing, BorderRadius } from '../../../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
 
 interface IGuessRowItemProps {
@@ -17,8 +17,8 @@ export const GuessRowItem = React.memo<IGuessRowItemProps>(({ guess, index }) =>
 
   const getAgeIndicator = (status: 'correct' | 'higher' | 'lower') => {
     if (status === 'correct') return '';
-    if (status === 'higher') return ' ⬆️';
-    return ' ⬇️';
+    if (status === 'higher') return ' ⬆';
+    return ' ⬇';
   };
 
   const ageText = player.age ? `${player.age}${getAgeIndicator(comparison.age)}` : '-';
@@ -40,34 +40,34 @@ export const GuessRowItem = React.memo<IGuessRowItemProps>(({ guess, index }) =>
 
       <View style={styles.tilesGrid}>
         <AnimatedAttributeTile
-          label="Kulüp"
+          label="KULÜP"
           value={player.club}
           status={comparison.club}
           delay={0}
         />
         <AnimatedAttributeTile
-          label="Lig"
+          label="LİG"
           value={player.league}
           status={comparison.league}
-          delay={80}
+          delay={60}
         />
         <AnimatedAttributeTile
-          label="Uyruk"
+          label="UYRUK"
           value={player.nationality}
           status={comparison.nationality}
-          delay={160}
+          delay={120}
         />
         <AnimatedAttributeTile
-          label="Mevki"
+          label="MEVKİ"
           value={player.position}
           status={comparison.position}
-          delay={240}
+          delay={180}
         />
         <AnimatedAttributeTile
-          label="Yaş"
+          label="YAŞ"
           value={ageText}
           status={comparison.age}
-          delay={320}
+          delay={240}
         />
       </View>
     </View>
@@ -79,11 +79,11 @@ GuessRowItem.displayName = 'GuessRowItem';
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.sharp,
     padding: Spacing.sm,
     marginVertical: Spacing.xs,
     marginHorizontal: Spacing.md,
-    borderWidth: 1,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
   },
   nameHeader: {
@@ -93,15 +93,17 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   indexText: {
-    ...Typography.caption,
-    color: Colors.accent,
-    fontWeight: '700',
+    ...Typography.monoMeta,
+    color: Colors.accentPrimary,
+    fontWeight: '800',
     marginRight: Spacing.xs,
+    fontSize: 11,
   },
   nameText: {
     ...Typography.bodyBold,
     color: Colors.textPrimary,
     flex: 1,
+    letterSpacing: -0.2,
   },
   tilesGrid: {
     flexDirection: 'row',

@@ -21,7 +21,7 @@ import { GameNavbar } from '../components/common/GameNavbar';
 import { useChallengeDataLoader } from '../hooks/useChallengeDataLoader';
 import { searchEngine } from '../services/searchEngine';
 import { Colors } from '../theme/colors';
-import { Spacing } from '../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../theme/spacing';
 import { Typography } from '../theme/typography';
 
 interface IWhoAreYaScreenProps {
@@ -254,27 +254,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.sm,
     paddingBottom: Platform.OS === 'android' ? 44 : Spacing.md,
-    borderTopWidth: 1,
+    borderTopWidth: Borders.thin,
     borderTopColor: Colors.border,
     backgroundColor: Colors.surface,
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
   },
   guessBtn: {
-    backgroundColor: Colors.primary,
-    minHeight: 52,
+    backgroundColor: Colors.accentPrimary,
+    minHeight: 48,
     justifyContent: 'center',
-    borderRadius: 12,
+    borderRadius: BorderRadius.sharp,
     alignItems: 'center',
     marginBottom: Platform.OS === 'android' ? 4 : 0,
   },
   guessBtnText: {
-    ...Typography.bodyBold,
-    color: Colors.background,
-    fontSize: 16,
+    ...Typography.statBadge,
+    color: '#090909',
+    fontSize: 13,
+    letterSpacing: 0.8,
     fontWeight: '800',
   },
 });

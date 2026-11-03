@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, Image, Text, StyleSheet, Platform, ActivityIndicator } from 'react-native';
 import { Colors } from '../../../theme/colors';
-import { Spacing, BorderRadius } from '../../../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
 
 interface IBlurredImageHeroProps {
@@ -32,7 +32,7 @@ export const BlurredImageHero = React.memo<IBlurredImageHeroProps>(
         <View style={styles.imageContainer}>
           {!isLoaded && !imageError && (
             <View style={styles.spinnerContainer}>
-              <ActivityIndicator size="small" color={Colors.primary} />
+              <ActivityIndicator size="small" color={Colors.accentPrimary} />
             </View>
           )}
 
@@ -70,19 +70,19 @@ export const BlurredImageHero = React.memo<IBlurredImageHeroProps>(
           ) : (
             <View style={styles.placeholderContainer}>
               <Text style={styles.placeholderIcon}>👤</Text>
-              <Text style={styles.placeholderText}>Gizemli Yıldız</Text>
+              <Text style={styles.placeholderText}>GİZEMLİ YILDIZ</Text>
             </View>
           )}
 
           <View style={styles.levelBadge}>
             <Text style={styles.levelBadgeText}>
-              Netlik: Seviye {Math.min(currentAttempt + 1, maxAttempts)}/{maxAttempts}
+              NETLİK: {Math.min(currentAttempt + 1, maxAttempts)}/{maxAttempts}
             </Text>
           </View>
         </View>
 
         <Text style={styles.subtext}>
-          Her yanlış tahminde fotoğraf bir kademe daha netleşir!
+          HER YANLIŞ TAHMİNDE GÖRSEL BİR KADEME NETLEŞİR
         </Text>
       </View>
     );
@@ -94,10 +94,10 @@ BlurredImageHero.displayName = 'BlurredImageHero';
 const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+    borderRadius: BorderRadius.sharp,
     padding: Spacing.md,
     alignItems: 'center',
-    borderWidth: 1,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
     marginHorizontal: Spacing.md,
     marginVertical: Spacing.sm,
@@ -105,14 +105,14 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: 190,
     height: 190,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.sharp,
     overflow: 'hidden',
-    backgroundColor: '#121722',
+    backgroundColor: Colors.surfaceLight,
     position: 'relative',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
   },
   image: {
     width: '100%',
@@ -130,35 +130,40 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   placeholderIcon: {
-    fontSize: 54,
-    opacity: 0.6,
+    fontSize: 50,
+    opacity: 0.5,
   },
   placeholderText: {
-    ...Typography.caption,
-    color: Colors.textSecondary,
+    ...Typography.statBadge,
+    color: Colors.textMuted,
     marginTop: Spacing.xs,
+    fontSize: 10,
+    letterSpacing: 0.8,
   },
   levelBadge: {
     position: 'absolute',
     bottom: Spacing.xs,
     right: Spacing.xs,
-    backgroundColor: 'rgba(11, 14, 20, 0.88)',
+    backgroundColor: Colors.background,
     paddingHorizontal: Spacing.sm,
     paddingVertical: 3,
-    borderRadius: BorderRadius.sm,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
     zIndex: 2,
   },
   levelBadgeText: {
-    ...Typography.statBadge,
-    color: Colors.accent,
-    fontWeight: '700',
+    ...Typography.monoMeta,
+    color: Colors.accentPrimary,
+    fontWeight: '800',
+    fontSize: 9.5,
   },
   subtext: {
-    ...Typography.caption,
-    color: Colors.textSecondary,
+    ...Typography.statBadge,
+    color: Colors.textMuted,
     marginTop: Spacing.sm,
     textAlign: 'center',
+    fontSize: 9.5,
+    letterSpacing: 0.6,
   },
 });

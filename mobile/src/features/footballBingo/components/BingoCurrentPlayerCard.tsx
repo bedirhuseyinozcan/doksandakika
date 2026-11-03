@@ -4,7 +4,7 @@ import { ILightPlayer, searchEngine } from '../../../services/searchEngine';
 import { useFeedbackAnimation } from '../../../hooks/useFeedbackAnimation';
 import { PlayerAvatar } from '../../../components/common/PlayerAvatar';
 import { Colors } from '../../../theme/colors';
-import { Spacing, BorderRadius } from '../../../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
 
 interface IBingoCurrentPlayerCardProps {
@@ -48,13 +48,13 @@ export const BingoCurrentPlayerCard: React.FC<IBingoCurrentPlayerCardProps> = Re
         <View style={styles.topStatsRow}>
           <View style={styles.statPill}>
             <Text style={styles.statPillText}>
-              🃏 Deste: <Text style={styles.statPillHighlight}>{playersLeftInDeck}/{totalDeckSize}</Text>
+              DESTE: <Text style={styles.statPillHighlight}>{playersLeftInDeck}/{totalDeckSize}</Text>
             </Text>
           </View>
 
           <View style={[styles.statPill, styles.matchedPill]}>
             <Text style={styles.statPillText}>
-              🎯 Bingo: <Text style={styles.matchedHighlight}>{matchedCount}/{totalTilesCount}</Text>
+              BİNGO: <Text style={styles.matchedHighlight}>{matchedCount}/{totalTilesCount}</Text>
             </Text>
           </View>
         </View>
@@ -81,6 +81,7 @@ export const BingoCurrentPlayerCard: React.FC<IBingoCurrentPlayerCardProps> = Re
             </Text>
           </View>
         )}
+
         {player ? (
           <Animated.View style={[styles.playerCard, player.isLegend && styles.legendCard, animatedStyle]}>
             <View style={styles.playerMainRow}>
@@ -89,7 +90,7 @@ export const BingoCurrentPlayerCard: React.FC<IBingoCurrentPlayerCardProps> = Re
                 imageUrl={searchEngine.getPlayerPhoto(player)}
                 name={player.name}
                 isLegend={player.isLegend}
-                size={48}
+                size={46}
                 style={{ marginRight: Spacing.sm }}
               />
 
@@ -98,24 +99,22 @@ export const BingoCurrentPlayerCard: React.FC<IBingoCurrentPlayerCardProps> = Re
                   {player.name}
                 </Text>
                 {player.isLegend ? (
-                  <Text style={styles.legendBadge} numberOfLines={1}>
-                    👑 Efsane İkon
+                  <Text style={styles.legendBadge}>👑 EFSANE FUTBOLCU</Text>
+                ) : (
+                  <Text style={styles.playerInstruction}>
+                    Doğru bingo kutusuna dokun veya pas geç
                   </Text>
-                ) : null}
-                <Text style={styles.playerInstruction} numberOfLines={1}>
-                  Uygun kutuya yerleştir veya pas geç
-                </Text>
+                )}
               </View>
 
               <TouchableOpacity
                 style={styles.skipBtn}
-                activeOpacity={0.8}
                 onPress={onSkip}
+                activeOpacity={0.75}
                 disabled={disabled}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
-                <Text style={styles.skipBtnText}>Pas Geç</Text>
-                <Text style={styles.skipSub}>⏭️ -1</Text>
+                <Text style={styles.skipBtnText}>PAS GEÇ</Text>
+                <Text style={styles.skipSub}>-1 Hak</Text>
               </TouchableOpacity>
             </View>
           </Animated.View>
@@ -133,9 +132,9 @@ BingoCurrentPlayerCard.displayName = 'BingoCurrentPlayerCard';
 
 const styles = StyleSheet.create({
   cardWrapper: {
-    width: '100%',
     paddingHorizontal: Spacing.md,
     marginTop: Spacing.xs,
+    marginBottom: Spacing.xs,
   },
   topStatsRow: {
     flexDirection: 'row',
@@ -144,68 +143,69 @@ const styles = StyleSheet.create({
   },
   statPill: {
     backgroundColor: Colors.surface,
-    paddingVertical: 4,
+    paddingVertical: 3,
     paddingHorizontal: Spacing.sm,
-    borderRadius: BorderRadius.sm,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
   },
   matchedPill: {
-    borderColor: 'rgba(34, 197, 94, 0.3)',
-    backgroundColor: 'rgba(34, 197, 94, 0.08)',
+    borderColor: Colors.accentPrimary,
   },
   statPillText: {
-    ...Typography.caption,
-    color: Colors.textSecondary,
-    fontSize: 11,
+    ...Typography.statBadge,
+    color: Colors.textMuted,
+    fontSize: 10,
+    letterSpacing: 0.5,
   },
   statPillHighlight: {
-    color: Colors.accent,
-    fontWeight: '700',
+    ...Typography.monoMeta,
+    color: Colors.textPrimary,
+    fontWeight: '800',
   },
   matchedHighlight: {
-    color: Colors.success,
-    fontWeight: '700',
+    ...Typography.monoMeta,
+    color: Colors.accentPrimary,
+    fontWeight: '800',
   },
   feedbackBox: {
-    borderRadius: BorderRadius.md,
-    paddingVertical: 5,
-    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+    paddingHorizontal: Spacing.md,
+    borderRadius: BorderRadius.sharp,
     marginBottom: Spacing.xs,
-    borderWidth: 1,
-    alignItems: 'center',
+    borderWidth: Borders.thin,
   },
   feedbackSuccess: {
-    backgroundColor: 'rgba(34, 197, 94, 0.15)',
+    backgroundColor: Colors.surfaceLight,
     borderColor: Colors.success,
   },
   feedbackPenalty: {
-    backgroundColor: 'rgba(239, 68, 68, 0.18)',
-    borderColor: '#EF4444',
+    backgroundColor: Colors.surfaceLight,
+    borderColor: Colors.danger,
   },
   feedbackSkip: {
-    backgroundColor: 'rgba(59, 130, 246, 0.12)',
-    borderColor: Colors.primary,
+    backgroundColor: Colors.surfaceLight,
+    borderColor: Colors.border,
   },
   feedbackText: {
-    ...Typography.captionBold,
-    fontSize: 11,
+    ...Typography.statBadge,
     textAlign: 'center',
+    fontSize: 10.5,
   },
   feedbackSuccessText: {
     color: Colors.success,
   },
   feedbackPenaltyText: {
-    color: '#EF4444',
+    color: Colors.danger,
   },
   feedbackSkipText: {
-    color: Colors.primary,
+    color: Colors.accentPrimary,
   },
   playerCard: {
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.sharp,
     padding: Spacing.sm,
-    borderWidth: 1,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
   },
   playerMainRow: {
@@ -213,13 +213,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   legendCard: {
-    borderColor: Colors.accent,
-    borderWidth: 1.5,
+    borderColor: Colors.warning,
+    borderWidth: Borders.thick,
   },
   legendBadge: {
-    ...Typography.captionBold,
-    color: Colors.accent,
-    fontSize: 11,
+    ...Typography.statBadge,
+    color: Colors.warning,
+    fontSize: 10,
     marginTop: 1,
   },
   playerInfoCol: {
@@ -228,47 +228,49 @@ const styles = StyleSheet.create({
   playerName: {
     ...Typography.bodyBold,
     color: Colors.textPrimary,
-    fontSize: 16,
-    letterSpacing: 0.2,
+    fontSize: 14,
+    letterSpacing: -0.2,
   },
   playerInstruction: {
     ...Typography.caption,
     color: Colors.textMuted,
-    fontSize: 11,
+    fontSize: 10.5,
     marginTop: 2,
   },
   skipBtn: {
     backgroundColor: Colors.surfaceLight,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
-    minHeight: 42,
-    minWidth: 56,
-    paddingVertical: 6,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
+    minHeight: 38,
+    minWidth: 64,
+    paddingVertical: 4,
     paddingHorizontal: Spacing.sm,
-    borderRadius: BorderRadius.sm,
+    borderRadius: BorderRadius.sharp,
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: Spacing.xs,
   },
   skipBtnText: {
-    ...Typography.captionBold,
+    ...Typography.statBadge,
     color: Colors.textPrimary,
-    fontSize: 11,
+    fontSize: 10,
   },
   skipSub: {
-    ...Typography.caption,
-    color: Colors.textMuted,
+    ...Typography.monoMeta,
+    color: Colors.danger,
     fontSize: 9,
     marginTop: 1,
   },
   deckEmptyBox: {
     backgroundColor: Colors.surface,
     padding: Spacing.md,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
     alignItems: 'center',
   },
   deckEmptyText: {
-    ...Typography.body,
-    color: Colors.textSecondary,
+    ...Typography.caption,
+    color: Colors.textMuted,
   },
 });

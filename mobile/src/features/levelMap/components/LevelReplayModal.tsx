@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet } from 'react-native';
 import { Colors } from '../../../theme/colors';
-import { Spacing, BorderRadius } from '../../../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
 
 interface ILevelReplayModalProps {
@@ -22,7 +22,7 @@ export const LevelReplayModal: React.FC<ILevelReplayModalProps> = React.memo(
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
             <Text style={styles.modalEmoji}>🔁</Text>
-            <Text style={styles.modalTitle}>Seviye Zaten Tamamlandı</Text>
+            <Text style={styles.modalTitle}>SEVİYE ZATEN TAMAMLANDI</Text>
             <Text style={styles.modalSubtitle}>
               Seviye {levelNumber}'i daha önce başarıyla tamamladınız. Tekrar oynamak istiyor
               musunuz?
@@ -37,7 +37,7 @@ export const LevelReplayModal: React.FC<ILevelReplayModalProps> = React.memo(
 
             <View style={styles.modalBtnRow}>
               <TouchableOpacity style={styles.modalCancelBtn} onPress={onCancel} activeOpacity={0.8}>
-                <Text style={styles.modalCancelBtnText}>Vazgeç</Text>
+                <Text style={styles.modalCancelBtnText}>VAZGEÇ</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -45,7 +45,7 @@ export const LevelReplayModal: React.FC<ILevelReplayModalProps> = React.memo(
                 onPress={onConfirm}
                 activeOpacity={0.8}
               >
-                <Text style={styles.modalConfirmBtnText}>Evet, Tekrar Oyna</Text>
+                <Text style={styles.modalConfirmBtnText}>TEKRAR OYNA</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -60,7 +60,7 @@ LevelReplayModal.displayName = 'LevelReplayModal';
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    backgroundColor: 'rgba(9, 9, 9, 0.85)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.lg,
@@ -69,40 +69,44 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 340,
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+    borderRadius: BorderRadius.sharp,
     padding: Spacing.lg,
     alignItems: 'center',
-    borderWidth: 1,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
   },
   modalEmoji: {
-    fontSize: 40,
+    fontSize: 36,
     marginBottom: Spacing.xs,
   },
   modalTitle: {
-    ...Typography.h3,
+    ...Typography.statBadge,
     color: Colors.textPrimary,
+    fontSize: 13,
+    letterSpacing: 0.6,
     textAlign: 'center',
     marginBottom: Spacing.xs,
   },
   modalSubtitle: {
-    ...Typography.body,
-    color: Colors.textSecondary,
+    ...Typography.caption,
+    color: Colors.textMuted,
     textAlign: 'center',
+    lineHeight: 18,
     marginBottom: Spacing.md,
   },
   modalNoticeBox: {
-    backgroundColor: 'rgba(245, 158, 11, 0.1)',
-    borderRadius: BorderRadius.sm,
+    backgroundColor: Colors.surfaceLight,
+    borderRadius: BorderRadius.sharp,
     padding: Spacing.sm,
-    borderWidth: 1,
-    borderColor: 'rgba(245, 158, 11, 0.3)',
+    borderWidth: Borders.thin,
+    borderColor: Colors.borderLight,
     marginBottom: Spacing.lg,
-    width: '100%',
   },
   modalNoticeText: {
     ...Typography.caption,
-    color: Colors.accent,
+    color: Colors.warning,
+    fontSize: 11,
+    lineHeight: 16,
     textAlign: 'center',
   },
   modalBtnRow: {
@@ -112,26 +116,29 @@ const styles = StyleSheet.create({
   },
   modalCancelBtn: {
     flex: 1,
-    backgroundColor: Colors.surfaceLight,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.md,
-    alignItems: 'center',
-    borderWidth: 1,
+    paddingVertical: Spacing.sm + 2,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
+    alignItems: 'center',
+    backgroundColor: Colors.surfaceLight,
   },
   modalCancelBtnText: {
-    ...Typography.bodyBold,
-    color: Colors.textSecondary,
+    ...Typography.statBadge,
+    color: Colors.textMuted,
+    fontSize: 11,
   },
   modalConfirmBtn: {
     flex: 1,
-    backgroundColor: Colors.primary,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.md,
+    backgroundColor: Colors.accentPrimary,
+    paddingVertical: Spacing.sm + 2,
+    borderRadius: BorderRadius.sharp,
     alignItems: 'center',
   },
   modalConfirmBtnText: {
-    ...Typography.bodyBold,
-    color: '#FFFFFF',
+    ...Typography.statBadge,
+    color: '#090909',
+    fontSize: 11,
+    letterSpacing: 0.6,
   },
 });

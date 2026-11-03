@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { ICareerStepItem } from '../types';
 import { ClubLogo } from '../../../components/common/ClubLogo';
 import { Colors } from '../../../theme/colors';
-import { Spacing, BorderRadius } from '../../../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
 
 interface ICareerStepBadgeProps {
@@ -28,7 +28,9 @@ export const CareerStepBadge = React.memo<ICareerStepBadgeProps>(
         {/* Step Marker */}
         <View style={styles.markerCol}>
           <View style={[styles.dot, isLast && styles.currentDot]}>
-            <Text style={styles.stepNum}>{stepIndex + 1}</Text>
+            <Text style={[styles.stepNum, isLast && styles.currentStepNum]}>
+              {stepIndex + 1}
+            </Text>
           </View>
           {!isLast && <View style={styles.line} />}
         </View>
@@ -39,7 +41,7 @@ export const CareerStepBadge = React.memo<ICareerStepBadgeProps>(
             <ClubLogo
               logoUrl={step.clubLogoUrl}
               clubName={step.clubName}
-              size={22}
+              size={20}
               fallbackEmoji="🛡️"
             />
             <Text style={styles.clubName} numberOfLines={1}>
@@ -64,34 +66,39 @@ const styles = StyleSheet.create({
   stepContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: Spacing.sm,
+    marginBottom: Spacing.xs + 2,
   },
   markerCol: {
     alignItems: 'center',
-    width: 32,
+    width: 28,
     marginRight: Spacing.sm,
   },
   dot: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: Colors.surfaceLight,
-    borderWidth: 2,
+    width: 22,
+    height: 22,
+    borderRadius: BorderRadius.sharp,
+    backgroundColor: Colors.surface,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   currentDot: {
-    borderColor: Colors.primary,
-    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+    borderColor: Colors.accentPrimary,
+    backgroundColor: Colors.surfaceElevated,
+    borderWidth: Borders.thick,
   },
   stepNum: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: Colors.textPrimary,
+    ...Typography.monoMeta,
+    fontSize: 10,
+    fontWeight: '800',
+    color: Colors.textMuted,
+  },
+  currentStepNum: {
+    color: Colors.accentPrimary,
   },
   line: {
-    width: 2,
+    width: 1,
     flex: 1,
     minHeight: 28,
     backgroundColor: Colors.border,
@@ -101,8 +108,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.surface,
     padding: Spacing.sm,
-    borderRadius: BorderRadius.md,
-    borderWidth: 1,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
   },
   clubTitleRow: {
@@ -115,15 +122,18 @@ const styles = StyleSheet.create({
     ...Typography.bodyBold,
     color: Colors.textPrimary,
     flex: 1,
+    letterSpacing: -0.2,
   },
   yearText: {
-    ...Typography.caption,
-    color: Colors.accent,
+    ...Typography.monoMeta,
+    color: Colors.accentPrimary,
     marginTop: 2,
+    fontSize: 10.5,
   },
   statsText: {
-    ...Typography.caption,
-    color: Colors.textSecondary,
+    ...Typography.monoMeta,
+    color: Colors.textMuted,
     marginTop: 2,
+    fontSize: 10,
   },
 });

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useDailyCountdown } from '../hooks/useDailyCountdown';
 import { Colors } from '../../../theme/colors';
-import { Spacing, BorderRadius } from '../../../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
 
 interface IDailyHeaderCardProps {
@@ -18,7 +18,9 @@ export const DailyHeaderCard = React.memo<IDailyHeaderCardProps>(
     return (
       <View style={styles.card}>
         <View style={styles.topRow}>
-          <Text style={styles.badge}>{leagueLabel.toUpperCase()}</Text>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{leagueLabel.toUpperCase()}</Text>
+          </View>
           <View style={styles.timerBadge}>
             <Text style={styles.timerText}>⏳ {formattedCountdown}</Text>
           </View>
@@ -28,7 +30,7 @@ export const DailyHeaderCard = React.memo<IDailyHeaderCardProps>(
 
         <View style={styles.statusRow}>
           <Text style={[styles.statusText, isCompleted && styles.completedText]}>
-            {isCompleted ? '✅ Bugünün Sorusu Çözüldü' : '🔥 Çöz ve Günlük Serini Koru!'}
+            {isCompleted ? '✓ BUGÜNÜN GÖREVİ TAMAMLANDI' : '🔥 GÜNLÜK SERİNİ SÜRDÜRMEK İÇİN ÇÖZ'}
           </Text>
         </View>
       </View>
@@ -41,51 +43,61 @@ DailyHeaderCard.displayName = 'DailyHeaderCard';
 const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+    borderRadius: BorderRadius.sharp,
     padding: Spacing.md,
     marginHorizontal: Spacing.md,
     marginTop: Spacing.sm,
-    borderWidth: 1,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
   },
   topRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: Spacing.xs,
+    marginBottom: Spacing.xs + 2,
   },
   badge: {
-    ...Typography.statBadge,
-    color: Colors.primary,
-    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    backgroundColor: Colors.surfaceLight,
     paddingHorizontal: Spacing.sm,
-    paddingVertical: 2,
-    borderRadius: BorderRadius.sm,
+    paddingVertical: 3,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
+    borderColor: Colors.borderLight,
+  },
+  badgeText: {
+    ...Typography.statBadge,
+    color: Colors.accentPrimary,
+    fontSize: 9.5,
+    letterSpacing: 0.8,
   },
   timerBadge: {
     backgroundColor: Colors.surfaceLight,
     paddingHorizontal: Spacing.sm,
-    paddingVertical: 2,
-    borderRadius: BorderRadius.sm,
+    paddingVertical: 3,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
   },
   timerText: {
-    ...Typography.caption,
-    color: Colors.accent,
+    ...Typography.monoMeta,
+    color: Colors.warning,
+    fontSize: 10,
     fontWeight: '700',
   },
   title: {
     ...Typography.h2,
     color: Colors.textPrimary,
+    letterSpacing: -0.3,
   },
   statusRow: {
     marginTop: Spacing.xs,
   },
   statusText: {
-    ...Typography.caption,
-    color: Colors.textSecondary,
+    ...Typography.statBadge,
+    color: Colors.textMuted,
+    fontSize: 9.5,
   },
   completedText: {
-    color: Colors.success,
-    fontWeight: '700',
+    color: Colors.accentPrimary,
   },
 });

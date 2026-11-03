@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { useDailyCountdown } from '../hooks/useDailyCountdown';
 import { Colors } from '../../../theme/colors';
-import { Spacing, BorderRadius } from '../../../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
 
 interface IDailyCompletedBannerProps {
@@ -23,14 +23,14 @@ export const DailyCompletedBanner: React.FC<IDailyCompletedBannerProps> = React.
           <Text style={styles.emoji}>{isWon ? '🏆' : '🔒'}</Text>
           <View style={styles.textCol}>
             <Text style={styles.title}>
-              {isWon ? 'Bugünün Sorusu Tamamlandı!' : 'Bugünkü Haklarınız Bitti'}
+              {isWon ? 'GÜNLÜK MEYDAN OKUMA TAMAMLANDI' : 'HAKLARINIZ DOLDU'}
             </Text>
             <Text style={styles.subtitle}>
               {isWon
-                ? `${attemptsUsed}/${maxAttempts} denemede bildiniz.`
-                : 'Maalesef doğru futbolcuyu bulamadınız.'}
+                ? `${attemptsUsed}/${maxAttempts} denemede başarıyla tamamlandı.`
+                : 'Doğru futbolcu tespit edilemedi.'}
             </Text>
-            <Text style={styles.timerText}>⏳ Yeni Soruya Kalan: {formattedCountdown}</Text>
+            <Text style={styles.timerText}>⏳ YENİ SORUYA KALAN: {formattedCountdown}</Text>
           </View>
         </View>
 
@@ -39,7 +39,7 @@ export const DailyCompletedBanner: React.FC<IDailyCompletedBannerProps> = React.
           activeOpacity={0.8}
           onPress={onOpenResultModal}
         >
-          <Text style={styles.resultBtnText}>📊 Sonuç Kartını Gör</Text>
+          <Text style={styles.resultBtnText}>SONUÇ KARTINI GÖRÜNTÜLE ➔</Text>
         </TouchableOpacity>
       </View>
     );
@@ -51,11 +51,10 @@ DailyCompletedBanner.displayName = 'DailyCompletedBanner';
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.surface,
-    borderTopWidth: 1,
+    borderTopWidth: Borders.thin,
     borderTopColor: Colors.border,
     padding: Spacing.md,
     paddingBottom: Platform.OS === 'android' ? 44 : Spacing.md,
-    elevation: 8,
   },
   contentRow: {
     flexDirection: 'row',
@@ -63,37 +62,43 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   emoji: {
-    fontSize: 32,
+    fontSize: 28,
     marginRight: Spacing.sm,
   },
   textCol: {
     flex: 1,
   },
   title: {
-    ...Typography.bodyBold,
+    ...Typography.statBadge,
     color: Colors.textPrimary,
+    fontSize: 11,
+    letterSpacing: 0.6,
   },
   subtitle: {
     ...Typography.caption,
-    color: Colors.textSecondary,
-    marginTop: 1,
+    color: Colors.textMuted,
+    marginTop: 2,
+    fontSize: 11,
   },
   timerText: {
-    ...Typography.caption,
-    color: Colors.accent,
+    ...Typography.monoMeta,
+    color: Colors.warning,
     fontWeight: '700',
-    marginTop: 2,
+    marginTop: 3,
+    fontSize: 10,
   },
   resultBtn: {
     backgroundColor: Colors.surfaceLight,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.md,
+    paddingVertical: Spacing.sm + 2,
+    borderRadius: BorderRadius.sharp,
     alignItems: 'center',
-    borderWidth: 1,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
   },
   resultBtnText: {
-    ...Typography.bodyBold,
+    ...Typography.statBadge,
     color: Colors.textPrimary,
+    fontSize: 11,
+    letterSpacing: 0.6,
   },
 });

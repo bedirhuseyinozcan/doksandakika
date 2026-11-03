@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Animated } from 'react-native';
 import { ICareerPathGuess } from '../types';
 import { ClubLogo } from '../../../components/common/ClubLogo';
 import { Colors } from '../../../theme/colors';
-import { Spacing, BorderRadius } from '../../../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
 
 interface ICareerGuessRowProps {
@@ -14,17 +14,16 @@ const CareerGuessRow: React.FC<ICareerGuessRowProps> = React.memo(({ guess }) =>
   const anim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.spring(anim, {
+    Animated.timing(anim, {
       toValue: 1,
-      tension: 60,
-      friction: 8,
+      duration: 200,
       useNativeDriver: true,
     }).start();
   }, [anim]);
 
   const translateY = anim.interpolate({
     inputRange: [0, 1],
-    outputRange: [12, 0],
+    outputRange: [6, 0],
   });
 
   return (
@@ -39,8 +38,8 @@ const CareerGuessRow: React.FC<ICareerGuessRowProps> = React.memo(({ guess }) =>
       ]}
     >
       <View style={styles.guessRowContent}>
-        <Text style={styles.statusEmoji}>{guess.isCorrect ? '✅' : '❌'}</Text>
-        <ClubLogo clubName={guess.club} size={18} fallbackEmoji="🛡️" />
+        <Text style={styles.statusEmoji}>{guess.isCorrect ? '✓' : '✕'}</Text>
+        <ClubLogo clubName={guess.club} size={16} fallbackEmoji="🛡️" />
         <Text style={styles.guessName} numberOfLines={1}>
           {guess.playerName} ({guess.club})
         </Text>
@@ -60,7 +59,7 @@ export const CareerGuessHistory: React.FC<ICareerGuessHistoryProps> = React.memo
 
   return (
     <View style={styles.guessHistory}>
-      <Text style={styles.historyTitle}>Yapılan Tahminler:</Text>
+      <Text style={styles.historyTitle}>YAPILAN TAHMİNLER</Text>
       {guesses.map((g, idx) => (
         <CareerGuessRow key={`${g.playerId}_${idx}`} guess={g} />
       ))}
@@ -77,24 +76,26 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   historyTitle: {
-    ...Typography.bodyBold,
-    color: Colors.textSecondary,
+    ...Typography.statBadge,
+    color: Colors.textMuted,
     marginBottom: Spacing.xs,
+    fontSize: 10,
+    letterSpacing: 0.8,
   },
   guessRow: {
-    paddingVertical: Spacing.sm,
+    paddingVertical: Spacing.xs + 4,
     paddingHorizontal: Spacing.md,
-    borderRadius: BorderRadius.sm,
+    borderRadius: BorderRadius.sharp,
     marginBottom: Spacing.xs,
-    borderWidth: 1,
+    borderWidth: Borders.thin,
   },
   correctRow: {
-    backgroundColor: 'rgba(34, 197, 94, 0.15)',
-    borderColor: '#22C55E',
+    backgroundColor: Colors.surfaceLight,
+    borderColor: Colors.success,
   },
   wrongRow: {
-    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-    borderColor: '#EF4444',
+    backgroundColor: Colors.surface,
+    borderColor: Colors.border,
   },
   guessRowContent: {
     flexDirection: 'row',
@@ -102,11 +103,14 @@ const styles = StyleSheet.create({
     gap: Spacing.xs + 2,
   },
   statusEmoji: {
-    fontSize: 14,
+    ...Typography.statBadge,
+    fontSize: 12,
+    color: Colors.textPrimary,
   },
   guessName: {
     ...Typography.bodyBold,
     color: Colors.textPrimary,
+    fontSize: 13,
     flex: 1,
   },
 });

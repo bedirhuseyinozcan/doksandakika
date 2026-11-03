@@ -12,7 +12,7 @@ import { useSettingsStore } from '../../../stores/useSettingsStore';
 import { hapticsService } from '../../../services/hapticsService';
 import { searchEngine } from '../../../services/searchEngine';
 import { Colors } from '../../../theme/colors';
-import { Spacing, BorderRadius } from '../../../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
 
 interface ISettingsModalProps {
@@ -180,7 +180,7 @@ SettingsModal.displayName = 'SettingsModal';
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.78)',
+    backgroundColor: 'rgba(9, 9, 9, 0.88)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.md,
@@ -190,9 +190,9 @@ const styles = StyleSheet.create({
     maxWidth: 380,
     maxHeight: '86%',
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
+    borderRadius: BorderRadius.sharp,
     padding: Spacing.lg,
-    borderWidth: 1,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
   },
   headerRow: {
@@ -200,17 +200,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: Spacing.md,
+    borderBottomWidth: Borders.thin,
+    borderBottomColor: Colors.border,
+    paddingBottom: Spacing.sm,
   },
   headerTitle: {
-    ...Typography.h2,
+    ...Typography.statBadge,
     color: Colors.textPrimary,
-    fontSize: 18,
+    fontSize: 12,
+    letterSpacing: 0.6,
   },
   closeBtn: {
     padding: Spacing.xs,
   },
   closeText: {
-    fontSize: 18,
+    fontSize: 16,
     color: Colors.textMuted,
     fontWeight: '700',
   },
@@ -218,10 +222,11 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.sm,
   },
   sectionTitle: {
-    ...Typography.captionBold,
-    color: Colors.primary,
+    ...Typography.statBadge,
+    color: Colors.accentPrimary,
     textTransform: 'uppercase',
     letterSpacing: 0.8,
+    fontSize: 10,
     marginBottom: Spacing.xs,
   },
   settingRow: {
@@ -230,9 +235,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: Colors.surfaceLight,
     padding: Spacing.sm + 2,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.sharp,
     marginBottom: Spacing.xs + 2,
-    borderWidth: 1,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
   },
   settingInfo: {
@@ -246,35 +251,37 @@ const styles = StyleSheet.create({
   },
   settingSub: {
     ...Typography.caption,
-    color: Colors.textSecondary,
+    color: Colors.textMuted,
     fontSize: 11,
     marginTop: 2,
   },
   syncBtn: {
-    backgroundColor: 'rgba(59, 130, 246, 0.15)',
-    borderWidth: 1,
-    borderColor: Colors.secondary,
+    backgroundColor: Colors.surface,
+    borderWidth: Borders.thin,
+    borderColor: Colors.accentPrimary,
     paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.sharp,
     alignItems: 'center',
     marginTop: Spacing.xs,
   },
   syncBtnText: {
-    ...Typography.bodyBold,
-    color: Colors.secondary,
-    fontSize: 12,
+    ...Typography.statBadge,
+    color: Colors.accentPrimary,
+    fontSize: 11,
+    letterSpacing: 0.6,
   },
   syncStatusText: {
-    ...Typography.captionBold,
+    ...Typography.statBadge,
     color: Colors.success,
     textAlign: 'center',
     marginTop: 6,
+    fontSize: 10,
   },
   guideBox: {
     backgroundColor: Colors.surfaceLight,
     padding: Spacing.sm + 2,
-    borderRadius: BorderRadius.md,
-    borderWidth: 1,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
     gap: 8,
   },
@@ -289,21 +296,23 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   versionText: {
-    ...Typography.caption,
+    ...Typography.monoMeta,
     color: Colors.textMuted,
     textAlign: 'center',
     marginTop: Spacing.md,
     fontSize: 10,
   },
   doneBtn: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.accentPrimary,
     paddingVertical: Spacing.sm + 2,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.sharp,
     alignItems: 'center',
     marginTop: Spacing.sm,
   },
   doneBtnText: {
-    ...Typography.bodyBold,
-    color: '#0F172A',
+    ...Typography.statBadge,
+    color: '#090909',
+    fontSize: 12,
+    letterSpacing: 0.8,
   },
 });

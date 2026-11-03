@@ -2,7 +2,8 @@ import React, { useCallback } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { ILevelItem } from '../types';
 import { Colors } from '../../../theme/colors';
-import { Spacing, BorderRadius } from '../../../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
+import { Typography } from '../../../theme/typography';
 
 interface ILevelGridCardProps {
   item: ILevelItem;
@@ -33,11 +34,11 @@ export const LevelGridCard: React.FC<ILevelGridCardProps> = React.memo(({ item, 
       <View style={styles.cardHeader}>
         {isCompleted ? (
           <View style={styles.completedBadge}>
-            <Text style={styles.completedIcon}>✅</Text>
+            <Text style={styles.completedIcon}>✓</Text>
           </View>
         ) : isCurrent ? (
           <View style={styles.currentBadge}>
-            <Text style={styles.currentIcon}>⭐</Text>
+            <Text style={styles.currentIcon}>★</Text>
           </View>
         ) : (
           <View style={styles.lockedBadge}>
@@ -65,7 +66,7 @@ export const LevelGridCard: React.FC<ILevelGridCardProps> = React.memo(({ item, 
           isLocked && styles.lockedStatusText,
         ]}
       >
-        {isCompleted ? 'Geçildi' : isCurrent ? 'Oyna ▶' : 'Kilitli'}
+        {isCompleted ? 'GEÇİLDİ' : isCurrent ? 'AKTİF' : 'KİLİTLİ'}
       </Text>
     </TouchableOpacity>
   );
@@ -78,66 +79,70 @@ const styles = StyleSheet.create({
     width: '23%',
     aspectRatio: 0.9,
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.sharp,
     padding: Spacing.xs,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1.5,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
   },
   completedCard: {
-    backgroundColor: 'rgba(34, 197, 94, 0.12)',
-    borderColor: '#22C55E',
+    backgroundColor: Colors.surfaceLight,
+    borderColor: Colors.success,
   },
   currentCard: {
-    backgroundColor: 'rgba(16, 185, 129, 0.25)',
-    borderColor: Colors.primary,
-    borderWidth: 2,
+    backgroundColor: Colors.surfaceElevated,
+    borderColor: Colors.accentPrimary,
+    borderWidth: Borders.thick,
   },
   lockedCard: {
-    backgroundColor: Colors.surfaceLight,
-    borderColor: 'transparent',
-    opacity: 0.55,
+    backgroundColor: Colors.surface,
+    borderColor: Colors.borderSubtle,
+    opacity: 0.45,
   },
   cardHeader: {
     marginBottom: 2,
   },
   completedBadge: {},
   completedIcon: {
-    fontSize: 14,
+    fontSize: 12,
+    color: Colors.success,
+    fontWeight: '900',
   },
   currentBadge: {},
   currentIcon: {
-    fontSize: 14,
+    fontSize: 12,
+    color: Colors.accentPrimary,
   },
   lockedBadge: {},
   lockedIcon: {
-    fontSize: 14,
+    fontSize: 11,
   },
   levelNumber: {
-    fontSize: 18,
-    fontWeight: '800',
+    ...Typography.monoLarge,
+    fontSize: 17,
     color: Colors.textPrimary,
   },
   completedNumber: {
-    color: '#22C55E',
+    color: Colors.success,
   },
   currentNumber: {
-    color: '#10B981',
+    color: Colors.accentPrimary,
   },
   lockedNumber: {
     color: Colors.textMuted,
   },
   levelStatusText: {
-    fontSize: 10,
-    fontWeight: '700',
+    ...Typography.statBadge,
+    fontSize: 8.5,
     marginTop: 2,
+    letterSpacing: 0.5,
   },
   completedStatusText: {
-    color: '#22C55E',
+    color: Colors.success,
   },
   currentStatusText: {
-    color: '#10B981',
+    color: Colors.accentPrimary,
   },
   lockedStatusText: {
     color: Colors.textMuted,

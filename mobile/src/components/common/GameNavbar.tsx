@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform, StatusBar } from 'react-native';
 import { Colors } from '../../theme/colors';
-import { Spacing, BorderRadius } from '../../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../../theme/spacing';
 import { Typography } from '../../theme/typography';
 import { useGameStore } from '../../stores/useGameStore';
 import { getCosmeticById } from '../../features/shop/catalog';
@@ -34,21 +34,23 @@ export const GameNavbar: React.FC<IGameNavbarProps> = React.memo(
     const theme = equippedCosmetic.themeConfig;
 
     return (
-      <View style={[styles.navbar, { borderBottomColor: theme.cardBorder }]}>
+      <View style={[styles.navbar, { borderBottomColor: theme.cardBorder || Colors.border }]}>
         <TouchableOpacity
           onPress={onBack}
           style={styles.backBtn}
           activeOpacity={0.7}
           hitSlop={{ top: 16, bottom: 16, left: 16, right: 20 }}
         >
-          <Text style={[styles.backBtnText, { color: theme.primaryColor }]}>‹ Geri</Text>
+          <Text style={[styles.backBtnText, { color: theme.primaryColor || Colors.accentPrimary }]}>
+            ‹ GERİ
+          </Text>
         </TouchableOpacity>
 
         <View style={styles.navTitleContainer}>
           <Text style={styles.navTitle}>{title}</Text>
           {isReplay ? (
             <View style={styles.replayBadge}>
-              <Text style={styles.replayBadgeText}>🔁 Tekrar</Text>
+              <Text style={styles.replayBadgeText}>TEKRAR</Text>
             </View>
           ) : null}
         </View>
@@ -61,7 +63,7 @@ export const GameNavbar: React.FC<IGameNavbarProps> = React.memo(
               activeOpacity={0.7}
               hitSlop={{ top: 12, bottom: 12, left: 10, right: 10 }}
             >
-              <Text style={styles.mapHeaderBtnText}>🗺️ Harita</Text>
+              <Text style={styles.mapHeaderBtnText}>HARİTA</Text>
             </TouchableOpacity>
           ) : null}
 
@@ -71,7 +73,7 @@ export const GameNavbar: React.FC<IGameNavbarProps> = React.memo(
               styles.navAvatarBadge,
               {
                 borderColor: theme.primaryColor,
-                backgroundColor: theme.accentGlow,
+                backgroundColor: theme.accentGlow || Colors.surfaceLight,
               },
             ]}
           >
@@ -83,7 +85,7 @@ export const GameNavbar: React.FC<IGameNavbarProps> = React.memo(
               styles.attemptsBadge,
               {
                 borderColor: theme.primaryColor,
-                backgroundColor: theme.accentGlow,
+                backgroundColor: theme.accentGlow || Colors.surfaceLight,
               },
             ]}
           >
@@ -108,7 +110,8 @@ const styles = StyleSheet.create({
     paddingTop:
       Platform.OS === 'android' ? (StatusBar.currentHeight || 24) + Spacing.xs : Spacing.sm,
     paddingBottom: Spacing.sm,
-    borderBottomWidth: 1,
+    backgroundColor: Colors.background,
+    borderBottomWidth: Borders.thin,
     borderBottomColor: Colors.border,
     minHeight: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) + 54 : 54,
   },
@@ -121,8 +124,9 @@ const styles = StyleSheet.create({
   },
   backBtnText: {
     ...Typography.bodyBold,
-    color: Colors.primary,
-    fontSize: 17,
+    fontFamily: Typography.statBadge.fontFamily,
+    fontSize: 12,
+    letterSpacing: 0.8,
   },
   navTitleContainer: {
     flexDirection: 'row',
@@ -132,19 +136,21 @@ const styles = StyleSheet.create({
   navTitle: {
     ...Typography.h3,
     color: Colors.textPrimary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   replayBadge: {
-    backgroundColor: 'rgba(245, 158, 11, 0.2)',
+    backgroundColor: Colors.surfaceLight,
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: BorderRadius.sm,
-    borderWidth: 1,
-    borderColor: 'rgba(245, 158, 11, 0.4)',
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
+    borderColor: Colors.warning,
   },
   replayBadgeText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: Colors.accent,
+    ...Typography.statBadge,
+    fontSize: 9,
+    color: Colors.warning,
   },
   navRightRow: {
     flexDirection: 'row',
@@ -154,23 +160,23 @@ const styles = StyleSheet.create({
   mapHeaderBtn: {
     backgroundColor: Colors.surfaceLight,
     paddingHorizontal: Spacing.sm,
-    paddingVertical: 6,
-    minHeight: 36,
+    paddingVertical: 5,
+    minHeight: 32,
     justifyContent: 'center',
-    borderRadius: BorderRadius.full,
-    borderWidth: 1,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
   },
   mapHeaderBtnText: {
-    ...Typography.caption,
+    ...Typography.statBadge,
+    fontSize: 10,
     color: Colors.textPrimary,
-    fontWeight: '700',
   },
   navAvatarBadge: {
     width: 28,
     height: 28,
-    borderRadius: 14,
-    borderWidth: 1.5,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -181,13 +187,13 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surfaceLight,
     paddingHorizontal: Spacing.sm,
     paddingVertical: 4,
-    borderRadius: BorderRadius.full,
-    borderWidth: 1,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
   },
   attemptsText: {
-    ...Typography.caption,
-    color: Colors.textPrimary,
-    fontWeight: '700',
+    ...Typography.monoMeta,
+    fontWeight: '800',
+    fontSize: 11,
   },
 });

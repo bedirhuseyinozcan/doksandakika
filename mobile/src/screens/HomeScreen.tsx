@@ -1,12 +1,12 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
+  TouchableOpacity,
   SafeAreaView,
   StatusBar,
-  TouchableOpacity,
   Platform,
 } from 'react-native';
 import { GameModeType } from '../api/dailyApi';
@@ -17,11 +17,11 @@ import { getAuthoritativeUtcDate } from '../services/authoritativeTime';
 import { PlayerStatsModal } from '../features/stats/components/PlayerStatsModal';
 import { ScoutShopModal } from '../features/shop/components/ScoutShopModal';
 import { getCosmeticById } from '../features/shop/catalog';
-import { HomeGameCard } from '../features/home/components/HomeGameCard';
-import { HomeBottomNav } from '../features/home/components/HomeBottomNav';
 import { SettingsModal } from '../features/settings/components/SettingsModal';
+import { HomeGameCard } from '../features/home/components/HomeGameCard';
+import { HomeBottomNav, HomeNavTab } from '../features/home/components/HomeBottomNav';
 import { Colors } from '../theme/colors';
-import { Spacing, BorderRadius } from '../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../theme/spacing';
 import { Typography } from '../theme/typography';
 
 export type AppScreenType =
@@ -35,18 +35,15 @@ export type AppScreenType =
   | 'levelMap';
 
 interface IHomeScreenProps {
-  onNavigate: (
-    screen: AppScreenType,
-    isDaily?: boolean,
-    gameMode?: GameModeType
-  ) => void;
+  onNavigate: (screen: AppScreenType, isDaily?: boolean, mode?: GameModeType) => void;
 }
 
 export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }) => {
   const coins = useGameStore((s) => s.coins);
-  const xp = useGameStore((s) => s.xp);
   const currentStreak = useGameStore((s) => s.currentStreak);
   const isDailyCompleted = useGameStore((s) => s.isDailyCompleted);
+  const xp = useGameStore((s) => s.xp);
+
   const selectedLeagueMode = useSettingsStore((s) => s.selectedLeagueMode);
   const setLeagueMode = useSettingsStore((s) => s.setLeagueMode);
 
@@ -54,7 +51,7 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
   const [isShopModalVisible, setIsShopModalVisible] = useState(false);
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
 
-  const activeTab = useMemo<'play' | 'shop' | 'stats' | 'settings'>(() => {
+  const activeTab: HomeNavTab = useMemo(() => {
     if (isShopModalVisible) return 'shop';
     if (isStatsModalVisible) return 'stats';
     if (isSettingsModalVisible) return 'settings';
@@ -98,7 +95,8 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
     theme.primaryColor === '#FBBF24' ||
     theme.primaryColor === '#FFFFFF' ||
     theme.primaryColor === '#F4F4F5' ||
-    theme.primaryColor === '#EAB308';
+    theme.primaryColor === '#EAB308' ||
+    theme.primaryColor === '#00D084';
 
   const rankInfo = useMemo(() => getRankByXp(xp), [xp]);
   const todayDate = useMemo(() => getAuthoritativeUtcDate(), []);
@@ -119,16 +117,22 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="light-content" backgroundColor={Colors.background} />
+
+      {/* Industrial Architectural Top Edge Accent */}
       <View
-        style={[styles.ambientGlow, { backgroundColor: theme.accentGlow }]}
+        style={[styles.topAccentBar, { backgroundColor: theme.primaryColor }]}
         pointerEvents="none"
       />
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.container}>
+        {/* Brand Header */}
         <View style={styles.header}>
           <View style={styles.brandCol}>
-            <Text style={[styles.brandTitle, { color: theme.primaryColor }]}>PENALTY</Text>
-            <Text style={styles.brandSubtitle}>Futbol Oyun Portalı</Text>
+            <View style={styles.brandTitleRow}>
+              <Text style={styles.brandTitleMain}>PENALTY</Text>
+              <View style={[styles.brandDot, { backgroundColor: theme.primaryColor }]} />
+            </View>
+            <Text style={styles.brandSubtitle}>ENDÜSTRİYEL FUTBOL TRIVIA SİSTEMİ</Text>
           </View>
 
           <View style={styles.currencyRow}>
@@ -147,26 +151,25 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
           </View>
         </View>
 
+        {/* Hero Scout & Fan Card */}
         <TouchableOpacity
           style={[
             styles.heroScoutCard,
             {
-              borderColor: theme.cardBorder,
+              borderColor: theme.cardBorder || Colors.border,
               borderLeftColor: theme.primaryColor,
-              shadowColor: theme.primaryColor,
             },
           ]}
           activeOpacity={0.88}
           onPress={() => setIsStatsModalVisible(true)}
         >
-          {/* Üst Kısım: Avatar + Rütbe & Kozmetik Başlık + İlerleme Yüzdesi */}
           <View style={styles.heroScoutHeader}>
             <View
               style={[
-                styles.heroAvatarCircle,
+                styles.heroAvatarSquare,
                 {
                   borderColor: theme.primaryColor,
-                  shadowColor: theme.primaryColor,
+                  backgroundColor: theme.accentGlow || Colors.surfaceLight,
                 },
               ]}
             >
@@ -180,11 +183,14 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
                 </Text>
                 <View
                   style={[
-                    styles.heroCosmeticPill,
-                    { backgroundColor: equippedCosmetic.themeGlowColor },
+                    styles.heroCosmeticBadge,
+                    {
+                      borderColor: theme.primaryColor,
+                      backgroundColor: theme.accentGlow || Colors.surfaceLight,
+                    },
                   ]}
                 >
-                  <Text style={[styles.heroCosmeticPillText, { color: theme.primaryColor }]}>
+                  <Text style={[styles.heroCosmeticBadgeText, { color: theme.primaryColor }]}>
                     {theme.teamBadgeEmojis} {equippedCosmetic.titleBadge}
                   </Text>
                 </View>
@@ -192,13 +198,13 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
 
               <View style={styles.heroScoutMetaRow}>
                 <Text style={styles.heroStadiumText}>
-                  🏟️ {theme.stadiumName}
+                  {theme.stadiumName}
                 </Text>
-                <Text style={styles.heroMetaDot}>•</Text>
+                <Text style={styles.heroMetaDot}>|</Text>
                 <Text style={styles.heroXpText}>
                   {rankInfo.tier === 4
-                    ? 'Zirve Rütbe'
-                    : `${rankInfo.xpNeededForNext} XP kaldı`}
+                    ? 'MAKSİMUM RÜTBE'
+                    : `${rankInfo.xpNeededForNext} XP KALDI`}
                 </Text>
               </View>
             </View>
@@ -207,11 +213,11 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
               <Text style={[styles.heroProgressPercent, { color: theme.primaryColor }]}>
                 %{rankInfo.currentProgressInTier}
               </Text>
-              <Text style={styles.heroStatsHint}>İstatistik ➔</Text>
+              <Text style={styles.heroStatsHint}>DETAY ➔</Text>
             </View>
           </View>
 
-          {/* İlerleme Çubuğu */}
+          {/* Precision Industrial Progress Line */}
           <View style={styles.heroProgressBarBg}>
             <View
               style={[
@@ -224,16 +230,18 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
             />
           </View>
 
-          {/* Alt Kısım: Canlı Tribün Tezahüratı Şeridi */}
-          <View style={[styles.heroAtmosphereStrip, { backgroundColor: theme.accentGlow }]}>
-            <View style={[styles.pulseDot, { backgroundColor: theme.primaryColor }]} />
+          {/* Fan Atmosphere Banner */}
+          <View style={[styles.heroAtmosphereStrip, { borderColor: theme.cardBorder || Colors.border }]}>
+            <View style={[styles.pulseSquare, { backgroundColor: theme.primaryColor }]} />
             <Text style={styles.heroChantText} numberOfLines={1}>
               {theme.anthemChant}
             </Text>
           </View>
         </TouchableOpacity>
+
+        {/* Mode Switcher Container */}
         <View style={styles.modeSwitcherContainer}>
-          <Text style={styles.sectionTitle}>Lig Modu Seçimi</Text>
+          <Text style={styles.sectionTitle}>LİG KAPSAMI</Text>
           <View style={styles.tabContainer}>
             <TouchableOpacity
               style={[
@@ -247,12 +255,12 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
                 style={[
                   styles.tabText,
                   isSuperLig && {
-                    color: isLightPrimary ? '#0B0E14' : '#FFFFFF',
-                    fontWeight: '900',
+                    color: isLightPrimary ? '#090909' : '#FFFFFF',
+                    fontWeight: '800',
                   },
                 ]}
               >
-                🇹🇷 Süper Lig
+                🇹🇷 SÜPER LİG
               </Text>
             </TouchableOpacity>
 
@@ -268,21 +276,23 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
                 style={[
                   styles.tabText,
                   !isSuperLig && {
-                    color: isLightPrimary ? '#0B0E14' : '#FFFFFF',
-                    fontWeight: '900',
+                    color: isLightPrimary ? '#090909' : '#FFFFFF',
+                    fontWeight: '800',
                   },
                 ]}
               >
-                🌍 5 Büyük Lig (Global)
+                🌍 5 BÜYÜK LİG (GLOBAL)
               </Text>
             </TouchableOpacity>
           </View>
         </View>
+
+        {/* Game Mode Cards */}
         <HomeGameCard
           emoji="🕵️‍♂️"
           title="Kim Bu Yıldız?"
           subtitle="Bulanık fotoğraftan ve ipuçlarından futbolcuyu tahmin et"
-          dailyBtnText={isWhoAreYaDailyCompleted ? '✅ Günün Sorusu (Çözüldü)' : '📅 Günün Sorusu'}
+          dailyBtnText={isWhoAreYaDailyCompleted ? '✓ GÜNÜN SORUSU' : '📅 GÜNÜN SORUSU'}
           themePrimaryColor={theme.primaryColor}
           themeBorderColor={theme.cardBorder}
           onPressDaily={() => onNavigate('whoAreYa', true, 'whoAreYa')}
@@ -293,7 +303,7 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
           emoji="🧭"
           title="Transfer Rotası"
           subtitle="Kariyerinde oynadığı kulüpleri takip ederek yıldızı bul"
-          dailyBtnText={isCareerDailyCompleted ? '✅ Günün Sorusu (Çözüldü)' : '📅 Günün Sorusu'}
+          dailyBtnText={isCareerDailyCompleted ? '✓ GÜNÜN SORUSU' : '📅 GÜNÜN SORUSU'}
           themePrimaryColor={theme.primaryColor}
           themeBorderColor={theme.cardBorder}
           onPressDaily={() => onNavigate('careerPath', true, 'careerPath')}
@@ -303,8 +313,8 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
         <HomeGameCard
           emoji="🛡️"
           title="Arma Avcısı"
-          subtitle="Gizlenmiş ve bulanıklaştırılmış kulüp armasından takımı bul"
-          dailyBtnText={isClubLogoDailyCompleted ? '✅ Günün Sorusu (Çözüldü)' : '📅 Günün Sorusu'}
+          subtitle="Gizlenmiş ve netleştirilen kulüp armasından takımı bul"
+          dailyBtnText={isClubLogoDailyCompleted ? '✓ GÜNÜN SORUSU' : '📅 GÜNÜN SORUSU'}
           themePrimaryColor={theme.primaryColor}
           themeBorderColor={theme.cardBorder}
           onPressDaily={() => onNavigate('clubLogo', true, 'clubLogo')}
@@ -314,8 +324,8 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
         <HomeGameCard
           emoji="🔥"
           title="Sıcak Temas"
-          subtitle="Sıcak-soğuk benzerlik sinyallerini takip ederek #1 numaralı yıldızı bul"
-          dailyBtnText={isContextinhoDailyCompleted ? '✅ Günün Sorusu (Çözüldü)' : '📅 Günün Sorusu'}
+          subtitle="Sıcak-soğuk benzerlik sinyalleriyle #1 numaralı yıldızı bul"
+          dailyBtnText={isContextinhoDailyCompleted ? '✓ GÜNÜN SORUSU' : '📅 GÜNÜN SORUSU'}
           themePrimaryColor={theme.primaryColor}
           themeBorderColor={theme.cardBorder}
           onPressDaily={() => onNavigate('contextinho', true, 'contextinho')}
@@ -326,7 +336,7 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
           emoji="🎯"
           title="Tiki-Taka (3x3)"
           subtitle="Kriter kesişimlerine (Kulüp × Mevki/Uyruk) uyan futbolcuları bul"
-          dailyBtnText={isTicTacToeDailyCompleted ? '✅ Günün Sorusu (Çözüldü)' : '📅 Günün Sorusu'}
+          dailyBtnText={isTicTacToeDailyCompleted ? '✓ GÜNÜN SORUSU' : '📅 GÜNÜN SORUSU'}
           themePrimaryColor={theme.primaryColor}
           themeBorderColor={theme.cardBorder}
           onPressDaily={() => onNavigate('ticTacToe', true, 'ticTacToe')}
@@ -336,8 +346,8 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
         <HomeGameCard
           emoji="🔢"
           title="Futbol Bingo (4x4)"
-          subtitle="42 kişilik desteden gelen futbolcuları doğru kriter kutularına yerleştir"
-          dailyBtnText={isBingoDailyCompleted ? '✅ Günün Sorusu (Çözüldü)' : '📅 Günün Sorusu'}
+          subtitle="42 kişilik desteden gelen futbolcuları doğru kriterlere yerleştir"
+          dailyBtnText={isBingoDailyCompleted ? '✓ GÜNÜN SORUSU' : '📅 GÜNÜN SORUSU'}
           themePrimaryColor={theme.primaryColor}
           themeBorderColor={theme.cardBorder}
           onPressDaily={() => onNavigate('footballBingo', true, 'footballBingo')}
@@ -345,6 +355,7 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
         />
       </ScrollView>
 
+      {/* Industrial Bottom Navigation */}
       <HomeBottomNav
         primaryColor={theme.primaryColor}
         activeTab={activeTab}
@@ -378,17 +389,11 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: Colors.background,
-    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) + Spacing.xs : 0,
+    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) : 0,
   },
-  ambientGlow: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 320,
-    opacity: 0.65,
-    borderBottomLeftRadius: 100,
-    borderBottomRightRadius: 100,
+  topAccentBar: {
+    height: Borders.thick,
+    width: '100%',
   },
   scrollView: {
     flex: 1,
@@ -401,101 +406,89 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: Spacing.sm,
+    marginBottom: Spacing.md,
+    paddingTop: Spacing.xs,
   },
   brandCol: {
     justifyContent: 'center',
   },
-  brandTitle: {
-    ...Typography.h1,
-    fontWeight: '900',
-    letterSpacing: 1.2,
+  brandTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  brandTitleMain: {
+    ...Typography.hero,
     fontSize: 22,
+    lineHeight: 26,
+    color: Colors.textPrimary,
+    letterSpacing: 1.5,
+  },
+  brandDot: {
+    width: 6,
+    height: 6,
+    borderRadius: BorderRadius.none,
   },
   brandSubtitle: {
-    ...Typography.caption,
-    color: Colors.textSecondary,
-    fontSize: 10,
-    marginTop: 1,
+    ...Typography.statBadge,
+    fontSize: 9,
+    color: Colors.textMuted,
+    marginTop: 2,
+    letterSpacing: 1.2,
   },
   currencyRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    gap: 6,
   },
   currencyBadge: {
     backgroundColor: Colors.surface,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    minHeight: 30,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+    minHeight: 28,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: BorderRadius.full,
-    borderWidth: 1,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
   },
   streakBadge: {
     borderColor: Colors.warning,
-    backgroundColor: 'rgba(245, 158, 11, 0.15)',
+    backgroundColor: 'rgba(234, 179, 8, 0.08)',
   },
   streakText: {
-    ...Typography.bodyBold,
+    ...Typography.statBadge,
     color: Colors.warning,
-    fontSize: 12,
+    fontSize: 11,
   },
   currencyText: {
-    ...Typography.bodyBold,
-    color: Colors.accent,
-    fontSize: 12,
-  },
-  statsBtn: {
-    borderColor: Colors.secondary,
-    backgroundColor: 'rgba(59, 130, 246, 0.15)',
-    paddingHorizontal: 7,
-  },
-  statsIconText: {
-    fontSize: 13,
-  },
-  shopBtn: {
-    backgroundColor: 'rgba(234, 179, 8, 0.15)',
-    paddingHorizontal: 8,
-  },
-  shopBtnText: {
-    ...Typography.bodyBold,
+    ...Typography.statBadge,
+    color: Colors.accentPrimary,
     fontSize: 11,
   },
   heroScoutCard: {
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.sm + 2,
-    borderWidth: 1,
-    borderLeftWidth: 4,
-    marginBottom: Spacing.sm,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 4,
+    borderRadius: BorderRadius.sharp,
+    padding: Spacing.sm + 4,
+    borderWidth: Borders.thin,
+    borderLeftWidth: Borders.thick + 1,
+    marginBottom: Spacing.md,
   },
   heroScoutHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm,
+    gap: Spacing.sm + 2,
   },
-  heroAvatarCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 2,
-    backgroundColor: Colors.surfaceLight,
+  heroAvatarSquare: {
+    width: 38,
+    height: 38,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 4,
-    elevation: 3,
   },
   heroAvatarEmoji: {
-    fontSize: 20,
+    fontSize: 18,
   },
   heroScoutInfoCol: {
     flex: 1,
@@ -511,114 +504,117 @@ const styles = StyleSheet.create({
     ...Typography.bodyBold,
     color: Colors.textPrimary,
     fontSize: 13,
+    letterSpacing: -0.2,
   },
-  heroCosmeticPill: {
+  heroCosmeticBadge: {
     paddingVertical: 1,
-    paddingHorizontal: 6,
-    borderRadius: BorderRadius.xs,
+    paddingHorizontal: 5,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
   },
-  heroCosmeticPillText: {
-    fontSize: 9,
-    fontWeight: '800',
-    textTransform: 'uppercase',
+  heroCosmeticBadgeText: {
+    ...Typography.statBadge,
+    fontSize: 8.5,
+    letterSpacing: 0.4,
   },
   heroScoutMetaRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    marginTop: 2,
+    marginTop: 3,
   },
   heroStadiumText: {
-    ...Typography.caption,
+    ...Typography.monoMeta,
     color: Colors.textSecondary,
-    fontSize: 10,
-    fontWeight: '600',
+    fontSize: 9.5,
   },
   heroMetaDot: {
-    ...Typography.caption,
-    color: Colors.textMuted,
-    fontSize: 10,
+    ...Typography.monoMeta,
+    color: Colors.borderLight,
+    fontSize: 9,
   },
   heroXpText: {
-    ...Typography.caption,
+    ...Typography.monoMeta,
     color: Colors.textMuted,
-    fontSize: 10,
+    fontSize: 9.5,
   },
   heroProgressCol: {
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
   heroProgressPercent: {
-    ...Typography.captionBold,
-    fontSize: 14,
-    fontWeight: '900',
+    ...Typography.monoLarge,
+    fontSize: 15,
   },
   heroStatsHint: {
-    fontSize: 9,
-    color: Colors.textSecondary,
-    fontWeight: '700',
-    marginTop: 1,
+    ...Typography.statBadge,
+    fontSize: 8.5,
+    color: Colors.textMuted,
+    marginTop: 2,
   },
   heroProgressBarBg: {
-    height: 5,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: BorderRadius.full,
+    height: 3,
+    backgroundColor: Colors.surfaceHighlight,
+    borderRadius: BorderRadius.none,
     overflow: 'hidden',
-    marginTop: 8,
-    marginBottom: 6,
+    marginTop: 10,
+    marginBottom: 8,
   },
   heroProgressBarFill: {
     height: '100%',
-    borderRadius: BorderRadius.full,
+    borderRadius: BorderRadius.none,
   },
   heroAtmosphereStrip: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 3,
-    paddingHorizontal: 8,
-    borderRadius: 6,
+    paddingVertical: 4,
+    paddingHorizontal: Spacing.sm,
+    backgroundColor: Colors.surfaceLight,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
     gap: 6,
   },
-  pulseDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+  pulseSquare: {
+    width: 5,
+    height: 5,
+    borderRadius: BorderRadius.none,
   },
   heroChantText: {
-    ...Typography.captionBold,
-    color: Colors.textPrimary,
+    ...Typography.caption,
+    color: Colors.textSecondary,
     fontSize: 10,
-    fontStyle: 'italic',
     flex: 1,
   },
   modeSwitcherContainer: {
     marginBottom: Spacing.md,
   },
   sectionTitle: {
-    ...Typography.caption,
-    color: Colors.textSecondary,
-    marginBottom: Spacing.xs,
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
+    ...Typography.statBadge,
+    color: Colors.textMuted,
+    marginBottom: Spacing.xs + 2,
+    fontSize: 10,
+    letterSpacing: 1.2,
   },
   tabContainer: {
     flexDirection: 'row',
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
-    padding: 4,
-    borderWidth: 1,
+    borderRadius: BorderRadius.sharp,
+    padding: 2,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
   },
   tabBtn: {
     flex: 1,
-    minHeight: 42,
+    minHeight: 38,
     justifyContent: 'center',
-    paddingVertical: Spacing.sm,
+    paddingVertical: Spacing.xs + 2,
     alignItems: 'center',
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.sharp,
   },
   tabText: {
-    ...Typography.bodyBold,
-    color: Colors.textSecondary,
+    ...Typography.statBadge,
+    color: Colors.textMuted,
+    fontSize: 11,
+    letterSpacing: 0.6,
   },
 });

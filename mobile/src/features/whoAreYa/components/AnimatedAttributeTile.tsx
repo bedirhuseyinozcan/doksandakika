@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, Text, StyleSheet } from 'react-native';
 import { Colors } from '../../../theme/colors';
-import { BorderRadius } from '../../../theme/spacing';
+import { BorderRadius, Borders } from '../../../theme/spacing';
+import { Typography } from '../../../theme/typography';
 
 interface IAnimatedAttributeTileProps {
   label: string;
@@ -17,7 +18,7 @@ export const AnimatedAttributeTile: React.FC<IAnimatedAttributeTileProps> = Reac
     useEffect(() => {
       Animated.timing(anim, {
         toValue: 1,
-        duration: 300,
+        duration: 250,
         delay,
         useNativeDriver: true,
       }).start();
@@ -25,17 +26,20 @@ export const AnimatedAttributeTile: React.FC<IAnimatedAttributeTileProps> = Reac
 
     const scale = anim.interpolate({
       inputRange: [0, 0.6, 1],
-      outputRange: [0.75, 1.05, 1],
+      outputRange: [0.85, 1.03, 1],
     });
 
     const translateY = anim.interpolate({
       inputRange: [0, 1],
-      outputRange: [10, 0],
+      outputRange: [6, 0],
     });
 
     const opacity = anim;
 
-    const bgColor = status === 'correct' ? Colors.matchCorrect : Colors.matchWrong;
+    const bgColor = status === 'correct' ? Colors.matchCorrect : Colors.surfaceLight;
+    const textColor = status === 'correct' ? '#090909' : Colors.textPrimary;
+    const labelColor = status === 'correct' ? '#090909' : Colors.textMuted;
+    const borderColor = status === 'correct' ? Colors.matchCorrect : Colors.border;
 
     return (
       <Animated.View
@@ -43,13 +47,14 @@ export const AnimatedAttributeTile: React.FC<IAnimatedAttributeTileProps> = Reac
           styles.tile,
           {
             backgroundColor: bgColor,
+            borderColor,
             opacity,
             transform: [{ scale }, { translateY }],
           },
         ]}
       >
-        <Text style={styles.tileLabel}>{label}</Text>
-        <Text style={styles.tileValue} numberOfLines={1}>
+        <Text style={[styles.tileLabel, { color: labelColor }]}>{label}</Text>
+        <Text style={[styles.tileValue, { color: textColor }]} numberOfLines={1}>
           {value}
         </Text>
       </Animated.View>
@@ -62,22 +67,22 @@ AnimatedAttributeTile.displayName = 'AnimatedAttributeTile';
 const styles = StyleSheet.create({
   tile: {
     width: '19%',
-    aspectRatio: 0.9,
-    borderRadius: BorderRadius.sm,
+    aspectRatio: 0.92,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 2,
   },
   tileLabel: {
-    fontSize: 9,
-    color: 'rgba(255, 255, 255, 0.75)',
-    fontWeight: '600',
+    ...Typography.statBadge,
+    fontSize: 8.5,
     marginBottom: 2,
-    textTransform: 'uppercase',
+    letterSpacing: 0.4,
   },
   tileValue: {
-    fontSize: 11,
-    color: '#FFFFFF',
+    ...Typography.statBadge,
+    fontSize: 10,
     fontWeight: '800',
     textAlign: 'center',
   },

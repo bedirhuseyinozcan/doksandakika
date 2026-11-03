@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { hapticsService } from '../../../services/hapticsService';
 import { Colors } from '../../../theme/colors';
-import { Spacing, BorderRadius } from '../../../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
 
 export type HomeNavTab = 'play' | 'shop' | 'stats' | 'settings';
@@ -69,11 +69,11 @@ export const HomeBottomNav: React.FC<IHomeBottomNavProps> = React.memo(
               style={[
                 styles.navLabel,
                 activeTab === 'play'
-                  ? { color: primaryColor, fontWeight: '900' }
-                  : { color: Colors.textPrimary },
+                  ? { color: primaryColor, fontWeight: '800' }
+                  : { color: Colors.textMuted },
               ]}
             >
-              Oyna
+              OYNA
             </Text>
           </TouchableOpacity>
 
@@ -98,11 +98,11 @@ export const HomeBottomNav: React.FC<IHomeBottomNavProps> = React.memo(
               style={[
                 styles.navLabel,
                 activeTab === 'shop'
-                  ? { color: primaryColor, fontWeight: '900' }
-                  : { color: Colors.textPrimary },
+                  ? { color: primaryColor, fontWeight: '800' }
+                  : { color: Colors.textMuted },
               ]}
             >
-              Dükkan
+              KULÜP
             </Text>
           </TouchableOpacity>
 
@@ -127,11 +127,11 @@ export const HomeBottomNav: React.FC<IHomeBottomNavProps> = React.memo(
               style={[
                 styles.navLabel,
                 activeTab === 'stats'
-                  ? { color: primaryColor, fontWeight: '900' }
-                  : { color: Colors.textPrimary },
+                  ? { color: primaryColor, fontWeight: '800' }
+                  : { color: Colors.textMuted },
               ]}
             >
-              Kariyerim
+              KÜNYE
             </Text>
           </TouchableOpacity>
 
@@ -156,11 +156,11 @@ export const HomeBottomNav: React.FC<IHomeBottomNavProps> = React.memo(
               style={[
                 styles.navLabel,
                 activeTab === 'settings'
-                  ? { color: primaryColor, fontWeight: '900' }
-                  : { color: Colors.textPrimary },
+                  ? { color: primaryColor, fontWeight: '800' }
+                  : { color: Colors.textMuted },
               ]}
             >
-              Ayarlar
+              AYARLAR
             </Text>
           </TouchableOpacity>
         </View>
@@ -176,26 +176,21 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: Colors.background,
     paddingHorizontal: Spacing.sm,
-    paddingTop: 6,
+    paddingTop: 4,
     paddingBottom: SAFE_BOTTOM_PADDING,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 255, 0.08)',
+    borderTopWidth: Borders.thin,
+    borderTopColor: Colors.border,
   },
   navBar: {
     flexDirection: 'row',
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
-    borderWidth: 1,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
     paddingVertical: 8,
     paddingHorizontal: Spacing.xs,
     justifyContent: 'space-around',
     alignItems: 'center',
-    elevation: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
   },
   navItem: {
     flex: 1,
@@ -207,16 +202,17 @@ const styles = StyleSheet.create({
   activeIndicator: {
     position: 'absolute',
     top: -8,
-    width: 28,
-    height: 3,
-    borderRadius: BorderRadius.full,
+    width: 24,
+    height: 2,
+    borderRadius: BorderRadius.none,
   },
   navEmoji: {
-    fontSize: 18,
-    marginBottom: 3,
+    fontSize: 16,
+    marginBottom: 2,
   },
   navLabel: {
-    ...Typography.captionBold,
-    fontSize: 11.5,
+    ...Typography.statBadge,
+    fontSize: 10,
+    letterSpacing: 0.5,
   },
 });

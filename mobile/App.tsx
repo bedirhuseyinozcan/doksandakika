@@ -15,6 +15,7 @@ import { appStorage, StorageKeys } from './src/storage/mmkv';
 import { useGameStore } from './src/stores/useGameStore';
 import { useSettingsStore } from './src/stores/useSettingsStore';
 import { Colors } from './src/theme/colors';
+import { BorderRadius, Borders } from './src/theme/spacing';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -240,7 +241,7 @@ function App() {
 const styles = StyleSheet.create({
   outerWrapper: {
     flex: 1,
-    backgroundColor: '#050811',
+    backgroundColor: Colors.background,
     alignItems: 'center',
   },
   container: {
@@ -257,31 +258,34 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   errorEmoji: {
-    fontSize: 48,
+    fontSize: 40,
     marginBottom: 16,
   },
   errorTitle: {
-    fontSize: 20,
-    fontWeight: '700',
+    fontSize: 18,
+    fontWeight: '800',
     color: Colors.textPrimary,
+    letterSpacing: 0.5,
     marginBottom: 8,
   },
   errorDetails: {
-    fontSize: 13,
-    color: Colors.textSecondary,
+    fontSize: 12,
+    color: Colors.textMuted,
     textAlign: 'center',
     marginBottom: 24,
+    lineHeight: 18,
   },
   resetBtn: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.accentPrimary,
     paddingHorizontal: 24,
     paddingVertical: 12,
-    borderRadius: 12,
+    borderRadius: BorderRadius.sharp,
   },
   resetBtnText: {
-    color: '#0F172A',
-    fontWeight: '700',
-    fontSize: 15,
+    color: '#090909',
+    fontWeight: '800',
+    fontSize: 14,
+    letterSpacing: 0.6,
   },
 });
 

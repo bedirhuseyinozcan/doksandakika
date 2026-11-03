@@ -3,7 +3,7 @@ import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import { ILightPlayer } from '../../../services/searchEngine';
 import { ClubLogo } from '../../../components/common/ClubLogo';
 import { Colors } from '../../../theme/colors';
-import { Spacing, BorderRadius } from '../../../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
 
 interface IPlayerSearchItemProps {
@@ -50,21 +50,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: Spacing.sm + 4,
+    paddingVertical: Spacing.sm + 2,
     paddingHorizontal: Spacing.md,
     backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
+    borderBottomWidth: Borders.thin,
     borderBottomColor: Colors.border,
   },
   clubBadge: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 34,
+    height: 34,
+    borderRadius: BorderRadius.sharp,
     backgroundColor: Colors.surfaceLight,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: Spacing.sm,
-    borderWidth: 1,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
   },
   infoCol: {
@@ -74,22 +74,25 @@ const styles = StyleSheet.create({
   nameText: {
     ...Typography.bodyBold,
     color: Colors.textPrimary,
+    letterSpacing: -0.2,
   },
   clubText: {
     ...Typography.caption,
-    color: Colors.textSecondary,
+    color: Colors.textMuted,
     marginTop: 2,
+    fontSize: 11,
   },
   posBadge: {
     paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
+    paddingVertical: 3,
     backgroundColor: Colors.surfaceLight,
-    borderRadius: BorderRadius.sm,
-    borderWidth: 1,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
   },
   posText: {
     ...Typography.statBadge,
-    color: Colors.primary,
+    color: Colors.accentPrimary,
+    fontSize: 10,
   },
 });
