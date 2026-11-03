@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~57.0.17",
+    "@expo/vector-icons": "^15.0.2",
     "@react-native-async-storage/async-storage": "2.2.0",
     "axios": "^1.7.2",
     "expo": "^57.0.0",
@@ -17,10 +18,12 @@
     "expo-haptics": "~57.0.3",
     "expo-status-bar": "~57.0.1",
     "fuse.js": "^7.0.0",
+    "lucide-react-native": "^1.67.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.86.3",
     "react-native-mmkv": "^2.12.2",
+    "react-native-svg": "15.15.4",
     "react-native-web": "^0.21.2",
     "zustand": "^4.5.4"
   },

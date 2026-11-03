@@ -5,7 +5,8 @@ import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
 
 interface IHomeGameCardProps {
-  emoji: string;
+  emoji?: string;
+  icon?: React.ReactNode;
   title: string;
   subtitle: string;
   dailyBtnText?: string;
@@ -19,6 +20,7 @@ interface IHomeGameCardProps {
 export const HomeGameCard: React.FC<IHomeGameCardProps> = React.memo(
   ({
     emoji,
+    icon,
     title,
     subtitle,
     dailyBtnText = 'GÜNÜN SORUSU',
@@ -52,8 +54,17 @@ export const HomeGameCard: React.FC<IHomeGameCardProps> = React.memo(
         ]}
       >
         <View style={styles.cardHeader}>
-          <View style={styles.emojiBox}>
-            <Text style={styles.cardEmoji}>{emoji}</Text>
+          <View
+            style={[
+              styles.iconBox,
+              themeBorderColor ? { borderColor: themeBorderColor } : null,
+            ]}
+          >
+            {icon ? (
+              icon
+            ) : (
+              <Text style={styles.cardEmoji}>{emoji}</Text>
+            )}
           </View>
           <View style={styles.cardTitleCol}>
             <Text style={styles.cardTitle}>{title}</Text>
@@ -118,9 +129,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Spacing.md,
   },
-  emojiBox: {
-    width: 44,
-    height: 44,
+  iconBox: {
+    width: 46,
+    height: 46,
     backgroundColor: Colors.surfaceLight,
     borderWidth: Borders.thin,
     borderColor: Colors.border,
@@ -130,7 +141,7 @@ const styles = StyleSheet.create({
     marginRight: Spacing.md,
   },
   cardEmoji: {
-    fontSize: 24,
+    fontSize: 22,
   },
   cardTitleCol: {
     flex: 1,

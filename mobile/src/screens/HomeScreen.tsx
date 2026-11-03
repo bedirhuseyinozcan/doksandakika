@@ -20,6 +20,14 @@ import { getCosmeticById } from '../features/shop/catalog';
 import { SettingsModal } from '../features/settings/components/SettingsModal';
 import { HomeGameCard } from '../features/home/components/HomeGameCard';
 import { HomeBottomNav, HomeNavTab } from '../features/home/components/HomeBottomNav';
+import {
+  ScanFace,
+  Route,
+  Shield,
+  Flame,
+  Grid3x3,
+  LayoutGrid,
+} from 'lucide-react-native';
 import { Colors } from '../theme/colors';
 import { Spacing, BorderRadius, Borders } from '../theme/spacing';
 import { Typography } from '../theme/typography';
@@ -289,7 +297,7 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
 
         {/* Game Mode Cards */}
         <HomeGameCard
-          emoji="🕵️‍♂️"
+          icon={<ScanFace size={22} color={theme.primaryColor} strokeWidth={2.2} />}
           title="Kim Bu Yıldız?"
           subtitle="Bulanık fotoğraftan ve ipuçlarından futbolcuyu tahmin et"
           dailyBtnText={isWhoAreYaDailyCompleted ? '✓ GÜNÜN SORUSU' : '📅 GÜNÜN SORUSU'}
@@ -300,7 +308,7 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
         />
 
         <HomeGameCard
-          emoji="🧭"
+          icon={<Route size={22} color={theme.primaryColor} strokeWidth={2.2} />}
           title="Transfer Rotası"
           subtitle="Kariyerinde oynadığı kulüpleri takip ederek yıldızı bul"
           dailyBtnText={isCareerDailyCompleted ? '✓ GÜNÜN SORUSU' : '📅 GÜNÜN SORUSU'}
@@ -311,7 +319,7 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
         />
 
         <HomeGameCard
-          emoji="🛡️"
+          icon={<Shield size={22} color={theme.primaryColor} strokeWidth={2.2} />}
           title="Arma Avcısı"
           subtitle="Gizlenmiş ve netleştirilen kulüp armasından takımı bul"
           dailyBtnText={isClubLogoDailyCompleted ? '✓ GÜNÜN SORUSU' : '📅 GÜNÜN SORUSU'}
@@ -322,7 +330,7 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
         />
 
         <HomeGameCard
-          emoji="🔥"
+          icon={<Flame size={22} color={theme.primaryColor} strokeWidth={2.2} />}
           title="Sıcak Temas"
           subtitle="Sıcak-soğuk benzerlik sinyalleriyle #1 numaralı yıldızı bul"
           dailyBtnText={isContextinhoDailyCompleted ? '✓ GÜNÜN SORUSU' : '📅 GÜNÜN SORUSU'}
@@ -333,7 +341,7 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
         />
 
         <HomeGameCard
-          emoji="🎯"
+          icon={<Grid3x3 size={22} color={theme.primaryColor} strokeWidth={2.2} />}
           title="Tiki-Taka (3x3)"
           subtitle="Kriter kesişimlerine (Kulüp × Mevki/Uyruk) uyan futbolcuları bul"
           dailyBtnText={isTicTacToeDailyCompleted ? '✓ GÜNÜN SORUSU' : '📅 GÜNÜN SORUSU'}
@@ -344,7 +352,7 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
         />
 
         <HomeGameCard
-          emoji="🔢"
+          icon={<LayoutGrid size={22} color={theme.primaryColor} strokeWidth={2.2} />}
           title="Futbol Bingo (4x4)"
           subtitle="42 kişilik desteden gelen futbolcuları doğru kriterlere yerleştir"
           dailyBtnText={isBingoDailyCompleted ? '✓ GÜNÜN SORUSU' : '📅 GÜNÜN SORUSU'}
