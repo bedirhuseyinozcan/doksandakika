@@ -130,7 +130,7 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
   }, [addCoins]);
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <TouchableOpacity
         style={styles.overlay}
         activeOpacity={1}
@@ -138,14 +138,14 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
       >
         <TouchableOpacity
           activeOpacity={1}
-          style={styles.modalContainer}
+          style={styles.card}
           onPress={(e) => e.stopPropagation?.()}
         >
           {/* Header */}
-          <View style={styles.header}>
-            <View>
-              <Text style={styles.modalTitle}>🛍️ Scout Dükkanı</Text>
-              <Text style={styles.modalSubtitle}>Kozmetik Çerçeveler & Taraftar Setleri</Text>
+          <View style={styles.headerRow}>
+            <View style={styles.headerTitleCol}>
+              <Text style={styles.headerTitle}>🛍️ Kulüp & Scout Mağazası</Text>
+              <Text style={styles.headerSubtitle}>Kozmetik Çerçeveler & Setler</Text>
             </View>
 
             <View style={styles.headerRight}>
@@ -170,105 +170,12 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
                 activeOpacity={0.7}
                 hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
               >
-                <Text style={styles.closeBtnText}>✕</Text>
+                <Text style={styles.closeText}>✕</Text>
               </TouchableOpacity>
             </View>
           </View>
 
-          {bonusSuccessMsg ? (
-            <View style={styles.bonusBanner}>
-              <Text style={styles.bonusBannerText}>🎉 {bonusSuccessMsg}</Text>
-            </View>
-          ) : null}
-
-          <View style={[styles.showcaseCard, { borderColor: previewItem.frameBorderColor }]}>
-            <View style={styles.showcaseTopRow}>
-              <View
-                style={[
-                  styles.showcaseAvatarCircle,
-                  {
-                    borderColor: previewItem.frameBorderColor,
-                    shadowColor: previewItem.frameBorderColor,
-                  },
-                ]}
-              >
-                <Text style={styles.showcaseAvatarEmoji}>{previewItem.avatarEmoji}</Text>
-              </View>
-
-              <View style={styles.showcaseInfo}>
-                <View style={styles.showcaseBadgeRow}>
-                  <View
-                    style={[
-                      styles.titlePill,
-                      { backgroundColor: previewItem.themeGlowColor },
-                    ]}
-                  >
-                    <Text style={styles.titlePillText}>{previewItem.titleBadge}</Text>
-                  </View>
-                  {previewItem.badgeText ? (
-                    <Text style={styles.badgeLabelText}>{previewItem.badgeText}</Text>
-                  ) : null}
-                </View>
-
-                <Text style={styles.showcaseTitle}>{previewItem.name}</Text>
-                <Text style={styles.showcaseDesc} numberOfLines={2}>
-                  {previewItem.description}
-                </Text>
-
-                <View style={styles.showcaseThemeDetails}>
-                  <Text style={[styles.showcaseStadiumText, { color: previewItem.themeConfig.primaryColor }]}>
-                    {previewItem.themeConfig.teamBadgeEmojis} {previewItem.themeConfig.stadiumName}
-                  </Text>
-                  <Text style={styles.showcaseChantText} numberOfLines={1}>
-                    {previewItem.themeConfig.anthemChant}
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            <View style={styles.showcaseActionRow}>
-              {isPreviewEquipped ? (
-                <View style={[styles.showcaseBtn, styles.showcaseEquippedBtn]}>
-                  <Text style={styles.showcaseEquippedBtnText}>✓ Profilinde Kuşanıldı (Aktif)</Text>
-                </View>
-              ) : isPreviewUnlocked ? (
-                <TouchableOpacity
-                  style={[styles.showcaseBtn, styles.showcaseEquipBtn]}
-                  activeOpacity={0.8}
-                  onPress={() => {
-                    hapticsService.selection();
-                    equipCosmetic(previewItem.id);
-                  }}
-                >
-                  <Text style={styles.showcaseEquipBtnText}>🛡️ Kuşan & Profilde Göster</Text>
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity
-                  style={[
-                    styles.showcaseBtn,
-                    coins >= previewItem.cost
-                      ? styles.showcaseBuyBtn
-                      : styles.showcaseLockedBtn,
-                  ]}
-                  activeOpacity={0.8}
-                  onPress={() => handleAction(previewItem)}
-                >
-                  <Text
-                    style={
-                      coins >= previewItem.cost
-                        ? styles.showcaseBuyBtnText
-                        : styles.showcaseLockedBtnText
-                    }
-                  >
-                    {coins >= previewItem.cost
-                      ? `🪙 ${previewItem.cost} Altın ile Satın Al & Kuşan`
-                      : `🪙 ${previewItem.cost} Altın (Yetersiz Altın — Dokun)`}
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          </View>
-
+          {/* Tab Bar pinned under header */}
           <View style={styles.tabBar}>
             <TouchableOpacity
               style={[styles.tabButton, activeTab === 'fan_bundle' && styles.activeTabButton]}
@@ -305,7 +212,110 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
             </TouchableOpacity>
           </View>
 
-          <ScrollView contentContainerStyle={styles.scrollList} showsVerticalScrollIndicator={false}>
+          {/* Scrollable Content: Preview Showcase + All Catalog Items */}
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollList}
+            showsVerticalScrollIndicator={false}
+          >
+            {bonusSuccessMsg ? (
+              <View style={styles.bonusBanner}>
+                <Text style={styles.bonusBannerText}>🎉 {bonusSuccessMsg}</Text>
+              </View>
+            ) : null}
+
+            <View style={[styles.showcaseCard, { borderColor: previewItem.frameBorderColor }]}>
+              <View style={styles.showcaseTopRow}>
+                <View
+                  style={[
+                    styles.showcaseAvatarCircle,
+                    {
+                      borderColor: previewItem.frameBorderColor,
+                      shadowColor: previewItem.frameBorderColor,
+                    },
+                  ]}
+                >
+                  <Text style={styles.showcaseAvatarEmoji}>{previewItem.avatarEmoji}</Text>
+                </View>
+
+                <View style={styles.showcaseInfo}>
+                  <View style={styles.showcaseBadgeRow}>
+                    <View
+                      style={[
+                        styles.titlePill,
+                        { backgroundColor: previewItem.themeGlowColor },
+                      ]}
+                    >
+                      <Text style={styles.titlePillText}>{previewItem.titleBadge}</Text>
+                    </View>
+                    {previewItem.badgeText ? (
+                      <Text style={styles.badgeLabelText}>{previewItem.badgeText}</Text>
+                    ) : null}
+                  </View>
+
+                  <Text style={styles.showcaseTitle}>{previewItem.name}</Text>
+                  <Text style={styles.showcaseDesc} numberOfLines={2}>
+                    {previewItem.description}
+                  </Text>
+
+                  <View style={styles.showcaseThemeDetails}>
+                    <Text style={[styles.showcaseStadiumText, { color: previewItem.themeConfig.primaryColor }]}>
+                      {previewItem.themeConfig.teamBadgeEmojis} {previewItem.themeConfig.stadiumName}
+                    </Text>
+                    <Text style={styles.showcaseChantText} numberOfLines={1}>
+                      {previewItem.themeConfig.anthemChant}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
+              <View style={styles.showcaseActionRow}>
+                {isPreviewEquipped ? (
+                  <View style={[styles.showcaseBtn, styles.showcaseEquippedBtn]}>
+                    <Text style={styles.showcaseEquippedBtnText}>✓ Profilinde Kuşanıldı (Aktif)</Text>
+                  </View>
+                ) : isPreviewUnlocked ? (
+                  <TouchableOpacity
+                    style={[styles.showcaseBtn, styles.showcaseEquipBtn]}
+                    activeOpacity={0.8}
+                    onPress={() => {
+                      hapticsService.selection();
+                      equipCosmetic(previewItem.id);
+                    }}
+                  >
+                    <Text style={styles.showcaseEquipBtnText}>🛡️ Kuşan & Profilde Göster</Text>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    style={[
+                      styles.showcaseBtn,
+                      coins >= previewItem.cost
+                        ? styles.showcaseBuyBtn
+                        : styles.showcaseLockedBtn,
+                    ]}
+                    activeOpacity={0.8}
+                    onPress={() => handleAction(previewItem)}
+                  >
+                    <Text
+                      style={
+                        coins >= previewItem.cost
+                          ? styles.showcaseBuyBtnText
+                          : styles.showcaseLockedBtnText
+                      }
+                    >
+                      {coins >= previewItem.cost
+                        ? `🪙 ${previewItem.cost} Altın ile Satın Al & Kuşan`
+                        : `🪙 ${previewItem.cost} Altın (Yetersiz Altın — Dokun)`}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
+
+            <Text style={styles.listSectionTitle}>
+              {activeTab === 'fan_bundle' ? 'TÜM TARAFTAR PAKETLERİ' : 'TÜM SCOUT ROZETLERİ'}
+            </Text>
+
             {filteredItems.map((item) => {
               const isUnlocked =
                 unlockedCosmetics.includes(item.id) || item.id === 'avatar_default';
@@ -485,40 +495,46 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(9, 9, 9, 0.88)',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: Spacing.md,
   },
-  modalContainer: {
-    height: '90%',
-    backgroundColor: Colors.background,
-    borderTopLeftRadius: BorderRadius.none,
-    borderTopRightRadius: BorderRadius.none,
-    borderTopWidth: Borders.thick,
-    borderTopColor: Colors.accentPrimary,
+  card: {
+    width: '100%',
+    maxWidth: 380,
+    height: '86%',
+    maxHeight: '86%',
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.sharp,
+    padding: Spacing.md,
     borderWidth: Borders.thin,
     borderColor: Colors.border,
-    paddingHorizontal: Spacing.md,
-    paddingTop: Spacing.md,
-    paddingBottom: Platform.OS === 'android' ? 24 : Spacing.md,
+    overflow: 'hidden',
   },
-  header: {
+  headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: Spacing.sm,
+    borderBottomWidth: Borders.thin,
+    borderBottomColor: Colors.border,
+    paddingBottom: Spacing.sm,
   },
-  modalTitle: {
-    ...Typography.hero,
-    fontSize: 20,
-    lineHeight: 24,
-    color: Colors.textPrimary,
-    letterSpacing: 0.5,
+  headerTitleCol: {
+    flex: 1,
+    marginRight: Spacing.xs,
   },
-  modalSubtitle: {
+  headerTitle: {
     ...Typography.statBadge,
+    fontSize: 12,
+    color: Colors.textPrimary,
+    letterSpacing: 0.6,
+  },
+  headerSubtitle: {
+    ...Typography.caption,
     color: Colors.textMuted,
-    fontSize: 10,
-    marginTop: 2,
-    letterSpacing: 0.8,
+    fontSize: 9.5,
+    marginTop: 1,
   },
   headerRight: {
     flexDirection: 'row',
@@ -529,8 +545,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
     borderWidth: Borders.thin,
     borderColor: Colors.border,
-    paddingVertical: 4,
-    paddingHorizontal: Spacing.sm,
+    paddingVertical: 3,
+    paddingHorizontal: 6,
     borderRadius: BorderRadius.sharp,
   },
   balanceText: {
@@ -543,8 +559,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surfaceLight,
     borderWidth: Borders.thin,
     borderColor: Colors.accentPrimary,
-    paddingVertical: 4,
-    paddingHorizontal: Spacing.xs + 4,
+    paddingVertical: 3,
+    paddingHorizontal: Spacing.xs + 3,
     borderRadius: BorderRadius.sharp,
   },
   addCoinsHeaderText: {
@@ -554,15 +570,17 @@ const styles = StyleSheet.create({
   },
   closeBtn: {
     padding: Spacing.xs,
-    marginLeft: Spacing.xs,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  closeBtnText: {
-    color: Colors.textMuted,
+  closeText: {
     fontSize: 22,
+    color: Colors.textMuted,
     fontWeight: '700',
     lineHeight: 24,
+  },
+  scrollView: {
+    flex: 1,
   },
   bonusBanner: {
     backgroundColor: Colors.surfaceLight,
@@ -738,6 +756,14 @@ const styles = StyleSheet.create({
     color: '#090909',
     fontWeight: '800',
   },
+  listSectionTitle: {
+    ...Typography.statBadge,
+    color: Colors.accentPrimary,
+    letterSpacing: 0.8,
+    fontSize: 10,
+    marginTop: Spacing.xs,
+    marginBottom: Spacing.xs,
+  },
   scrollList: {
     paddingBottom: Spacing.xxl,
     gap: Spacing.xs + 2,
@@ -871,10 +897,10 @@ const styles = StyleSheet.create({
   },
   dialogCard: {
     width: '100%',
-    maxWidth: 340,
+    maxWidth: 320,
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.sharp,
-    padding: Spacing.lg,
+    padding: Spacing.md,
     borderWidth: Borders.thick,
     borderColor: Colors.border,
     alignItems: 'center',
