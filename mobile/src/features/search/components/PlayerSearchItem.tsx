@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import { ILightPlayer } from '../../../services/searchEngine';
 import { ClubLogo } from '../../../components/common/ClubLogo';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 import { Colors } from '../../../theme/colors';
 import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
@@ -12,6 +13,7 @@ interface IPlayerSearchItemProps {
 }
 
 export const PlayerSearchItem = React.memo<IPlayerSearchItemProps>(({ player, onSelect }) => {
+  const { primaryColor } = useActiveTheme();
   const logoUrl = player.logoUrl || player.logo;
 
   return (
@@ -37,7 +39,7 @@ export const PlayerSearchItem = React.memo<IPlayerSearchItemProps>(({ player, on
         </Text>
       </View>
       <View style={styles.posBadge}>
-        <Text style={styles.posText}>{player.position}</Text>
+        <Text style={[styles.posText, { color: primaryColor }]}>{player.position}</Text>
       </View>
     </TouchableOpacity>
   );

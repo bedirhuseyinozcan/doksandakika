@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, Image, Text, StyleSheet, Platform, ActivityIndicator } from 'react-native';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 import { Colors } from '../../../theme/colors';
 import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
@@ -24,6 +25,7 @@ export const BlurredImageHero = React.memo<IBlurredImageHeroProps>(
     isGameOver = false,
     solvedPlayerName,
   }) => {
+    const { primaryColor, onPrimaryTextColor } = useActiveTheme();
     const [imageError, setImageError] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
 
@@ -44,7 +46,7 @@ export const BlurredImageHero = React.memo<IBlurredImageHeroProps>(
         <View style={styles.imageContainer}>
           {!isLoaded && !imageError && (
             <View style={styles.spinnerContainer}>
-              <ActivityIndicator size="small" color={Colors.accentPrimary} />
+              <ActivityIndicator size="small" color={primaryColor} />
             </View>
           )}
 
@@ -86,8 +88,19 @@ export const BlurredImageHero = React.memo<IBlurredImageHeroProps>(
             </View>
           )}
 
-          <View style={[styles.levelBadge, isSolved && styles.levelBadgeSolved]}>
-            <Text style={[styles.levelBadgeText, isSolved && styles.levelBadgeTextSolved]}>
+          <View
+            style={[
+              styles.levelBadge,
+              isSolved && [styles.levelBadgeSolved, { backgroundColor: primaryColor, borderColor: primaryColor }],
+            ]}
+          >
+            <Text
+              style={[
+                styles.levelBadgeText,
+                { color: primaryColor },
+                isSolved && [styles.levelBadgeTextSolved, { color: onPrimaryTextColor }],
+              ]}
+            >
               {isSolved
                 ? '✓ BİLDİNİZ! • %100'
                 : isGameOver
@@ -97,7 +110,7 @@ export const BlurredImageHero = React.memo<IBlurredImageHeroProps>(
           </View>
         </View>
 
-        <Text style={[styles.subtext, isSolved && styles.subtextSolved]}>
+        <Text style={[styles.subtext, isSolved && [styles.subtextSolved, { color: primaryColor }]]}>
           {isSolved && solvedPlayerName
             ? `TEBRİKLER! BİLDİNİZ: ${solvedPlayerName.toUpperCase()}`
             : isGameOver && solvedPlayerName

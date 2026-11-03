@@ -174,8 +174,19 @@ export const ClubLogoScreen: React.FC<IClubLogoScreenProps> = React.memo(
           )}
 
           <Animated.View style={[styles.heroCard, animatedStyle]}>
-            <View style={[styles.clarityBadge, isRevealed && styles.clarityBadgeSolved]}>
-              <Text style={[styles.clarityText, isRevealed && styles.clarityTextSolved]}>
+            <View
+              style={[
+                styles.clarityBadge,
+                isRevealed && [styles.clarityBadgeSolved, { backgroundColor: primaryColor, borderColor: primaryColor }],
+              ]}
+            >
+              <Text
+                style={[
+                  styles.clarityText,
+                  { color: primaryColor },
+                  isRevealed && [styles.clarityTextSolved, { color: onPrimaryTextColor }],
+                ]}
+              >
                 {gameStatus === 'won'
                   ? '✓ BİLDİNİZ! • %100 NETLİK'
                   : isRevealed
@@ -218,7 +229,7 @@ export const ClubLogoScreen: React.FC<IClubLogoScreenProps> = React.memo(
               )}
             </View>
 
-            <Text style={[styles.heroCaption, isRevealed && styles.heroCaptionSolved]}>
+            <Text style={[styles.heroCaption, isRevealed && [styles.heroCaptionSolved, { color: primaryColor }]]}>
               {gameStatus === 'won'
                 ? `🛡️ TEBRİKLER! BİLDİNİZ: ${targetClubName.toUpperCase()}`
                 : isRevealed
@@ -299,7 +310,7 @@ export const ClubLogoScreen: React.FC<IClubLogoScreenProps> = React.memo(
         ) : (
           <View style={styles.solvedActionBanner}>
             <View>
-              <Text style={styles.solvedActionTitle}>
+              <Text style={[styles.solvedActionTitle, { color: primaryColor }]}>
                 {gameStatus === 'won' ? '✓ BİLDİNİZ!' : '🏁 OYUN BİTTİ'}
               </Text>
               <Text style={styles.solvedActionSubtitle}>

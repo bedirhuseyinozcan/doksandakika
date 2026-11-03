@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import { ILightPlayer, searchEngine } from '../../../services/searchEngine';
 import { useFeedbackAnimation } from '../../../hooks/useFeedbackAnimation';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 import { PlayerAvatar } from '../../../components/common/PlayerAvatar';
 import { Colors } from '../../../theme/colors';
 import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
@@ -32,6 +33,7 @@ export const BingoCurrentPlayerCard: React.FC<IBingoCurrentPlayerCardProps> = Re
     onSkip,
     disabled = false,
   }) => {
+    const { primaryColor } = useActiveTheme();
     const { animatedStyle, triggerShake, triggerPulse } = useFeedbackAnimation();
 
     useEffect(() => {
@@ -52,9 +54,9 @@ export const BingoCurrentPlayerCard: React.FC<IBingoCurrentPlayerCardProps> = Re
             </Text>
           </View>
 
-          <View style={[styles.statPill, styles.matchedPill]}>
+          <View style={[styles.statPill, styles.matchedPill, { borderColor: primaryColor }]}>
             <Text style={styles.statPillText}>
-              BİNGO: <Text style={styles.matchedHighlight}>{matchedCount}/{totalTilesCount}</Text>
+              BİNGO: <Text style={[styles.matchedHighlight, { color: primaryColor }]}>{matchedCount}/{totalTilesCount}</Text>
             </Text>
           </View>
         </View>

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { ICareerStepItem } from '../types';
 import { ClubLogo } from '../../../components/common/ClubLogo';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 import { Colors } from '../../../theme/colors';
 import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
@@ -14,6 +15,7 @@ interface ICareerStepBadgeProps {
 
 export const CareerStepBadge = React.memo<ICareerStepBadgeProps>(
   ({ step, isLast, stepIndex }) => {
+    const { primaryColor } = useActiveTheme();
     let yearRange = '';
     if (step.startYear && step.endYear) {
       yearRange = `${step.startYear} - ${step.endYear}`;
@@ -27,8 +29,8 @@ export const CareerStepBadge = React.memo<ICareerStepBadgeProps>(
       <View style={styles.stepContainer}>
         {/* Step Marker */}
         <View style={styles.markerCol}>
-          <View style={[styles.dot, isLast && styles.currentDot]}>
-            <Text style={[styles.stepNum, isLast && styles.currentStepNum]}>
+          <View style={[styles.dot, isLast && [styles.currentDot, { borderColor: primaryColor }]]}>
+            <Text style={[styles.stepNum, isLast && [styles.currentStepNum, { color: primaryColor }]]}>
               {stepIndex + 1}
             </Text>
           </View>
@@ -48,7 +50,9 @@ export const CareerStepBadge = React.memo<ICareerStepBadgeProps>(
               {step.clubName}
             </Text>
           </View>
-          {yearRange ? <Text style={styles.yearText}>{yearRange}</Text> : null}
+          {yearRange ? (
+            <Text style={[styles.yearText, { color: primaryColor }]}>{yearRange}</Text>
+          ) : null}
           {step.apps != null && step.apps > 0 ? (
             <Text style={styles.statsText}>
               {step.apps} maç • {step.goals ?? 0} gol

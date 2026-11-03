@@ -147,8 +147,8 @@ export const ContextinhoScreen: React.FC<IContextinhoScreenProps> = React.memo(
               {(!isHardMode || item.rank === 1) && item.sharedTags.length > 0 && (
                 <View style={styles.tagRow}>
                   {item.sharedTags.map((tag) => (
-                    <View key={tag} style={styles.sharedTagPill}>
-                      <Text style={styles.sharedTagText}>{tag}</Text>
+                    <View key={tag} style={[styles.sharedTagPill, { borderColor: primaryColor }]}>
+                      <Text style={[styles.sharedTagText, { color: primaryColor }]}>{tag}</Text>
                     </View>
                   ))}
                 </View>
@@ -212,20 +212,20 @@ export const ContextinhoScreen: React.FC<IContextinhoScreenProps> = React.memo(
 
           <View style={styles.modeToggleContainer}>
             <TouchableOpacity
-              style={[styles.modeTab, !isHardMode && styles.modeTabActive]}
+              style={[styles.modeTab, !isHardMode && [styles.modeTabActive, { borderColor: primaryColor }]]}
               onPress={() => setIsHardMode(false)}
               activeOpacity={0.8}
             >
-              <Text style={[styles.modeTabText, !isHardMode && styles.modeTabTextActive]}>
+              <Text style={[styles.modeTabText, !isHardMode && [styles.modeTabTextActive, { color: primaryColor }]]}>
                 💡 İPUÇLU (NORMAL)
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.modeTab, isHardMode && styles.modeTabActive]}
+              style={[styles.modeTab, isHardMode && [styles.modeTabActive, { borderColor: primaryColor }]]}
               onPress={() => setIsHardMode(true)}
               activeOpacity={0.8}
             >
-              <Text style={[styles.modeTabText, isHardMode && styles.modeTabTextActive]}>
+              <Text style={[styles.modeTabText, isHardMode && [styles.modeTabTextActive, { color: primaryColor }]]}>
                 ⚡ İPUÇSUZ (ZOR)
               </Text>
             </TouchableOpacity>

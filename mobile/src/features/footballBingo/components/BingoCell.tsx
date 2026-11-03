@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import { IBingoTile } from '../types';
 import { ClubLogo } from '../../../components/common/ClubLogo';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 import { Colors } from '../../../theme/colors';
 import { BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
@@ -15,13 +16,14 @@ interface IBingoCellProps {
 
 export const BingoCell: React.FC<IBingoCellProps> = React.memo(
   ({ tile, isWrongFlash, onPress, disabled = false }) => {
+    const { primaryColor } = useActiveTheme();
     const { index, emoji, title, subtitle, isMatched, matchedPlayer } = tile;
 
     return (
       <TouchableOpacity
         style={[
           styles.cell,
-          isMatched && styles.matchedCell,
+          isMatched && [styles.matchedCell, { borderColor: primaryColor }],
           isWrongFlash && styles.wrongFlashCell,
         ]}
         activeOpacity={0.7}
@@ -31,7 +33,7 @@ export const BingoCell: React.FC<IBingoCellProps> = React.memo(
         {isMatched && matchedPlayer ? (
           <View style={styles.matchedContent}>
             <View style={styles.matchedBadgeRow}>
-              <Text style={styles.checkIcon}>✓</Text>
+              <Text style={[styles.checkIcon, { color: primaryColor }]}>✓</Text>
               <ClubLogo
                 logoUrl={matchedPlayer.logoUrl || matchedPlayer.logo}
                 clubName={matchedPlayer.club}
@@ -39,7 +41,7 @@ export const BingoCell: React.FC<IBingoCellProps> = React.memo(
                 fallbackEmoji=""
               />
             </View>
-            <Text style={styles.matchedPlayerName} numberOfLines={2}>
+            <Text style={[styles.matchedPlayerName, { color: primaryColor }]} numberOfLines={2}>
               {matchedPlayer.name}
             </Text>
             <Text style={styles.matchedTileTitle} numberOfLines={1}>

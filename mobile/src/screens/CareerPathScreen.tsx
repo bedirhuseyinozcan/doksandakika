@@ -166,7 +166,7 @@ export const CareerPathScreen: React.FC<ICareerPathScreenProps> = React.memo(
 
           {gameStatus !== 'playing' && (
             <TouchableOpacity
-              style={styles.revealedHeroCard}
+              style={[styles.revealedHeroCard, { borderLeftColor: primaryColor }]}
               activeOpacity={0.85}
               onPress={() => setIsResultModalVisible(true)}
             >
@@ -178,7 +178,7 @@ export const CareerPathScreen: React.FC<ICareerPathScreenProps> = React.memo(
                 style={{ marginRight: Spacing.sm + 2 }}
               />
               <View style={styles.revealedCol}>
-                <Text style={styles.revealedBadge}>
+                <Text style={[styles.revealedBadge, { color: primaryColor }]}>
                   {gameStatus === 'won' ? '🎉 DOĞRU TAHMİN' : '💔 CEVAP'}
                 </Text>
                 <Text style={styles.revealedName} numberOfLines={1}>

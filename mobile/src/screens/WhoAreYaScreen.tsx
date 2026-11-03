@@ -184,7 +184,7 @@ export const WhoAreYaScreen: React.FC<IWhoAreYaScreenProps> = React.memo(
         ) : (
           <View style={styles.solvedActionBanner}>
             <View>
-              <Text style={styles.solvedActionTitle}>
+              <Text style={[styles.solvedActionTitle, { color: primaryColor }]}>
                 {gameStatus === 'won' ? '✓ BİLDİNİZ!' : '🏁 OYUN BİTTİ'}
               </Text>
               <Text style={styles.solvedActionSubtitle}>

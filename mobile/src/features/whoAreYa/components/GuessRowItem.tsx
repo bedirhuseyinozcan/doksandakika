@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { IWhoAreYaGuess } from '../types';
 import { AnimatedAttributeTile } from './AnimatedAttributeTile';
 import { ClubLogo } from '../../../components/common/ClubLogo';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 import { Colors } from '../../../theme/colors';
 import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
@@ -13,6 +14,7 @@ interface IGuessRowItemProps {
 }
 
 export const GuessRowItem = React.memo<IGuessRowItemProps>(({ guess, index }) => {
+  const { primaryColor } = useActiveTheme();
   const { player, comparison } = guess;
 
   const getAgeIndicator = (status: 'correct' | 'higher' | 'lower') => {
@@ -26,7 +28,7 @@ export const GuessRowItem = React.memo<IGuessRowItemProps>(({ guess, index }) =>
   return (
     <View style={styles.container}>
       <View style={styles.nameHeader}>
-        <Text style={styles.indexText}>#{index + 1}</Text>
+        <Text style={[styles.indexText, { color: primaryColor }]}>#{index + 1}</Text>
         <ClubLogo
           logoUrl={player.logoUrl || player.logo}
           clubName={player.club}

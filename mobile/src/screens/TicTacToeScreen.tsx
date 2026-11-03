@@ -140,7 +140,7 @@ export const TicTacToeScreen: React.FC<ITicTacToeScreenProps> = React.memo(
           <View style={styles.metaRow}>
             <View style={styles.progressPill}>
               <Text style={styles.progressText}>
-                Doldurulan: <Text style={styles.progressHighlight}>{filledCount}/9</Text>
+                Doldurulan: <Text style={[styles.progressHighlight, { color: primaryColor }]}>{filledCount}/9</Text>
               </Text>
             </View>
             <View style={styles.attemptsPill}>
@@ -152,12 +152,12 @@ export const TicTacToeScreen: React.FC<ITicTacToeScreenProps> = React.memo(
 
           <View style={styles.actionContainer}>
             <TouchableOpacity
-              style={styles.directSearchBtn}
+              style={[styles.directSearchBtn, { borderColor: primaryColor }]}
               activeOpacity={0.8}
               onPress={openGeneralSearch}
               disabled={gameStatus !== 'playing'}
             >
-              <Text style={styles.directSearchText}>🔍 FUTBOLCU ARA & DOLDUR</Text>
+              <Text style={[styles.directSearchText, { color: primaryColor }]}>🔍 FUTBOLCU ARA & DOLDUR</Text>
               <Text style={styles.directSearchSubtext}>
                 Tek aramada uyan tüm açık kutuları (1-3 kutu) birden doldurur
               </Text>

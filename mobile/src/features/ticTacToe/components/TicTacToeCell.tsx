@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import { ITicTacToeCellState } from '../types';
 import { ClubLogo } from '../../../components/common/ClubLogo';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 import { Colors } from '../../../theme/colors';
 import { BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
@@ -15,14 +16,15 @@ interface ITicTacToeCellProps {
 
 export const TicTacToeCell: React.FC<ITicTacToeCellProps> = React.memo(
   ({ cell, isSelected, onPress, disabled = false }) => {
+    const { primaryColor } = useActiveTheme();
     const { cellIndex, isFilled, guessedPlayer } = cell;
 
     return (
       <TouchableOpacity
         style={[
           styles.cell,
-          isSelected && styles.selectedCell,
-          isFilled && styles.filledCell,
+          isSelected && [styles.selectedCell, { borderColor: primaryColor }],
+          isFilled && [styles.filledCell, { borderColor: primaryColor }],
         ]}
         activeOpacity={0.75}
         onPress={() => onPress(cellIndex)}
@@ -31,7 +33,7 @@ export const TicTacToeCell: React.FC<ITicTacToeCellProps> = React.memo(
         {isFilled && guessedPlayer ? (
           <View style={styles.filledContent}>
             <View style={styles.filledBadgeRow}>
-              <Text style={styles.checkIcon}>✓</Text>
+              <Text style={[styles.checkIcon, { color: primaryColor }]}>✓</Text>
               <ClubLogo
                 logoUrl={guessedPlayer.logoUrl || guessedPlayer.logo}
                 clubName={guessedPlayer.club}
@@ -53,10 +55,10 @@ export const TicTacToeCell: React.FC<ITicTacToeCellProps> = React.memo(
           </View>
         ) : (
           <View style={styles.emptyContent}>
-            <Text style={[styles.plusIcon, isSelected && styles.selectedPlus]}>
+            <Text style={[styles.plusIcon, isSelected && [styles.selectedPlus, { color: primaryColor }]]}>
               {isSelected ? '🎯' : '+'}
             </Text>
-            <Text style={styles.cellSubtext}>
+            <Text style={[styles.cellSubtext, isSelected && { color: primaryColor }]}>
               {isSelected ? 'SEÇİLDİ' : 'DOLDUR'}
             </Text>
           </View>

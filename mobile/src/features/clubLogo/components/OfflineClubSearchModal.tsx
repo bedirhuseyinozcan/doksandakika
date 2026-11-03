@@ -83,8 +83,8 @@ export const OfflineClubSearchModal: React.FC<IOfflineClubSearchModalProps> = Re
               {LEAGUE_LABELS[item.league] || item.league} • {item.playerCount} Oyuncu
             </Text>
           </View>
-          <View style={styles.selectPill}>
-            <Text style={styles.selectPillText}>Seç</Text>
+          <View style={[styles.selectPill, { borderColor: primaryColor }]}>
+            <Text style={[styles.selectPillText, { color: primaryColor }]}>Seç</Text>
           </View>
         </TouchableOpacity>
       ),
@@ -134,7 +134,7 @@ export const OfflineClubSearchModal: React.FC<IOfflineClubSearchModalProps> = Re
               />
               {query.length > 0 && (
                 <TouchableOpacity onPress={() => setQuery('')}>
-                  <Text style={styles.clearText}>Temizle</Text>
+                  <Text style={[styles.clearText, { color: primaryColor }]}>Temizle</Text>
                 </TouchableOpacity>
               )}
             </View>

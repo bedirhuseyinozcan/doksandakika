@@ -102,7 +102,7 @@ export const OfflinePlayerSearchModal: React.FC<IOfflinePlayerSearchModalProps> 
               />
               {query.length > 0 && (
                 <TouchableOpacity onPress={clearSearch} style={styles.clearBtn}>
-                  <Text style={styles.clearBtnText}>Temizle</Text>
+                  <Text style={[styles.clearBtnText, { color: primaryColor }]}>Temizle</Text>
                 </TouchableOpacity>
               )}
             </View>

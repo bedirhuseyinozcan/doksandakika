@@ -154,7 +154,7 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
             </TouchableOpacity>
 
             <View style={styles.currencyBadge}>
-              <Text style={styles.currencyText}>🪙 {coins}</Text>
+              <Text style={[styles.currencyText, { color: theme.primaryColor }]}>🪙 {coins}</Text>
             </View>
           </View>
         </View>
