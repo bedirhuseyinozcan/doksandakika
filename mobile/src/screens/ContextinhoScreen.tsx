@@ -19,6 +19,7 @@ import { DailyHeaderCard } from '../features/daily/components/DailyHeaderCard';
 import { DailyCompletedBanner } from '../features/daily/components/DailyCompletedBanner';
 import { GameNavbar } from '../components/common/GameNavbar';
 import { useChallengeDataLoader } from '../hooks/useChallengeDataLoader';
+import { useActiveTheme } from '../hooks/useActiveTheme';
 import { searchEngine } from '../services/searchEngine';
 import { Colors } from '../theme/colors';
 import { Spacing, BorderRadius, Borders } from '../theme/spacing';
@@ -57,6 +58,7 @@ const TIER_COLORS: Record<TemperatureTier, { bar: string; border: string; label:
 
 export const ContextinhoScreen: React.FC<IContextinhoScreenProps> = React.memo(
   ({ isDaily = false, initialLevel, isReplay = false, onBack, onOpenMap }) => {
+    const { primaryColor, onPrimaryTextColor } = useActiveTheme();
     const {
       isLoading,
       challengeData,
@@ -165,7 +167,7 @@ export const ContextinhoScreen: React.FC<IContextinhoScreenProps> = React.memo(
     if (isLoading) {
       return (
         <SafeAreaView style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={Colors.primary} />
+          <ActivityIndicator size="large" color={primaryColor} />
           <Text style={styles.loadingText}>Sıcak Temas sıralaması hazırlanıyor...</Text>
         </SafeAreaView>
       );
@@ -175,6 +177,7 @@ export const ContextinhoScreen: React.FC<IContextinhoScreenProps> = React.memo(
 
     return (
       <SafeAreaView style={styles.safeArea}>
+        <View style={{ height: Borders.thick, width: '100%', backgroundColor: primaryColor }} />
         <GameNavbar
           title={navTitle}
           isReplay={isCurrentReplay && !isDaily}
@@ -273,12 +276,12 @@ export const ContextinhoScreen: React.FC<IContextinhoScreenProps> = React.memo(
         {gameStatus === 'playing' ? (
           <View style={styles.bottomBar}>
             <TouchableOpacity
-              style={styles.guessBtn}
+              style={[styles.guessBtn, { backgroundColor: primaryColor }]}
               activeOpacity={0.8}
               onPress={openSearch}
               hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
             >
-              <Text style={styles.guessBtnText}>🔥 Futbolcu Tahmin Et</Text>
+              <Text style={[styles.guessBtnText, { color: onPrimaryTextColor }]}>🔥 Futbolcu Tahmin Et</Text>
             </TouchableOpacity>
           </View>
         ) : isDaily ? (

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet } from 'react-native';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 import { Colors } from '../../../theme/colors';
 import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
@@ -12,6 +13,8 @@ interface ILevelReplayModalProps {
 
 export const LevelReplayModal: React.FC<ILevelReplayModalProps> = React.memo(
   ({ levelNumber, onConfirm, onCancel }) => {
+    const { primaryColor, onPrimaryTextColor } = useActiveTheme();
+
     return (
       <Modal
         visible={levelNumber !== null}
@@ -20,7 +23,7 @@ export const LevelReplayModal: React.FC<ILevelReplayModalProps> = React.memo(
         onRequestClose={onCancel}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalCard}>
+          <View style={[styles.modalCard, { borderTopWidth: Borders.thick, borderTopColor: primaryColor }]}>
             <Text style={styles.modalEmoji}>🔁</Text>
             <Text style={styles.modalTitle}>SEVİYE ZATEN TAMAMLANDI</Text>
             <Text style={styles.modalSubtitle}>
@@ -41,11 +44,11 @@ export const LevelReplayModal: React.FC<ILevelReplayModalProps> = React.memo(
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={styles.modalConfirmBtn}
+                style={[styles.modalConfirmBtn, { backgroundColor: primaryColor }]}
                 onPress={onConfirm}
                 activeOpacity={0.8}
               >
-                <Text style={styles.modalConfirmBtnText}>TEKRAR OYNA</Text>
+                <Text style={[styles.modalConfirmBtnText, { color: onPrimaryTextColor }]}>TEKRAR OYNA</Text>
               </TouchableOpacity>
             </View>
           </View>

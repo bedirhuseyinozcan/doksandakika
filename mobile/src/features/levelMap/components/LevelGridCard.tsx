@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { ILevelItem } from '../types';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 import { Colors } from '../../../theme/colors';
 import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
@@ -11,6 +12,7 @@ interface ILevelGridCardProps {
 }
 
 export const LevelGridCard: React.FC<ILevelGridCardProps> = React.memo(({ item, onPress }) => {
+  const { primaryColor } = useActiveTheme();
   const { levelNumber, status } = item;
   const isCompleted = status === 'completed';
   const isCurrent = status === 'current';
@@ -24,8 +26,8 @@ export const LevelGridCard: React.FC<ILevelGridCardProps> = React.memo(({ item, 
     <TouchableOpacity
       style={[
         styles.levelCard,
-        isCompleted && styles.completedCard,
-        isCurrent && styles.currentCard,
+        isCompleted && [styles.completedCard, { borderColor: primaryColor }],
+        isCurrent && [styles.currentCard, { borderColor: primaryColor }],
         isLocked && styles.lockedCard,
       ]}
       activeOpacity={isLocked ? 0.9 : 0.7}
@@ -34,11 +36,11 @@ export const LevelGridCard: React.FC<ILevelGridCardProps> = React.memo(({ item, 
       <View style={styles.cardHeader}>
         {isCompleted ? (
           <View style={styles.completedBadge}>
-            <Text style={styles.completedIcon}>✓</Text>
+            <Text style={[styles.completedIcon, { color: primaryColor }]}>✓</Text>
           </View>
         ) : isCurrent ? (
           <View style={styles.currentBadge}>
-            <Text style={styles.currentIcon}>★</Text>
+            <Text style={[styles.currentIcon, { color: primaryColor }]}>★</Text>
           </View>
         ) : (
           <View style={styles.lockedBadge}>
@@ -50,8 +52,8 @@ export const LevelGridCard: React.FC<ILevelGridCardProps> = React.memo(({ item, 
       <Text
         style={[
           styles.levelNumber,
-          isCompleted && styles.completedNumber,
-          isCurrent && styles.currentNumber,
+          isCompleted && [styles.completedNumber, { color: primaryColor }],
+          isCurrent && [styles.currentNumber, { color: primaryColor }],
           isLocked && styles.lockedNumber,
         ]}
       >
@@ -61,8 +63,8 @@ export const LevelGridCard: React.FC<ILevelGridCardProps> = React.memo(({ item, 
       <Text
         style={[
           styles.levelStatusText,
-          isCompleted && styles.completedStatusText,
-          isCurrent && styles.currentStatusText,
+          isCompleted && [styles.completedStatusText, { color: primaryColor }],
+          isCurrent && [styles.currentStatusText, { color: primaryColor }],
           isLocked && styles.lockedStatusText,
         ]}
       >

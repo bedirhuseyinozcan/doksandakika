@@ -19,6 +19,7 @@ import { HintWithAdButton } from '../features/monetization/components/HintWithAd
 import { useInterstitialAd } from '../features/monetization/hooks/useInterstitialAd';
 import { WhoAreYaWinModal } from '../features/whoAreYa/components/WhoAreYaWinModal';
 import { useChallengeDataLoader } from '../hooks/useChallengeDataLoader';
+import { useActiveTheme } from '../hooks/useActiveTheme';
 import { getAuthoritativeUtcDate } from '../services/authoritativeTime';
 import { shareService } from '../services/shareService';
 import { Colors } from '../theme/colors';
@@ -35,6 +36,7 @@ interface ITicTacToeScreenProps {
 
 export const TicTacToeScreen: React.FC<ITicTacToeScreenProps> = React.memo(
   ({ isDaily = false, initialLevel, isReplay = false, onBack, onOpenMap }) => {
+    const { primaryColor, onPrimaryTextColor } = useActiveTheme();
     const {
       isLoading,
       currentLevel,
@@ -105,7 +107,7 @@ export const TicTacToeScreen: React.FC<ITicTacToeScreenProps> = React.memo(
     if (isLoading) {
       return (
         <SafeAreaView style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={Colors.primary} />
+          <ActivityIndicator size="large" color={primaryColor} />
           <Text style={styles.loadingText}>Tiki-Taka Hazırlanıyor...</Text>
         </SafeAreaView>
       );
@@ -115,6 +117,7 @@ export const TicTacToeScreen: React.FC<ITicTacToeScreenProps> = React.memo(
 
     return (
       <SafeAreaView style={styles.safeArea}>
+        <View style={{ height: Borders.thick, width: '100%', backgroundColor: primaryColor }} />
         <GameNavbar
           title={navTitle}
           isReplay={isCurrentReplay && !isDaily}

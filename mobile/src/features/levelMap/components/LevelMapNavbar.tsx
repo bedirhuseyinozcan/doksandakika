@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform, StatusBar } from 'react-native';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 import { Colors } from '../../../theme/colors';
 import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
@@ -12,6 +13,8 @@ interface ILevelMapNavbarProps {
 
 export const LevelMapNavbar: React.FC<ILevelMapNavbarProps> = React.memo(
   ({ coins, xp, onBack }) => {
+    const { primaryColor } = useActiveTheme();
+
     return (
       <View style={styles.navbar}>
         <TouchableOpacity
@@ -20,12 +23,12 @@ export const LevelMapNavbar: React.FC<ILevelMapNavbarProps> = React.memo(
           activeOpacity={0.7}
           hitSlop={{ top: 16, bottom: 16, left: 16, right: 20 }}
         >
-          <Text style={styles.backBtnText}>‹ ANA MENÜ</Text>
+          <Text style={[styles.backBtnText, { color: primaryColor }]}>‹ ANA MENÜ</Text>
         </TouchableOpacity>
 
         <View style={styles.navCurrency}>
           <View style={styles.coinBadge}>
-            <Text style={styles.coinText}>🪙 {coins}</Text>
+            <Text style={[styles.coinText, { color: primaryColor }]}>🪙 {coins}</Text>
           </View>
           <View style={styles.xpBadge}>
             <Text style={styles.xpText}>⚡ {xp} XP</Text>

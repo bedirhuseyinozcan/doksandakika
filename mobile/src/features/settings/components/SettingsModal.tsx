@@ -11,6 +11,7 @@ import {
 import { useSettingsStore } from '../../../stores/useSettingsStore';
 import { hapticsService } from '../../../services/hapticsService';
 import { searchEngine } from '../../../services/searchEngine';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 import { Colors } from '../../../theme/colors';
 import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
@@ -22,6 +23,7 @@ interface ISettingsModalProps {
 
 export const SettingsModal: React.FC<ISettingsModalProps> = React.memo(
   ({ visible, onClose }) => {
+    const { primaryColor, onPrimaryTextColor } = useActiveTheme();
     const soundEnabled = useSettingsStore((s) => s.soundEnabled);
     const hapticsEnabled = useSettingsStore((s) => s.hapticsEnabled);
     const toggleSound = useSettingsStore((s) => s.toggleSound);
@@ -56,7 +58,7 @@ export const SettingsModal: React.FC<ISettingsModalProps> = React.memo(
         >
           <TouchableOpacity
             activeOpacity={1}
-            style={styles.card}
+            style={[styles.card, { borderTopWidth: Borders.thick, borderTopColor: primaryColor }]}
             onPress={(e) => e.stopPropagation?.()}
           >
             <View style={styles.headerRow}>
@@ -76,7 +78,7 @@ export const SettingsModal: React.FC<ISettingsModalProps> = React.memo(
               contentContainerStyle={styles.scroll}
             >
               {/* Ses & Titreşim Kontrolleri */}
-              <Text style={styles.sectionTitle}>Tercihler</Text>
+              <Text style={[styles.sectionTitle, { color: primaryColor }]}>Tercihler</Text>
 
               <View style={styles.settingRow}>
                 <View style={styles.settingInfo}>
@@ -91,7 +93,7 @@ export const SettingsModal: React.FC<ISettingsModalProps> = React.memo(
                     toggleSound();
                     hapticsService.light();
                   }}
-                  trackColor={{ false: Colors.surfaceLight, true: Colors.primary }}
+                  trackColor={{ false: Colors.surfaceLight, true: primaryColor }}
                   thumbColor="#FFFFFF"
                 />
               </View>
@@ -106,18 +108,18 @@ export const SettingsModal: React.FC<ISettingsModalProps> = React.memo(
                 <Switch
                   value={hapticsEnabled}
                   onValueChange={toggleHaptics}
-                  trackColor={{ false: Colors.surfaceLight, true: Colors.primary }}
+                  trackColor={{ false: Colors.surfaceLight, true: primaryColor }}
                   thumbColor="#FFFFFF"
                 />
               </View>
 
               {/* Veritabanı Senkronizasyonu */}
               <TouchableOpacity
-                style={styles.syncBtn}
+                style={[styles.syncBtn, { borderColor: primaryColor }]}
                 activeOpacity={0.8}
                 onPress={handleSyncDatabase}
               >
-                <Text style={styles.syncBtnText}>
+                <Text style={[styles.syncBtnText, { color: primaryColor }]}>
                   🔄 Oyuncu Veritabanını Senkronize Et
                 </Text>
               </TouchableOpacity>
@@ -126,7 +128,7 @@ export const SettingsModal: React.FC<ISettingsModalProps> = React.memo(
               ) : null}
 
               {/* Nasıl Oynanır? */}
-              <Text style={[styles.sectionTitle, { marginTop: Spacing.md }]}>
+              <Text style={[styles.sectionTitle, { color: primaryColor, marginTop: Spacing.md }]}>
                 📖 Oyun Modları Rehberi
               </Text>
 
@@ -163,11 +165,11 @@ export const SettingsModal: React.FC<ISettingsModalProps> = React.memo(
             </ScrollView>
 
             <TouchableOpacity
-              style={styles.doneBtn}
+              style={[styles.doneBtn, { backgroundColor: primaryColor }]}
               onPress={onClose}
               activeOpacity={0.8}
             >
-              <Text style={styles.doneBtnText}>Tamam</Text>
+              <Text style={[styles.doneBtnText, { color: onPrimaryTextColor }]}>Tamam</Text>
             </TouchableOpacity>
           </TouchableOpacity>
         </TouchableOpacity>

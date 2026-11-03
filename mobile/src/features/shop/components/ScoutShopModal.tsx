@@ -16,6 +16,7 @@ import { Typography } from '../../../theme/typography';
 import { COSMETIC_CATALOG, getCosmeticById } from '../catalog';
 import { ICosmeticItem, CosmeticCategory } from '../types';
 import { useRewardedAd } from '../../monetization/hooks/useRewardedAd';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 
 interface IScoutShopModalProps {
   visible: boolean;
@@ -23,6 +24,7 @@ interface IScoutShopModalProps {
 }
 
 export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visible, onClose }) => {
+  const { primaryColor, onPrimaryTextColor } = useActiveTheme();
   const coins = useGameStore((s) => s.coins);
   const unlockedCosmetics = useGameStore((s) => s.unlockedCosmetics);
   const equippedCosmeticId = useGameStore((s) => s.equippedCosmeticId);
@@ -138,7 +140,7 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
       >
         <TouchableOpacity
           activeOpacity={1}
-          style={styles.card}
+          style={[styles.card, { borderTopWidth: Borders.thick, borderTopColor: primaryColor }]}
           onPress={(e) => e.stopPropagation?.()}
         >
           {/* Header */}
@@ -150,16 +152,16 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
 
             <View style={styles.headerRight}>
               <View style={styles.balanceBadge}>
-                <Text style={styles.balanceText}>🪙 {coins}</Text>
+                <Text style={[styles.balanceText, { color: primaryColor }]}>🪙 {coins}</Text>
               </View>
 
               <TouchableOpacity
-                style={styles.addCoinsHeaderBtn}
+                style={[styles.addCoinsHeaderBtn, { borderColor: primaryColor }]}
                 activeOpacity={0.8}
                 disabled={isAdLoading}
                 onPress={__DEV__ ? handleClaimFreeCoins : handleWatchAdForCoins}
               >
-                <Text style={styles.addCoinsHeaderText}>
+                <Text style={[styles.addCoinsHeaderText, { color: primaryColor }]}>
                   {__DEV__ ? '+500 ⚙️' : '+ 🎬 Altın'}
                 </Text>
               </TouchableOpacity>
@@ -178,7 +180,10 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
           {/* Tab Bar pinned under header */}
           <View style={styles.tabBar}>
             <TouchableOpacity
-              style={[styles.tabButton, activeTab === 'fan_bundle' && styles.activeTabButton]}
+              style={[
+                styles.tabButton,
+                activeTab === 'fan_bundle' && [styles.activeTabButton, { backgroundColor: primaryColor }],
+              ]}
               onPress={() => {
                 hapticsService.light();
                 setActiveTab('fan_bundle');
@@ -187,7 +192,7 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
               <Text
                 style={[
                   styles.tabButtonText,
-                  activeTab === 'fan_bundle' && styles.activeTabButtonText,
+                  activeTab === 'fan_bundle' && [styles.activeTabButtonText, { color: onPrimaryTextColor }],
                 ]}
               >
                 🏟️ Taraftar Paketleri
@@ -195,7 +200,10 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.tabButton, activeTab === 'scout' && styles.activeTabButton]}
+              style={[
+                styles.tabButton,
+                activeTab === 'scout' && [styles.activeTabButton, { backgroundColor: primaryColor }],
+              ]}
               onPress={() => {
                 hapticsService.light();
                 setActiveTab('scout');
@@ -204,7 +212,7 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
               <Text
                 style={[
                   styles.tabButtonText,
-                  activeTab === 'scout' && styles.activeTabButtonText,
+                  activeTab === 'scout' && [styles.activeTabButtonText, { color: onPrimaryTextColor }],
                 ]}
               >
                 🎭 Scout Rozetleri
@@ -219,8 +227,8 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
             showsVerticalScrollIndicator={false}
           >
             {bonusSuccessMsg ? (
-              <View style={styles.bonusBanner}>
-                <Text style={styles.bonusBannerText}>🎉 {bonusSuccessMsg}</Text>
+              <View style={[styles.bonusBanner, { borderColor: primaryColor }]}>
+                <Text style={[styles.bonusBannerText, { color: primaryColor }]}>🎉 {bonusSuccessMsg}</Text>
               </View>
             ) : null}
 
@@ -271,19 +279,19 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
 
               <View style={styles.showcaseActionRow}>
                 {isPreviewEquipped ? (
-                  <View style={[styles.showcaseBtn, styles.showcaseEquippedBtn]}>
-                    <Text style={styles.showcaseEquippedBtnText}>✓ Profilinde Kuşanıldı (Aktif)</Text>
+                  <View style={[styles.showcaseBtn, styles.showcaseEquippedBtn, { borderColor: primaryColor }]}>
+                    <Text style={[styles.showcaseEquippedBtnText, { color: primaryColor }]}>✓ Profilinde Kuşanıldı (Aktif)</Text>
                   </View>
                 ) : isPreviewUnlocked ? (
                   <TouchableOpacity
-                    style={[styles.showcaseBtn, styles.showcaseEquipBtn]}
+                    style={[styles.showcaseBtn, styles.showcaseEquipBtn, { backgroundColor: primaryColor }]}
                     activeOpacity={0.8}
                     onPress={() => {
                       hapticsService.selection();
                       equipCosmetic(previewItem.id);
                     }}
                   >
-                    <Text style={styles.showcaseEquipBtnText}>🛡️ Kuşan & Profilde Göster</Text>
+                    <Text style={[styles.showcaseEquipBtnText, { color: onPrimaryTextColor }]}>🛡️ Kuşan & Profilde Göster</Text>
                   </TouchableOpacity>
                 ) : (
                   <TouchableOpacity
@@ -312,7 +320,7 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
               </View>
             </View>
 
-            <Text style={styles.listSectionTitle}>
+            <Text style={[styles.listSectionTitle, { color: primaryColor }]}>
               {activeTab === 'fan_bundle' ? 'TÜM TARAFTAR PAKETLERİ' : 'TÜM SCOUT ROZETLERİ'}
             </Text>
 
@@ -360,7 +368,9 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
                           </View>
                         ) : null}
                       </View>
-                      <Text style={styles.itemSubtitle}>{item.subtitle}</Text>
+                      <Text style={[styles.itemSubtitle, { color: item.frameBorderColor || primaryColor }]}>
+                        {item.subtitle}
+                      </Text>
                       <Text style={styles.itemDescription} numberOfLines={2}>
                         {item.description}
                       </Text>
@@ -370,8 +380,8 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
                   <TouchableOpacity
                     style={[
                       styles.actionBtn,
-                      isEquipped && styles.equippedBtn,
-                      !isEquipped && isUnlocked && styles.equipBtn,
+                      isEquipped && [styles.equippedBtn, { borderColor: primaryColor }],
+                      !isEquipped && isUnlocked && [styles.equipBtn, { borderColor: primaryColor }],
                       !isUnlocked && coins >= item.cost && styles.buyBtn,
                       !isUnlocked && coins < item.cost && styles.lockedBtn,
                     ]}
@@ -379,9 +389,9 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
                     onPress={() => handleAction(item)}
                   >
                     {isEquipped ? (
-                      <Text style={styles.equippedBtnText}>✓ Aktif</Text>
+                      <Text style={[styles.equippedBtnText, { color: primaryColor }]}>✓ Aktif</Text>
                     ) : isUnlocked ? (
-                      <Text style={styles.equipBtnText}>Kullan</Text>
+                      <Text style={[styles.equipBtnText, { color: primaryColor }]}>Kullan</Text>
                     ) : (
                       <Text style={styles.buyBtnText}>🪙 {item.cost}</Text>
                     )}
@@ -407,7 +417,7 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
                 </View>
 
                 <Text style={styles.dialogTitle}>Satın Alma Onayı</Text>
-                <Text style={styles.dialogItemName}>{confirmItem.name}</Text>
+                <Text style={[styles.dialogItemName, { color: primaryColor }]}>{confirmItem.name}</Text>
                 <Text style={styles.dialogDesc}>{confirmItem.description}</Text>
 
                 <View style={styles.dialogCostBox}>
@@ -431,11 +441,11 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    style={styles.dialogConfirmBtn}
+                    style={[styles.dialogConfirmBtn, { backgroundColor: primaryColor }]}
                     activeOpacity={0.8}
                     onPress={confirmPurchase}
                   >
-                    <Text style={styles.dialogConfirmBtnText}>🔥 Satın Al & Kuşan</Text>
+                    <Text style={[styles.dialogConfirmBtnText, { color: onPrimaryTextColor }]}>🔥 Satın Al & Kuşan</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -454,12 +464,12 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
 
                 <View style={styles.dialogBtnCol}>
                   <TouchableOpacity
-                    style={styles.dialogAdBtn}
+                    style={[styles.dialogAdBtn, { backgroundColor: primaryColor }]}
                     activeOpacity={0.8}
                     disabled={isAdLoading}
                     onPress={handleWatchAdForCoins}
                   >
-                    <Text style={styles.dialogAdBtnText}>🎬 Reklam İzle (+100 Altın Kazan)</Text>
+                    <Text style={[styles.dialogAdBtnText, { color: onPrimaryTextColor }]}>🎬 Reklam İzle (+100 Altın Kazan)</Text>
                   </TouchableOpacity>
 
                   {__DEV__ && (

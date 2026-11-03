@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet } from 'react-native';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 import { Colors } from '../../../theme/colors';
 import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
@@ -12,6 +13,8 @@ interface ILevelLockedModalProps {
 
 export const LevelLockedModal: React.FC<ILevelLockedModalProps> = React.memo(
   ({ lockedLevel, unlockedLevel, onDismiss }) => {
+    const { primaryColor, onPrimaryTextColor } = useActiveTheme();
+
     return (
       <Modal
         visible={lockedLevel !== null}
@@ -20,7 +23,7 @@ export const LevelLockedModal: React.FC<ILevelLockedModalProps> = React.memo(
         onRequestClose={onDismiss}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalCard}>
+          <View style={[styles.modalCard, { borderTopWidth: Borders.thick, borderTopColor: primaryColor }]}>
             <Text style={styles.modalEmoji}>🔒</Text>
             <Text style={styles.modalTitle}>SEVİYE HENÜZ KİLİTLİ</Text>
             <Text style={styles.modalSubtitle}>
@@ -29,11 +32,11 @@ export const LevelLockedModal: React.FC<ILevelLockedModalProps> = React.memo(
             </Text>
 
             <TouchableOpacity
-              style={styles.confirmBtn}
+              style={[styles.confirmBtn, { backgroundColor: primaryColor }]}
               onPress={onDismiss}
               activeOpacity={0.8}
             >
-              <Text style={styles.confirmBtnText}>ANLADIM</Text>
+              <Text style={[styles.confirmBtnText, { color: onPrimaryTextColor }]}>ANLADIM</Text>
             </TouchableOpacity>
           </View>
         </View>

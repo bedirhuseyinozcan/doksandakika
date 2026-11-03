@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { useRewardedAd } from '../hooks/useRewardedAd';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 import { Colors } from '../../../theme/colors';
 import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
@@ -15,6 +16,7 @@ interface IHintWithAdButtonProps {
 
 export const HintWithAdButton = React.memo<IHintWithAdButtonProps>(
   ({ hintTitle, onHintUnlocked, isUnlocked = false, unlockedText }) => {
+    const { primaryColor } = useActiveTheme();
     const { showRewardedAd, isLoading } = useRewardedAd();
 
     const handleUnlockWithAd = useCallback(() => {
@@ -24,8 +26,8 @@ export const HintWithAdButton = React.memo<IHintWithAdButtonProps>(
 
     if (isUnlocked) {
       return (
-        <View style={[styles.container, styles.unlockedContainer]}>
-          <Text style={styles.unlockedText}>💡 {unlockedText || hintTitle}</Text>
+        <View style={[styles.container, styles.unlockedContainer, { borderColor: primaryColor }]}>
+          <Text style={[styles.unlockedText, { color: primaryColor }]}>💡 {unlockedText || hintTitle}</Text>
         </View>
       );
     }
@@ -33,12 +35,12 @@ export const HintWithAdButton = React.memo<IHintWithAdButtonProps>(
     return (
       <View style={styles.container}>
         <TouchableOpacity
-          style={styles.adBtn}
+          style={[styles.adBtn, { borderColor: primaryColor }]}
           activeOpacity={0.8}
           onPress={handleUnlockWithAd}
           disabled={isLoading}
         >
-          <Text style={styles.adBtnText}>
+          <Text style={[styles.adBtnText, { color: primaryColor }]}>
             🎬 REKLAM İZLE & İPUCUNU AÇ {isLoading ? '...' : ''}
           </Text>
         </TouchableOpacity>

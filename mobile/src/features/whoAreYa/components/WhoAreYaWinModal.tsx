@@ -18,6 +18,7 @@ import { shareService } from '../../../services/shareService';
 import { useGameStore } from '../../../stores/useGameStore';
 import { useRewardedAd } from '../../monetization/hooks/useRewardedAd';
 import { hapticsService } from '../../../services/hapticsService';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 import { soundService } from '../../../services/soundService';
 import { searchEngine } from '../../../services/searchEngine';
 
@@ -75,6 +76,7 @@ export const WhoAreYaWinModal: React.FC<IWhoAreYaWinModalProps> = React.memo(
     onClose,
     onRevive,
   }) => {
+    const { primaryColor, onPrimaryTextColor } = useActiveTheme();
     const [frozenData, setFrozenData] = useState<IModalDisplayData | null>(null);
 
     const scaleAnim = useRef(new Animated.Value(0.85)).current;
@@ -266,6 +268,8 @@ export const WhoAreYaWinModal: React.FC<IWhoAreYaWinModalProps> = React.memo(
               {
                 opacity: opacityAnim,
                 transform: [{ scale: scaleAnim }],
+                borderTopWidth: Borders.thick,
+                borderTopColor: primaryColor,
               },
             ]}
           >
@@ -337,12 +341,12 @@ export const WhoAreYaWinModal: React.FC<IWhoAreYaWinModalProps> = React.memo(
 
             {isWon && displayIsDaily && (
               <TouchableOpacity
-                style={[styles.doubleRewardBtn, isDoubled && styles.doubleRewardDone]}
+                style={[styles.doubleRewardBtn, isDoubled && [styles.doubleRewardDone, { borderColor: primaryColor }]]}
                 activeOpacity={0.8}
                 onPress={handleDoubleRewardWithAd}
                 disabled={isDoubled || isAdLoading}
               >
-                <Text style={styles.doubleRewardText}>
+                <Text style={[styles.doubleRewardText, { color: primaryColor }]}>
                   {isDoubled
                     ? '🎉 2x Ödül Hesabına Eklendi! (+40🪙, +80XP)'
                     : '🎬 Reklam İzle & Ödülü 2x Katla (+40🪙, +80XP)'}
@@ -358,8 +362,12 @@ export const WhoAreYaWinModal: React.FC<IWhoAreYaWinModalProps> = React.memo(
               </TouchableOpacity>
 
               {onNextLevel && isWon ? (
-                <TouchableOpacity style={styles.primaryBtn} onPress={onNextLevel} activeOpacity={0.8}>
-                  <Text style={styles.primaryBtnText}>Sonraki Seviye ⏩</Text>
+                <TouchableOpacity
+                  style={[styles.primaryBtn, { backgroundColor: primaryColor }]}
+                  onPress={onNextLevel}
+                  activeOpacity={0.8}
+                >
+                  <Text style={[styles.primaryBtnText, { color: onPrimaryTextColor }]}>Sonraki Seviye ⏩</Text>
                 </TouchableOpacity>
               ) : null}
 

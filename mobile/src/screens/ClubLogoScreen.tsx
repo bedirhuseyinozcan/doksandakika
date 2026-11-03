@@ -21,6 +21,7 @@ import { DailyHeaderCard } from '../features/daily/components/DailyHeaderCard';
 import { DailyCompletedBanner } from '../features/daily/components/DailyCompletedBanner';
 import { GameNavbar } from '../components/common/GameNavbar';
 import { useChallengeDataLoader } from '../hooks/useChallengeDataLoader';
+import { useActiveTheme } from '../hooks/useActiveTheme';
 import { searchEngine } from '../services/searchEngine';
 import { Colors } from '../theme/colors';
 import { Spacing, BorderRadius, Borders } from '../theme/spacing';
@@ -45,6 +46,7 @@ interface IClubLogoScreenProps {
 
 export const ClubLogoScreen: React.FC<IClubLogoScreenProps> = React.memo(
   ({ isDaily = false, initialLevel, isReplay = false, onBack, onOpenMap }) => {
+    const { primaryColor, onPrimaryTextColor } = useActiveTheme();
     const {
       isLoading,
       challengeData,
@@ -135,7 +137,7 @@ export const ClubLogoScreen: React.FC<IClubLogoScreenProps> = React.memo(
     if (isLoading) {
       return (
         <SafeAreaView style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={Colors.primary} />
+          <ActivityIndicator size="large" color={primaryColor} />
           <Text style={styles.loadingText}>Kulüp arması hazırlanıyor...</Text>
         </SafeAreaView>
       );
@@ -151,6 +153,7 @@ export const ClubLogoScreen: React.FC<IClubLogoScreenProps> = React.memo(
 
     return (
       <SafeAreaView style={styles.safeArea}>
+        <View style={{ height: Borders.thick, width: '100%', backgroundColor: primaryColor }} />
         <GameNavbar
           title={navTitle}
           isReplay={isCurrentReplay && !isDaily}
@@ -278,12 +281,12 @@ export const ClubLogoScreen: React.FC<IClubLogoScreenProps> = React.memo(
         {gameStatus === 'playing' ? (
           <View style={styles.bottomBar}>
             <TouchableOpacity
-              style={styles.guessBtn}
+              style={[styles.guessBtn, { backgroundColor: primaryColor }]}
               activeOpacity={0.7}
               onPress={openSearch}
               hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
             >
-              <Text style={styles.guessBtnText}>🛡️ Kulüp Tahmin Et</Text>
+              <Text style={[styles.guessBtnText, { color: onPrimaryTextColor }]}>🛡️ Kulüp Tahmin Et</Text>
             </TouchableOpacity>
           </View>
         ) : isDaily ? (

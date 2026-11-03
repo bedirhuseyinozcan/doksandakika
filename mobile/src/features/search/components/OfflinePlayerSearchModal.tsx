@@ -18,6 +18,7 @@ import { hapticsService } from '../../../services/hapticsService';
 import { Colors } from '../../../theme/colors';
 import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 
 interface IOfflinePlayerSearchModalProps {
   visible: boolean;
@@ -28,6 +29,7 @@ interface IOfflinePlayerSearchModalProps {
 
 export const OfflinePlayerSearchModal: React.FC<IOfflinePlayerSearchModalProps> = React.memo(
   ({ visible, onClose, onSelectPlayer, includeLegends = false }) => {
+    const { primaryColor } = useActiveTheme();
     const { query, results, handleQueryChange, clearSearch } =
       useOfflinePlayerSearch(includeLegends);
 
@@ -70,7 +72,7 @@ export const OfflinePlayerSearchModal: React.FC<IOfflinePlayerSearchModalProps> 
             <View style={styles.topPeekArea} />
           </TouchableWithoutFeedback>
 
-          <View style={styles.sheet}>
+          <View style={[styles.sheet, { borderTopColor: primaryColor }]}>
             <View style={styles.dragHandle} />
 
             <View style={styles.header}>

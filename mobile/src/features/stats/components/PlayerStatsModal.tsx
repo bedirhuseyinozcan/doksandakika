@@ -4,6 +4,7 @@ import { useGameStore } from '../../../stores/useGameStore';
 import { getRankByXp } from '../utils/rankUtils';
 import { getCosmeticById } from '../../shop/catalog';
 import { ScoutShopModal } from '../../shop/components/ScoutShopModal';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 import { Colors } from '../../../theme/colors';
 import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
@@ -15,6 +16,7 @@ interface IPlayerStatsModalProps {
 
 export const PlayerStatsModal: React.FC<IPlayerStatsModalProps> = React.memo(
   ({ visible, onClose }) => {
+    const { primaryColor, onPrimaryTextColor, cardBorder } = useActiveTheme();
     const gamesPlayed = useGameStore((s) => s.gamesPlayed);
     const gamesWon = useGameStore((s) => s.gamesWon);
     const currentStreak = useGameStore((s) => s.currentStreak);
@@ -49,7 +51,7 @@ export const PlayerStatsModal: React.FC<IPlayerStatsModalProps> = React.memo(
         >
           <TouchableOpacity
             activeOpacity={1}
-            style={styles.card}
+            style={[styles.card, { borderTopWidth: Borders.thick, borderTopColor: primaryColor }]}
             onPress={(e) => e.stopPropagation?.()}
           >
             <View style={styles.headerRow}>
@@ -189,7 +191,7 @@ export const PlayerStatsModal: React.FC<IPlayerStatsModalProps> = React.memo(
                 </View>
 
                 <View style={styles.kpiCard}>
-                  <Text style={[styles.kpiNumber, styles.starText]}>⭐ {maxStreak}</Text>
+                  <Text style={[styles.kpiNumber, styles.starText, { color: primaryColor }]}>⭐ {maxStreak}</Text>
                   <Text style={styles.kpiLabel}>En İyi Seri</Text>
                 </View>
               </View>
@@ -220,10 +222,10 @@ export const PlayerStatsModal: React.FC<IPlayerStatsModalProps> = React.memo(
                           style={[
                             styles.distBarFill,
                             { width: `${percentWidth}%` },
-                            count > 0 && styles.distBarFillActive,
+                            count > 0 && [styles.distBarFillActive, { backgroundColor: primaryColor }],
                           ]}
                         >
-                          <Text style={styles.distCountText}>{count}</Text>
+                          <Text style={[styles.distCountText, count > 0 && { color: onPrimaryTextColor }]}>{count}</Text>
                         </View>
                       </View>
                     </View>
@@ -232,7 +234,11 @@ export const PlayerStatsModal: React.FC<IPlayerStatsModalProps> = React.memo(
               </View>
             </ScrollView>
 
-            <TouchableOpacity style={styles.actionBtn} onPress={onClose} activeOpacity={0.8}>
+            <TouchableOpacity
+              style={[styles.actionBtn, { borderColor: cardBorder }]}
+              onPress={onClose}
+              activeOpacity={0.8}
+            >
               <Text style={styles.actionBtnText}>Kapat</Text>
             </TouchableOpacity>
           </TouchableOpacity>

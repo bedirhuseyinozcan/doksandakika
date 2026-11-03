@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 import { Colors } from '../../../theme/colors';
 import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
@@ -15,10 +16,12 @@ interface ILevelMapHeaderProps {
 
 export const LevelMapHeader: React.FC<ILevelMapHeaderProps> = React.memo(
   ({ gameEmoji, gameTitle, leagueLabel, completedCount, progressPercent }) => {
+    const { primaryColor } = useActiveTheme();
+
     return (
       <View style={styles.headerCard}>
         <View style={styles.titleRow}>
-          <View style={styles.emojiBox}>
+          <View style={[styles.emojiBox, { borderColor: primaryColor }]}>
             <Text style={styles.titleEmoji}>{gameEmoji}</Text>
           </View>
           <View style={styles.titleCol}>
@@ -31,12 +34,17 @@ export const LevelMapHeader: React.FC<ILevelMapHeaderProps> = React.memo(
         <View style={styles.progressContainer}>
           <View style={styles.progressTextRow}>
             <Text style={styles.progressLabel}>İLERLEME DURUMU</Text>
-            <Text style={styles.progressVal}>
+            <Text style={[styles.progressVal, { color: primaryColor }]}>
               {completedCount} / {TOTAL_LEVELS} SEVİYE (%{progressPercent})
             </Text>
           </View>
           <View style={styles.progressBarBg}>
-            <View style={[styles.progressBarFill, { width: `${progressPercent}%` }]} />
+            <View
+              style={[
+                styles.progressBarFill,
+                { width: `${progressPercent}%`, backgroundColor: primaryColor },
+              ]}
+            />
           </View>
         </View>
       </View>

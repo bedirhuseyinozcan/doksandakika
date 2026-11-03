@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useDailyCountdown } from '../hooks/useDailyCountdown';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 import { Colors } from '../../../theme/colors';
 import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
@@ -13,13 +14,14 @@ interface IDailyHeaderCardProps {
 
 export const DailyHeaderCard = React.memo<IDailyHeaderCardProps>(
   ({ title, leagueLabel, isCompleted }) => {
+    const { primaryColor } = useActiveTheme();
     const { formattedCountdown } = useDailyCountdown();
 
     return (
       <View style={styles.card}>
         <View style={styles.topRow}>
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>{leagueLabel.toUpperCase()}</Text>
+          <View style={[styles.badge, { borderColor: primaryColor }]}>
+            <Text style={[styles.badgeText, { color: primaryColor }]}>{leagueLabel.toUpperCase()}</Text>
           </View>
           <View style={styles.timerBadge}>
             <Text style={styles.timerText}>⏳ {formattedCountdown}</Text>
@@ -29,7 +31,7 @@ export const DailyHeaderCard = React.memo<IDailyHeaderCardProps>(
         <Text style={styles.title}>{title}</Text>
 
         <View style={styles.statusRow}>
-          <Text style={[styles.statusText, isCompleted && styles.completedText]}>
+          <Text style={[styles.statusText, isCompleted && [styles.completedText, { color: primaryColor }]]}>
             {isCompleted ? '✓ BUGÜNÜN GÖREVİ TAMAMLANDI' : '🔥 GÜNLÜK SERİNİ SÜRDÜRMEK İÇİN ÇÖZ'}
           </Text>
         </View>

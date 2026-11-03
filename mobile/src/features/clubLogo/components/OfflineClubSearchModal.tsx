@@ -18,6 +18,7 @@ import { ClubLogo } from '../../../components/common/ClubLogo';
 import { Colors } from '../../../theme/colors';
 import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
+import { useActiveTheme } from '../../../hooks/useActiveTheme';
 
 const LEAGUE_LABELS: Record<string, string> = {
   super_lig: '🇹🇷 Süper Lig',
@@ -36,6 +37,7 @@ interface IOfflineClubSearchModalProps {
 
 export const OfflineClubSearchModal: React.FC<IOfflineClubSearchModalProps> = React.memo(
   ({ visible, onClose, onSelectClub }) => {
+    const { primaryColor } = useActiveTheme();
     const [query, setQuery] = useState('');
     const selectedLeagueMode = useSettingsStore((s) => s.selectedLeagueMode);
 
@@ -104,7 +106,7 @@ export const OfflineClubSearchModal: React.FC<IOfflineClubSearchModalProps> = Re
             <View style={styles.topPeekArea} />
           </TouchableWithoutFeedback>
 
-          <View style={styles.sheet}>
+          <View style={[styles.sheet, { borderTopColor: primaryColor }]}>
             <View style={styles.dragHandle} />
 
             <View style={styles.headerRow}>

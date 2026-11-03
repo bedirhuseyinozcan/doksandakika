@@ -18,10 +18,11 @@ import { HintWithAdButton } from '../features/monetization/components/HintWithAd
 import { useInterstitialAd } from '../features/monetization/hooks/useInterstitialAd';
 import { WhoAreYaWinModal } from '../features/whoAreYa/components/WhoAreYaWinModal';
 import { useChallengeDataLoader } from '../hooks/useChallengeDataLoader';
+import { useActiveTheme } from '../hooks/useActiveTheme';
 import { getAuthoritativeUtcDate } from '../services/authoritativeTime';
 import { shareService } from '../services/shareService';
 import { Colors } from '../theme/colors';
-import { Spacing } from '../theme/spacing';
+import { Spacing, Borders } from '../theme/spacing';
 import { Typography } from '../theme/typography';
 
 interface IFootballBingoScreenProps {
@@ -34,6 +35,7 @@ interface IFootballBingoScreenProps {
 
 export const FootballBingoScreen: React.FC<IFootballBingoScreenProps> = React.memo(
   ({ isDaily = false, initialLevel, isReplay = false, onBack, onOpenMap }) => {
+    const { primaryColor } = useActiveTheme();
     const {
       isLoading,
       currentLevel,
@@ -101,7 +103,7 @@ export const FootballBingoScreen: React.FC<IFootballBingoScreenProps> = React.me
     if (isLoading) {
       return (
         <SafeAreaView style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={Colors.primary} />
+          <ActivityIndicator size="large" color={primaryColor} />
           <Text style={styles.loadingText}>Bingo Tahtası & Deste Hazırlanıyor...</Text>
         </SafeAreaView>
       );
@@ -111,6 +113,7 @@ export const FootballBingoScreen: React.FC<IFootballBingoScreenProps> = React.me
 
     return (
       <SafeAreaView style={styles.safeArea}>
+        <View style={{ height: Borders.thick, width: '100%', backgroundColor: primaryColor }} />
         <GameNavbar
           title={navTitle}
           isReplay={isCurrentReplay && !isDaily}
