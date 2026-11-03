@@ -109,8 +109,13 @@ export const OfflineClubSearchModal: React.FC<IOfflineClubSearchModalProps> = Re
 
             <View style={styles.headerRow}>
               <Text style={styles.title}>🛡️ Kulüp Tahmin Et</Text>
-              <TouchableOpacity style={styles.closeBtn} onPress={handleClose}>
-                <Text style={styles.closeText}>Kapat ✕</Text>
+              <TouchableOpacity
+                style={styles.closeBtn}
+                onPress={handleClose}
+                hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.closeText}>✕</Text>
               </TouchableOpacity>
             </View>
 
@@ -197,13 +202,15 @@ const styles = StyleSheet.create({
     letterSpacing: 0.6,
   },
   closeBtn: {
-    paddingVertical: 4,
-    paddingHorizontal: 8,
+    padding: Spacing.xs,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   closeText: {
-    ...Typography.statBadge,
-    color: Colors.accentPrimary,
-    fontSize: 11,
+    fontSize: 22,
+    color: Colors.textMuted,
+    fontWeight: '700',
+    lineHeight: 24,
   },
   searchBox: {
     flexDirection: 'row',

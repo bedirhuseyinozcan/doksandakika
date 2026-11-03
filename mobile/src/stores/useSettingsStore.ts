@@ -23,7 +23,7 @@ const loadInitialLeagueMode = (): LeagueMode => {
 export const useSettingsStore = create<ISettingsStore>((set) => ({
   selectedLeagueMode: loadInitialLeagueMode(),
   soundEnabled: appStorage.getBoolean(StorageKeys.SOUND_ENABLED) ?? true,
-  hapticsEnabled: appStorage.getBoolean(StorageKeys.HAPTICS_ENABLED) ?? true,
+  hapticsEnabled: appStorage.getBoolean(StorageKeys.HAPTICS_ENABLED) ?? false,
 
   setLeagueMode: (mode: LeagueMode) => {
     appStorage.set(StorageKeys.SELECTED_LEAGUE_MODE, mode);
@@ -58,7 +58,7 @@ export const useSettingsStore = create<ISettingsStore>((set) => ({
     set({
       selectedLeagueMode: loadInitialLeagueMode(),
       soundEnabled: appStorage.getBoolean(StorageKeys.SOUND_ENABLED) ?? true,
-      hapticsEnabled: appStorage.getBoolean(StorageKeys.HAPTICS_ENABLED) ?? true,
+      hapticsEnabled: appStorage.getBoolean(StorageKeys.HAPTICS_ENABLED) ?? false,
     });
   },
 }));

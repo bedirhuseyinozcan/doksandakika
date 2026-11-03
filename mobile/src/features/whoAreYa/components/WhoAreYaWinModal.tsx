@@ -370,7 +370,7 @@ export const WhoAreYaWinModal: React.FC<IWhoAreYaWinModalProps> = React.memo(
               ) : null}
 
               <TouchableOpacity style={styles.secondaryBtn} onPress={onClose} activeOpacity={0.8}>
-                <Text style={styles.secondaryBtnText}>Kapat</Text>
+                <Text style={styles.secondaryBtnText}>KAPAT</Text>
               </TouchableOpacity>
             </View>
           </Animated.View>
@@ -590,15 +590,20 @@ const styles = StyleSheet.create({
     fontSize: 11,
   },
   secondaryBtn: {
-    backgroundColor: 'transparent',
-    paddingVertical: 6,
+    backgroundColor: Colors.danger,
+    paddingVertical: Spacing.sm + 2,
     borderRadius: BorderRadius.sharp,
     alignItems: 'center',
     width: '100%',
+    borderWidth: Borders.thin,
+    borderColor: Colors.danger,
+    marginTop: 2,
   },
   secondaryBtnText: {
-    ...Typography.caption,
-    color: Colors.textMuted,
-    fontSize: 11,
+    ...Typography.statBadge,
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 0.8,
   },
 });

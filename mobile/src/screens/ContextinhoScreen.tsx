@@ -429,17 +429,19 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   sharedTagPill: {
-    backgroundColor: Colors.surfaceLight,
+    backgroundColor: 'rgba(0, 208, 132, 0.12)',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: BorderRadius.sharp,
     borderWidth: Borders.thin,
-    borderColor: Colors.border,
+    borderColor: Colors.accentPrimary,
   },
   sharedTagText: {
     ...Typography.statBadge,
-    color: Colors.textPrimary,
+    color: Colors.accentPrimary,
     fontSize: 9,
+    fontWeight: '700',
+    letterSpacing: 0.3,
   },
   rightCol: {
     alignItems: 'flex-end',

@@ -54,7 +54,12 @@ export const PlayerStatsModal: React.FC<IPlayerStatsModalProps> = React.memo(
           >
             <View style={styles.headerRow}>
               <Text style={styles.headerTitle}>📊 Oyuncu İstatistikleri</Text>
-              <TouchableOpacity onPress={onClose} style={styles.closeBtn} activeOpacity={0.7}>
+              <TouchableOpacity
+                onPress={onClose}
+                style={styles.closeBtn}
+                activeOpacity={0.7}
+                hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+              >
                 <Text style={styles.closeText}>✕</Text>
               </TouchableOpacity>
             </View>
@@ -279,11 +284,14 @@ const styles = StyleSheet.create({
   },
   closeBtn: {
     padding: Spacing.xs,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   closeText: {
-    fontSize: 16,
+    fontSize: 22,
     color: Colors.textMuted,
     fontWeight: '700',
+    lineHeight: 24,
   },
   scroll: {
     paddingBottom: Spacing.md,

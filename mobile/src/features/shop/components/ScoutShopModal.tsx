@@ -164,7 +164,12 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
                 </Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
+              <TouchableOpacity
+                style={styles.closeBtn}
+                onPress={onClose}
+                activeOpacity={0.7}
+                hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+              >
                 <Text style={styles.closeBtnText}>✕</Text>
               </TouchableOpacity>
             </View>
@@ -548,20 +553,16 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   closeBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: BorderRadius.sharp,
-    backgroundColor: Colors.surfaceLight,
-    borderWidth: Borders.thin,
-    borderColor: Colors.border,
-    alignItems: 'center',
+    padding: Spacing.xs,
+    marginLeft: Spacing.xs,
     justifyContent: 'center',
-    marginLeft: 2,
+    alignItems: 'center',
   },
   closeBtnText: {
-    color: Colors.textPrimary,
-    fontSize: 14,
-    fontWeight: 'bold',
+    color: Colors.textMuted,
+    fontSize: 22,
+    fontWeight: '700',
+    lineHeight: 24,
   },
   bonusBanner: {
     backgroundColor: Colors.surfaceLight,
