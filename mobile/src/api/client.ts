@@ -19,7 +19,7 @@ function resolveBaseUrl(): string {
     }
   }
 
-  return 'http://192.168.1.3:5000/api/v1';
+  return 'https://doksandakika-backend.onrender.com/api/v1';
 }
 
 const DEFAULT_BASE_URL = resolveBaseUrl();
