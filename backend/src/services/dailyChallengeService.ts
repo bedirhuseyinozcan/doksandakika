@@ -28,6 +28,8 @@ export interface IDailyChallengeClientResponse {
 }
 
 export class DailyChallengeService {
+  private memoryCache = new Map<string, { date: string; data: IDailyChallengeClientResponse }>();
+
   public getCurrentUtcDate(): string {
     const now = new Date();
     return now.toISOString().split('T')[0];
@@ -38,6 +40,15 @@ export class DailyChallengeService {
     leagueMode: LeagueMode
   ): Promise<IDailyChallengeClientResponse> {
     const today = this.getCurrentUtcDate();
+    const cacheKey = `${today}_${gameMode}_${leagueMode}`;
+
+    const cached = this.memoryCache.get(cacheKey);
+    if (cached && cached.date === today) {
+      return {
+        ...cached.data,
+        serverUtcTime: new Date().toISOString(),
+      };
+    }
 
     const challenge = await DailyChallengeModel.findOne({
       date: today,
@@ -126,6 +137,8 @@ export class DailyChallengeService {
       response.imageUrl = player.originalImageUrl;
       response.careerPath = fixAndOrderCareerPath(player.careerPath, player.currentClub?.name, player.age);
     }
+
+    this.memoryCache.set(cacheKey, { date: today, data: response });
 
     return response;
   }

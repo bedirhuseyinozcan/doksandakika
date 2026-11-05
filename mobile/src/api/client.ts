@@ -2,6 +2,11 @@ import axios from 'axios';
 import { Platform, NativeModules } from 'react-native';
 
 function resolveBaseUrl(): string {
+  const envUrl = typeof process !== 'undefined' ? process?.env?.EXPO_PUBLIC_API_URL : undefined;
+  if (envUrl) {
+    return envUrl.replace(/\/+$/, '');
+  }
+
   if (Platform.OS === 'web') {
     return 'http://localhost:5000/api/v1';
   }

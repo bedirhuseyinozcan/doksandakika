@@ -2,6 +2,7 @@ import { appStorage, StorageKeys } from '../storage/mmkv';
 import { ILevelData, levelApi } from '../api/levelApi';
 import { GameModeType } from '../api/dailyApi';
 import { searchEngine } from './searchEngine';
+import { getAuthoritativeUtcDate } from './authoritativeTime';
 
 class LevelCacheService {
   private getStorageKey(gameMode: string, leagueMode: string): string {
@@ -137,6 +138,83 @@ class LevelCacheService {
     }
 
     return null;
+  }
+
+  public getDailyFallback(
+    gameMode: GameModeType,
+    leagueMode: 'global' | 'super_lig'
+  ): ILevelData | null {
+    const today = getAuthoritativeUtcDate();
+    const seedStr = `${today}_${gameMode}_${leagueMode}`;
+    let hash = 0;
+    for (let i = 0; i < seedStr.length; i++) {
+      hash = (hash << 5) - hash + seedStr.charCodeAt(i);
+      hash |= 0;
+    }
+
+    if (gameMode === 'clubLogo') {
+      const clubs = searchEngine.searchClubs('', leagueMode);
+      if (clubs.length > 0) {
+        const club = clubs[Math.abs(hash) % clubs.length];
+        return {
+          levelNumber: 1,
+          gameMode,
+          leagueMode,
+          rewardCoins: 30,
+          rewardXp: 50,
+          targetPlayerId: `club_${club.id}`,
+          playerName: club.starPlayer,
+          playerClub: club.name,
+          imageUrl: club.logoUrl,
+          initialBlurImageUrl: club.logoUrl,
+          hints: [`Kadrodaki Yıldız: ${club.starPlayer}`],
+        };
+      }
+    } else {
+      const allPlayers = searchEngine.getPlayersByLeagueMode(leagueMode, { includeLegends: false });
+      const activePlayers = allPlayers.filter(
+        (player) =>
+          player.club &&
+          (leagueMode === 'super_lig' ? player.league === 'super_lig' : player.league !== 'super_lig')
+      );
+      const pool = activePlayers.length > 0 ? activePlayers : allPlayers;
+      if (pool.length > 0) {
+        const poolSize = Math.min(180, pool.length);
+        const p = pool[Math.abs(hash) % poolSize];
+        const careerSteps =
+          p.careerPath && p.careerPath.length > 0
+            ? p.careerPath
+            : p.clubs && p.clubs.length > 0
+            ? p.clubs.map((cName, idx) => ({
+                clubName: cName,
+                startYear: 2018 + idx * 2,
+                ...(idx < p.clubs!.length - 1 ? { endYear: 2020 + idx * 2 } : {}),
+              }))
+            : [{ clubName: p.club, startYear: 2025 }];
+
+        const pImg =
+          p.imageUrl ||
+          p.img ||
+          (p.id ? `https://img.a.transfermarkt.technology/portrait/big/${p.id.replace(/^tmid_/, '')}.jpg` : undefined);
+
+        return {
+          levelNumber: 1,
+          gameMode,
+          leagueMode,
+          rewardCoins: 30,
+          rewardXp: 50,
+          targetPlayerId: p.id,
+          playerName: p.name,
+          playerClub: p.club,
+          imageUrl: pImg,
+          initialBlurImageUrl: pImg,
+          blurImages: [],
+          careerPath: careerSteps,
+          hints: [`${p.nationality} • ${p.position}`],
+        };
+      }
+    }
+    return this.getLevel(1, gameMode, leagueMode);
   }
 
   public cacheLevel(level: ILevelData): void {

@@ -28,11 +28,19 @@ export interface ILevelClientResponse {
 }
 
 export class LevelService {
+  private levelMemoryCache = new Map<string, ILevelClientResponse>();
+
   public async getLevel(
     levelNumber: number,
     gameMode: GameMode,
     leagueMode: LeagueMode
   ): Promise<ILevelClientResponse> {
+    const cacheKey = `${levelNumber}_${gameMode}_${leagueMode}`;
+    const cached = this.levelMemoryCache.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
     const level = await LevelModel.findOne({ levelNumber, gameMode, leagueMode }).lean();
     let player: any = null;
 
@@ -134,6 +142,8 @@ export class LevelService {
         ? player.careerPath
         : fixAndOrderCareerPath(player.careerPath, player.currentClub?.name, player.age);
     }
+
+    this.levelMemoryCache.set(cacheKey, response);
 
     return response;
   }

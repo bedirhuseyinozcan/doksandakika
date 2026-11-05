@@ -127,11 +127,9 @@ export const useChallengeDataLoader = ({
         }
       }
     } catch {
-      const fallback = levelCacheService.getLevel(
-        isDaily ? 1 : currentLevel,
-        gameMode,
-        selectedLeagueMode
-      );
+      const fallback = isDaily
+        ? levelCacheService.getDailyFallback(gameMode, selectedLeagueMode)
+        : levelCacheService.getLevel(currentLevel, gameMode, selectedLeagueMode);
       if (fallback) {
         setChallengeData({
           targetPlayerId: fallback.targetPlayerId || `level_${currentLevel}`,
