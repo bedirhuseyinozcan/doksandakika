@@ -11,11 +11,14 @@ function resolveBaseUrl(): string {
     return 'http://localhost:5000/api/v1';
   }
 
-  const scriptURL: string | undefined = NativeModules?.SourceCode?.scriptURL;
-  if (scriptURL) {
-    const match = scriptURL.match(/^https?:\/\/(\d+\.\d+\.\d+\.\d+):\d+/);
-    if (match?.[1] && match[1] !== '127.0.0.1') {
-      return `http://${match[1]}:5000/api/v1`;
+  // Sadece geliştirme (development) modunda metro yerel ip'sine bak
+  if (typeof __DEV__ !== 'undefined' && __DEV__) {
+    const scriptURL: string | undefined = NativeModules?.SourceCode?.scriptURL;
+    if (scriptURL) {
+      const match = scriptURL.match(/^https?:\/\/(\d+\.\d+\.\d+\.\d+):\d+/);
+      if (match?.[1] && match[1] !== '127.0.0.1') {
+        return `http://${match[1]}:5000/api/v1`;
+      }
     }
   }
 

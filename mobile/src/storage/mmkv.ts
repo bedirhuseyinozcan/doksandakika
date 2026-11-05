@@ -21,33 +21,9 @@ class UniversalStorage implements IAppStorage {
   }
 
   private initNativeMMKV(): void {
-    if (Platform.OS === 'web') {
-      return;
-    }
-
-    const globalAny = globalThis as any;
-    const isExpoGo =
-      Boolean(globalAny?.expo?.modules?.ExpoGo) ||
-      NativeModules?.NativeUnimoduleProxy?.modulesConstants?.ExponentConstants?.appOwnership === 'expo' ||
-      NativeModules?.ExponentConstants?.appOwnership === 'expo';
-
-    if (isExpoGo) {
-      return;
-    }
-
-    try {
-      const { MMKV } = require('react-native-mmkv');
-      this.nativeMMKV = new MMKV({
-        id: 'doksan-dakika-storage',
-      });
-      this.nativeMMKV.set('__mmkv_health_check__', 'ok');
-      if (this.nativeMMKV.getString('__mmkv_health_check__') !== 'ok') {
-        this.nativeMMKV = null;
-      }
-    } catch (e) {
-      console.warn('MMKV JSI fallback to AsyncStorage disk persistence:', e);
-      this.nativeMMKV = null;
-    }
+    // React Native 0.86+ / Expo 57 New Architecture:
+    // Güvenli ve sıfır C++ çökme riski için in-memory Map + AsyncStorage disk persistansı kullanılır.
+    this.nativeMMKV = null;
   }
 
   public async hydrateFromDisk(): Promise<void> {

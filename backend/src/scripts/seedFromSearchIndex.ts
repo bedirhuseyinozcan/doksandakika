@@ -18,43 +18,52 @@ export async function seedFromSearchIndex(): Promise<void> {
 
   const raw = fs.readFileSync(searchIndexPath, 'utf8');
   const players = JSON.parse(raw);
-  console.log(`⚽ Toplam ${players.length} oyuncu/efsane MongoDB Atlas'a aktarılmak üzere hazırlanıyor...`);
+  console.log(`⚽ Toplam ${players.length} oyuncu/efsane MongoDB Atlas için hazırlanıyor...`);
 
-  let count = 0;
-  for (const p of players) {
-    const playerId = p.id;
+  const bulkOps = players.map((p: any) => {
+    const isLegend = Boolean(p.isLegend);
     const currentClub = {
-      id: p.clubId ? String(p.clubId) : '0',
-      name: p.club || (p.isLegend ? 'Efsane İkon' : 'Kulüpsüz'),
-      logoUrl: p.logoUrl || undefined,
-      league: p.league || (p.isLegend ? 'legend' : 'other'),
+      id: isLegend ? 'legend' : p.clubId ? String(p.clubId) : '0',
+      name: isLegend ? 'Efsane İkon' : p.club || 'Kulüpsüz',
+      logoUrl: isLegend ? '' : p.logoUrl || undefined,
+      league: p.league || (isLegend ? 'legend' : 'other'),
     };
 
-    const doc = {
-      playerId,
-      name: p.name,
-      leagues: p.leagues || [p.league || 'other'],
-      currentClub,
-      nationality: p.nationality || 'Dünya',
-      position: p.position || 'CM',
-      age: p.age || 27,
-      shirtNumber: p.shirtNumber || undefined,
-      marketValueEur: p.marketValueEur || (p.isLegend ? 100000000 : 15000000),
-      careerPath: p.careerPath || [],
-      blurImages: p.blurImages || [],
-      originalImageUrl: p.imageUrl || undefined,
-      isActive: true,
-      isLegend: Boolean(p.isLegend),
+    return {
+      updateOne: {
+        filter: { playerId: p.id },
+        update: {
+          $set: {
+            playerId: p.id,
+            name: p.name,
+            leagues: p.leagues || [p.league || 'other'],
+            currentClub,
+            nationality: p.nationality || 'Dünya',
+            position: p.position || 'CM',
+            age: p.age || 27,
+            ...(p.shirtNumber ? { shirtNumber: p.shirtNumber } : {}),
+            marketValueEur: p.marketValueEur || (isLegend ? 100000000 : 15000000),
+            careerPath: p.careerPath || [],
+            blurImages: p.blurImages || [],
+            originalImageUrl: p.imageUrl || undefined,
+            // Efsaneler isActive: false olmalı ki aktif modları (WhoAreYa/Contextinho) bozmasın!
+            isActive: !isLegend,
+            isLegend,
+          },
+        },
+        upsert: true,
+      },
     };
+  });
 
-    await PlayerModel.findOneAndUpdate({ playerId }, doc, { upsert: true, new: true });
-    count++;
-    if (count % 50 === 0) {
-      console.log(`⏳ [${count}/${players.length}] futbolcu kaydedildi...`);
-    }
+  const chunkSize = 500;
+  for (let i = 0; i < bulkOps.length; i += chunkSize) {
+    const chunk = bulkOps.slice(i, i + chunkSize);
+    await PlayerModel.bulkWrite(chunk);
+    console.log(`⏳ [${Math.min(i + chunkSize, bulkOps.length)}/${players.length}] futbolcu kaydedildi...`);
   }
 
-  console.log(`🎉 Başarılı! Toplam ${count} futbolcu ve efsane MongoDB Atlas'a kaydedildi.`);
+  console.log(`🎉 Başarılı! Toplam ${players.length} futbolcu ve efsane MongoDB Atlas'a güncellendi.`);
   await mongoose.disconnect();
 }
 

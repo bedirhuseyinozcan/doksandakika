@@ -1,6 +1,5 @@
 import { Platform } from 'react-native';
 
-// Google Resmi Test Reklam Kimlikleri (Geliştirme aşamasında ban yememek için)
 const GOOGLE_TEST_INTERSTITIAL = 'ca-app-pub-3940256099942544/1033173712';
 const GOOGLE_TEST_REWARDED = 'ca-app-pub-3940256099942544/5224354917';
 
@@ -18,39 +17,51 @@ const getRewardedUnitId = (): string => {
 
 class AdMobService {
   private isAvailable: boolean = false;
+  private isInitialized: boolean = false;
+  private isInitializing: boolean = false;
   private interstitialInstance: any = null;
   private rewardedInstance: any = null;
   private isInterstitialLoaded: boolean = false;
   private isRewardedLoaded: boolean = false;
 
+  // Başlangıçta (constructor) ASLA senkron reklam yüklemesi yapılmaz (Android çökmesini önler)
   constructor() {
-    this.init();
+    this.isAvailable = false;
   }
 
-  private init(): void {
-    if (Platform.OS === 'web') return;
+  public async initialize(): Promise<void> {
+    if (Platform.OS === 'web' || this.isInitialized || this.isInitializing) return;
 
+    this.isInitializing = true;
     try {
-      const mobileAds = require('react-native-google-mobile-ads');
-      const { InterstitialAd, RewardedAd } = mobileAds;
+      const mobileAdsModule = require('react-native-google-mobile-ads');
+      const mobileAds = mobileAdsModule.default || mobileAdsModule;
 
-      if (InterstitialAd && RewardedAd) {
+      if (typeof mobileAds === 'function') {
+        await mobileAds().initialize();
         this.isAvailable = true;
+        this.isInitialized = true;
         this.preloadInterstitial();
         this.preloadRewarded();
       }
-    } catch {
+    } catch (e) {
+      console.warn('AdMob initialization safely skipped or failed:', e);
       this.isAvailable = false;
+    } finally {
+      this.isInitializing = false;
     }
   }
 
   public preloadInterstitial(): void {
-    if (!this.isAvailable || Platform.OS === 'web') return;
+    if (!this.isAvailable || Platform.OS === 'web' || !this.isInitialized) return;
 
     try {
-      const { InterstitialAd, AdEventType } = require('react-native-google-mobile-ads');
-      const adUnitId = getInterstitialUnitId();
+      const mobileAdsModule = require('react-native-google-mobile-ads');
+      const InterstitialAd = mobileAdsModule.InterstitialAd;
+      const AdEventType = mobileAdsModule.AdEventType;
+      if (!InterstitialAd || !AdEventType) return;
 
+      const adUnitId = getInterstitialUnitId();
       this.interstitialInstance = InterstitialAd.createForAdRequest(adUnitId, {
         requestNonPersonalizedAdsOnly: true,
       });
@@ -70,12 +81,16 @@ class AdMobService {
   }
 
   public preloadRewarded(): void {
-    if (!this.isAvailable || Platform.OS === 'web') return;
+    if (!this.isAvailable || Platform.OS === 'web' || !this.isInitialized) return;
 
     try {
-      const { RewardedAd, RewardedAdEventType } = require('react-native-google-mobile-ads');
-      const adUnitId = getRewardedUnitId();
+      const mobileAdsModule = require('react-native-google-mobile-ads');
+      const RewardedAd = mobileAdsModule.RewardedAd;
+      const RewardedAdEventType = mobileAdsModule.RewardedAdEventType;
+      const AdEventType = mobileAdsModule.AdEventType;
+      if (!RewardedAd || !RewardedAdEventType || !AdEventType) return;
 
+      const adUnitId = getRewardedUnitId();
       this.rewardedInstance = RewardedAd.createForAdRequest(adUnitId, {
         requestNonPersonalizedAdsOnly: true,
       });
@@ -102,7 +117,8 @@ class AdMobService {
     }
 
     try {
-      const { AdEventType } = require('react-native-google-mobile-ads');
+      const mobileAdsModule = require('react-native-google-mobile-ads');
+      const AdEventType = mobileAdsModule.AdEventType;
 
       const unsubscribeClosed = this.interstitialInstance.addAdEventListener(
         AdEventType.CLOSED,
@@ -128,7 +144,6 @@ class AdMobService {
     onClosed: () => void
   ): void {
     if (!this.isAvailable || !this.rewardedInstance || !this.isRewardedLoaded) {
-      // Reklam hazır değilse veya webdeyse kullanıcıyı mağdur etme, ödülü ver
       onRewardEarned();
       onClosed();
       this.preloadRewarded();
@@ -136,13 +151,13 @@ class AdMobService {
     }
 
     try {
-      const { RewardedAdEventType, AdEventType } = require('react-native-google-mobile-ads');
-      let earned = false;
+      const mobileAdsModule = require('react-native-google-mobile-ads');
+      const RewardedAdEventType = mobileAdsModule.RewardedAdEventType;
+      const AdEventType = mobileAdsModule.AdEventType;
 
       const unsubscribeEarned = this.rewardedInstance.addAdEventListener(
         RewardedAdEventType.EARNED_REWARD,
         () => {
-          earned = true;
           onRewardEarned();
         }
       );
@@ -170,7 +185,7 @@ class AdMobService {
   }
 
   public isReady(): boolean {
-    return this.isAvailable;
+    return this.isAvailable && this.isInitialized;
   }
 }
 

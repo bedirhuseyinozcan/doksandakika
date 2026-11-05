@@ -21,6 +21,7 @@
         "backgroundColor": "#0D1117"
       },
       "package": "com.doksandakika.app",
+      "versionCode": 2,
       "usesCleartextTraffic": true
     },
     "androidNavigationBar": {
@@ -34,7 +35,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "243fd1da-480f-4684-a6ec-f0bee05d847d"
+        "projectId": "c0093598-28fb-4fd2-82ab-fea7ea4864c9"
       }
     },
     "plugins": [
@@ -45,6 +46,7 @@
           "iosAppId": "ca-app-pub-3940256099942544~1458002511"
         }
       ]
-    ]
+    ],
+    "owner": "hsifuzuli"
   }
 }

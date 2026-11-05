@@ -14,6 +14,7 @@ import { authoritativeTime } from './src/services/authoritativeTime';
 import { appStorage, StorageKeys } from './src/storage/mmkv';
 import { useGameStore } from './src/stores/useGameStore';
 import { useSettingsStore } from './src/stores/useSettingsStore';
+import { admobService } from './src/features/monetization/services/admobService';
 import { Colors } from './src/theme/colors';
 import { BorderRadius, Borders } from './src/theme/spacing';
 
@@ -89,6 +90,10 @@ function App() {
 
       authoritativeTime.sync().catch((e) => {
         console.warn('Authoritative time sync warning:', e);
+      });
+
+      admobService.initialize().catch((e) => {
+        console.warn('AdMob bootstrap warning:', e);
       });
     };
 
