@@ -1342,7 +1342,8 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
     theme.primaryColor === '#FFFFFF' ||
     theme.primaryColor === '#F4F4F5' ||
     theme.primaryColor === '#EAB308' ||
-    theme.primaryColor === '#00D084';
+    theme.primaryColor === '#00D084' ||
+    theme.primaryColor === '#C7FB07';
 
   const rankInfo = useMemo(() => getRankByXp(xp), [xp]);
   const todayDate = useMemo(() => getAuthoritativeUtcDate(), []);
@@ -2301,7 +2302,7 @@ DOSYA: mobile\App.tsx
 ==============================
 
 import { useState, useEffect, Component, ErrorInfo, ReactNode } from 'react';
-import { View, StyleSheet, StatusBar, Text, TouchableOpacity, BackHandler } from 'react-native';
+import { View, StyleSheet, StatusBar, Text, TouchableOpacity, BackHandler, Platform } from 'react-native';
 import { HomeScreen, AppScreenType } from './src/screens/HomeScreen';
 import { WhoAreYaScreen } from './src/screens/WhoAreYaScreen';
 import { CareerPathScreen } from './src/screens/CareerPathScreen';
@@ -2316,6 +2317,7 @@ import { authoritativeTime } from './src/services/authoritativeTime';
 import { appStorage, StorageKeys } from './src/storage/mmkv';
 import { useGameStore } from './src/stores/useGameStore';
 import { useSettingsStore } from './src/stores/useSettingsStore';
+import { admobService } from './src/features/monetization/services/admobService';
 import { Colors } from './src/theme/colors';
 import { BorderRadius, Borders } from './src/theme/spacing';
 
@@ -2392,9 +2394,23 @@ function App() {
       authoritativeTime.sync().catch((e) => {
         console.warn('Authoritative time sync warning:', e);
       });
+
+      admobService.initialize().catch((e) => {
+        console.warn('AdMob bootstrap warning:', e);
+      });
     };
 
     bootstrap();
+  }, []);
+
+  useEffect(() => {
+    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      document.title = 'Doksan Dakika';
+      const existingFavicon = document.querySelector("link[rel*='icon']") as HTMLLinkElement | null;
+      if (existingFavicon) {
+        existingFavicon.href = '/src/assets/doksandakika.png';
+      }
+    }
   }, []);
 
   // Hardware Back Button handler for Android

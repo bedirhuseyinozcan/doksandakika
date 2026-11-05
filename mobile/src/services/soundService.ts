@@ -1,5 +1,5 @@
 import { Platform } from 'react-native';
-import { Audio } from 'expo-av';
+import { createAudioPlayer, setAudioModeAsync, AudioPlayer } from 'expo-audio';
 import { useSettingsStore } from '../stores/useSettingsStore';
 import {
   SOUND_TAP_URI,
@@ -20,7 +20,7 @@ interface IToneStep {
 
 class SoundService {
   private audioCtx: AudioContext | null = null;
-  private soundCache = new Map<string, Audio.Sound>();
+  private soundCache = new Map<string, AudioPlayer>();
   private nativeInitialized = false;
 
   constructor() {
@@ -30,10 +30,9 @@ class SoundService {
   private async initNativeAudio(): Promise<void> {
     if (Platform.OS === 'web') return;
     try {
-      await Audio.setAudioModeAsync({
-        playsInSilentModeIOS: true,
-        staysActiveInBackground: false,
-        shouldDuckAndroid: true,
+      await setAudioModeAsync({
+        playsInSilentMode: true,
+        interruptionMode: 'duckOthers',
       });
       this.nativeInitialized = true;
     } catch {
@@ -52,17 +51,14 @@ class SoundService {
   private async playNativeSound(uri: string): Promise<void> {
     if (!this.isEnabled() || Platform.OS === 'web') return;
     try {
-      let sound = this.soundCache.get(uri);
-      if (!sound) {
-        const created = await Audio.Sound.createAsync(
-          { uri },
-          { shouldPlay: true, volume: 0.85 }
-        );
-        sound = created.sound;
-        this.soundCache.set(uri, sound);
+      let player = this.soundCache.get(uri);
+      if (!player) {
+        player = createAudioPlayer({ uri });
+        this.soundCache.set(uri, player);
       } else {
-        await sound.replayAsync();
+        await player.seekTo(0);
       }
+      player.play();
     } catch {
       
     }
