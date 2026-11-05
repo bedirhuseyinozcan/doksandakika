@@ -1,6 +1,6 @@
-# Penalty Mobile Game Hub - Sistem Mimarisi ve Teknik Dokümantasyon
+# Doksan Dakika Mobile Game Hub - Sistem Mimarisi ve Teknik Dokümantasyon
 
-Bu doküman, Teknopark ön kuluçka sürecinde geliştirilen **Penalty** mobil futbol oyun portalının ölçeklenebilir, yüksek performanslı ve "Thick Client, Thin Server" mimari prensiplerine dayalı teknik altyapısını açıklamaktadır.
+Bu doküman, Teknopark ön kuluçka sürecinde geliştirilen **Doksan Dakika** mobil futbol oyun portalının ölçeklenebilir, yüksek performanslı ve "Thick Client, Thin Server" mimari prensiplerine dayalı teknik altyapısını açıklamaktadır.
 
 ---
 
@@ -89,7 +89,7 @@ flowchart TD
   currentClub: {
     id: "club_galatasaray",
     name: "Galatasaray",
-    logoUrl: "https://assets.penaltyhub.com/clubs/galatasaray.png",
+    logoUrl: "https://assets.doksandakika.com/clubs/galatasaray.png",
     league: "super_lig"
   },
   nationality: "Argentina",
@@ -103,9 +103,9 @@ flowchart TD
     { clubName: "Galatasaray", startYear: 2022, apps: 75, goals: 55 }
   ],
   blurImages: [
-    "https://assets.penaltyhub.com/blurred/icardi/level_1.webp",
+    "https://assets.doksandakika.com/blurred/icardi/level_1.webp",
     "...",
-    "https://assets.penaltyhub.com/blurred/icardi/level_8.webp"
+    "https://assets.doksandakika.com/blurred/icardi/level_8.webp"
   ],
   isActive: true
 }
@@ -119,7 +119,7 @@ flowchart TD
 ## 4. Dizin Yapısı (SOLID & Decoupled)
 
 ```
-penalty/
+doksan-dakika/
 ├── backend/
 │   ├── src/
 │   │   ├── config/           # Database bağlantısı, tip-güvenli Zod ENV, sabitler

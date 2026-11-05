@@ -1,4 +1,4 @@
-# ⚽ Penalty - Mobile Football Game Hub & Trivia Portal
+# ⚽ Doksan Dakika - Mobile Football Game Hub & Trivia Portal
 
 > **Teknopark Ön Kuluçka Standartlarında Profesyonel Mobil Oyun Altyapısı**  
 > *"İstemci Tarafında Ağır, Sunucu Tarafında Hafif" (Thick Client, Thin Server)*
@@ -6,7 +6,7 @@
 ---
 
 ## 📌 Proje Genel Bakışı
-**Penalty**, Süper Lig ve Avrupa'nın 5 Büyük Ligi'ni kapsayan, hibrit oyun döngüsüne (Sonsuz Seviye Haritası + 00:00 UTC Günün Sorusu) sahip, yüksek eşzamanlı trafiği (10.000+ CCU) sıfır gecikmeyle kaldırabilen çok modlu bir mobil futbol oyun portalıdır.
+**Doksan Dakika**, Süper Lig ve Avrupa'nın 5 Büyük Ligi'ni kapsayan, hibrit oyun döngüsüne (Sonsuz Seviye Haritası + 00:00 UTC Günün Sorusu) sahip, yüksek eşzamanlı trafiği (10.000+ CCU) sıfır gecikmeyle kaldırabilen çok modlu bir mobil futbol oyun portalıdır.
 
 ### 🎮 6 Profesyonel Oyun Modu:
 1. **Kim Bu Yıldız? (Scout Raporu - Who Are Ya?):** 8 kademeli netleşen bulanık fotoğraf ve Wordle benzeri nitelik karşılaştırmalarıyla futbolcuyu tahmin etme.
@@ -43,7 +43,7 @@ Detaylı mimari belgelendirme: [docs/ARCHITECTURE.md](file:///c:/Users/bedir/One
 
 ## 📁 Proje Dizin Yapısı
 ```
-penalty/
+doksan-dakika/
 ├── backend/                       # Node.js + Express + MongoDB Backend
 │   ├── src/
 │   │   ├── api/                   # REST API Controller ve Rotaları

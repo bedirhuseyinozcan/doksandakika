@@ -33,7 +33,8 @@ export function useActiveTheme(): IActiveThemeResult {
       primaryColor === '#FFFFFF' ||
       primaryColor === '#F4F4F5' ||
       primaryColor === '#EAB308' ||
-      primaryColor === '#00D084';
+      primaryColor === '#00D084' ||
+      primaryColor === '#C7FB07';
 
     const onPrimaryTextColor = isLightPrimary ? '#090909' : '#FFFFFF';
 

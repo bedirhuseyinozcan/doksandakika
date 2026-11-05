@@ -6,9 +6,9 @@ dotenv.config();
 const envSchema = z.object({
   PORT: z.string().default('5000').transform((val) => parseInt(val, 10)),
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-  MONGODB_URI: z.string().default('mongodb://127.0.0.1:27017/penalty_hub'),
+  MONGODB_URI: z.string().default('mongodb://127.0.0.1:27017/doksan_dakika'),
   CORS_ORIGIN: z.string().default('*'),
-  CDN_BASE_URL: z.string().default('https://assets.penaltyhub.com'),
+  CDN_BASE_URL: z.string().default('https://assets.doksandakika.com'),
   BLUR_STORAGE_PATH: z.string().default('./data/blurred'),
 });
 

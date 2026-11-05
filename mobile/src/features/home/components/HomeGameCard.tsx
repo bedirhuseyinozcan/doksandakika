@@ -35,7 +35,8 @@ export const HomeGameCard: React.FC<IHomeGameCardProps> = React.memo(
       themePrimaryColor === '#FFFFFF' ||
       themePrimaryColor === '#F4F4F5' ||
       themePrimaryColor === '#EAB308' ||
-      themePrimaryColor === '#00D084';
+      themePrimaryColor === '#00D084' ||
+      themePrimaryColor === '#C7FB07';
 
     const careerTextColor = isLightPrimary ? '#090909' : '#FFFFFF';
     const activeAccent = themePrimaryColor || Colors.accentPrimary;

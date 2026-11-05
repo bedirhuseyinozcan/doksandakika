@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   StatusBar,
   Platform,
+  Image,
 } from 'react-native';
 import { GameModeType } from '../api/dailyApi';
 import { useGameStore } from '../stores/useGameStore';
@@ -104,7 +105,8 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
     theme.primaryColor === '#FFFFFF' ||
     theme.primaryColor === '#F4F4F5' ||
     theme.primaryColor === '#EAB308' ||
-    theme.primaryColor === '#00D084';
+    theme.primaryColor === '#00D084' ||
+    theme.primaryColor === '#C7FB07';
 
   const rankInfo = useMemo(() => getRankByXp(xp), [xp]);
   const todayDate = useMemo(() => getAuthoritativeUtcDate(), []);
@@ -137,7 +139,12 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
         <View style={styles.header}>
           <View style={styles.brandCol}>
             <View style={styles.brandTitleRow}>
-              <Text style={styles.brandTitleMain}>PENALTY</Text>
+              <Image
+                source={require('../assets/doksandakika.png')}
+                style={styles.brandLogo}
+                resizeMode="contain"
+              />
+              <Text style={styles.brandTitleMain}>DOKSAN DAKİKA</Text>
               <View style={[styles.brandDot, { backgroundColor: theme.primaryColor }]} />
             </View>
             <Text style={styles.brandSubtitle}>ENDÜSTRİYEL FUTBOL TRIVIA SİSTEMİ</Text>
@@ -423,14 +430,19 @@ const styles = StyleSheet.create({
   brandTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
+  },
+  brandLogo: {
+    width: 26,
+    height: 26,
+    borderRadius: BorderRadius.sharp,
   },
   brandTitleMain: {
     ...Typography.hero,
-    fontSize: 22,
-    lineHeight: 26,
+    fontSize: 20,
+    lineHeight: 24,
     color: Colors.textPrimary,
-    letterSpacing: 1.5,
+    letterSpacing: 1.2,
   },
   brandDot: {
     width: 6,

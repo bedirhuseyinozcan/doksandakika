@@ -1,7 +1,7 @@
 {
-  "name": "penalty-backend",
+  "name": "doksan-dakika-backend",
   "version": "1.0.0",
-  "description": "Penalty Mobile Game Hub - High Performance Scalable Backend API & Pipeline",
+  "description": "Doksan Dakika Mobile Game Hub - High Performance Scalable Backend API & Pipeline",
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",

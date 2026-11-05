@@ -1,20 +1,26 @@
 {
   "expo": {
-    "name": "Penalty",
-    "slug": "penalty-hub",
+    "name": "Doksan Dakika",
+    "slug": "doksan-dakika",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/icon.png",
+    "icon": "./src/assets/doksandakika.png",
     "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./src/assets/doksandakika.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0D1117"
+    },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.penalty.hub"
+      "bundleIdentifier": "com.doksandakika.app"
     },
     "android": {
       "adaptiveIcon": {
+        "foregroundImage": "./src/assets/doksandakika.png",
         "backgroundColor": "#0D1117"
       },
-      "package": "com.penalty.hub",
+      "package": "com.doksandakika.app",
       "usesCleartextTraffic": true
     },
     "androidNavigationBar": {
@@ -22,7 +28,9 @@
       "barStyle": "light-content"
     },
     "web": {
-      "favicon": "./src/assets/favicon.png"
+      "name": "Doksan Dakika",
+      "shortName": "Doksan Dakika",
+      "favicon": "./src/assets/doksandakika.png"
     },
     "extra": {
       "eas": {

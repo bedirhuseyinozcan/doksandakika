@@ -841,7 +841,7 @@ function doesProfileMatchRequestedNames(
 }
 
 const WIKI_USER_AGENT =
-  'PenaltyLegendSync/1.0 (https://github.com/penalty-hub; contact@penaltyhub.org)';
+  'DoksanDakikaLegendSync/1.0 (https://github.com/doksan-dakika; contact@doksandakika.org)';
 
 async function resolveTmidsBatchViaWikidata(
   names: string[]

@@ -8,7 +8,7 @@ const startServer = async () => {
   const app = createApp();
 
   const server = app.listen(ENV.PORT, () => {
-    console.log(`🚀 Penalty Hub Backend running in [${ENV.NODE_ENV}] mode on port ${ENV.PORT}`);
+    console.log(`🚀 Doksan Dakika Backend running in [${ENV.NODE_ENV}] mode on port ${ENV.PORT}`);
     console.log(`📡 Health Check: http://localhost:${ENV.PORT}/api/v1/system/health`);
     console.log(`⏰ Anti-Cheat Server Time: http://localhost:${ENV.PORT}/api/v1/system/time`);
   });

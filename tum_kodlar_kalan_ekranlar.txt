@@ -29,9 +29,10 @@ import { DailyHeaderCard } from '../features/daily/components/DailyHeaderCard';
 import { DailyCompletedBanner } from '../features/daily/components/DailyCompletedBanner';
 import { GameNavbar } from '../components/common/GameNavbar';
 import { useChallengeDataLoader } from '../hooks/useChallengeDataLoader';
+import { useActiveTheme } from '../hooks/useActiveTheme';
 import { searchEngine } from '../services/searchEngine';
 import { Colors } from '../theme/colors';
-import { Spacing, BorderRadius } from '../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../theme/spacing';
 import { Typography } from '../theme/typography';
 
 const LEAGUE_LABELS: Record<string, string> = {
@@ -53,6 +54,7 @@ interface IClubLogoScreenProps {
 
 export const ClubLogoScreen: React.FC<IClubLogoScreenProps> = React.memo(
   ({ isDaily = false, initialLevel, isReplay = false, onBack, onOpenMap }) => {
+    const { primaryColor, onPrimaryTextColor } = useActiveTheme();
     const {
       isLoading,
       challengeData,
@@ -143,7 +145,7 @@ export const ClubLogoScreen: React.FC<IClubLogoScreenProps> = React.memo(
     if (isLoading) {
       return (
         <SafeAreaView style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={Colors.primary} />
+          <ActivityIndicator size="large" color={primaryColor} />
           <Text style={styles.loadingText}>Kulüp arması hazırlanıyor...</Text>
         </SafeAreaView>
       );
@@ -151,15 +153,15 @@ export const ClubLogoScreen: React.FC<IClubLogoScreenProps> = React.memo(
 
     const navTitle = isDaily ? 'Günün Arması' : `Seviye ${currentLevel}`;
     const isRevealed = gameStatus !== 'playing';
-    const blurRadius = isRevealed
-      ? 0
-      : Math.max(4, (maxAttempts - guesses.length) * 5);
+    const remainingRatio = Math.max(0, (maxAttempts - guesses.length) / maxAttempts);
+    const blurRadius = isRevealed ? 0 : Math.round(remainingRatio * 10);
     const clarityPercent = isRevealed
       ? 100
-      : Math.min(90, Math.round(((guesses.length + 1) / maxAttempts) * 85));
+      : Math.min(95, Math.round(40 + (1 - remainingRatio) * 55));
 
     return (
       <SafeAreaView style={styles.safeArea}>
+        <View style={{ height: Borders.thick, width: '100%', backgroundColor: primaryColor }} />
         <GameNavbar
           title={navTitle}
           isReplay={isCurrentReplay && !isDaily}
@@ -180,8 +182,25 @@ export const ClubLogoScreen: React.FC<IClubLogoScreenProps> = React.memo(
           )}
 
           <Animated.View style={[styles.heroCard, animatedStyle]}>
-            <View style={styles.clarityBadge}>
-              <Text style={styles.clarityText}>🔍 Netlik: %{clarityPercent}</Text>
+            <View
+              style={[
+                styles.clarityBadge,
+                isRevealed && [styles.clarityBadgeSolved, { backgroundColor: primaryColor, borderColor: primaryColor }],
+              ]}
+            >
+              <Text
+                style={[
+                  styles.clarityText,
+                  { color: primaryColor },
+                  isRevealed && [styles.clarityTextSolved, { color: onPrimaryTextColor }],
+                ]}
+              >
+                {gameStatus === 'won'
+                  ? '✓ BİLDİNİZ! • %100 NETLİK'
+                  : isRevealed
+                  ? '🏁 HEDEF ARMA • %100 NETLİK'
+                  : `🔍 Netlik: %${clarityPercent}`}
+              </Text>
             </View>
 
             <View style={styles.crestCircle}>
@@ -200,7 +219,7 @@ export const ClubLogoScreen: React.FC<IClubLogoScreenProps> = React.memo(
                   style={[
                     styles.crestImage,
                     !isRevealed && {
-                      transform: [{ scale: 1 + (maxAttempts - guesses.length) * 0.08 }],
+                      transform: [{ scale: 1 + remainingRatio * 0.05 }],
                     },
                     Platform.OS === 'web' && blurRadius > 0
                       ? ({
@@ -218,9 +237,11 @@ export const ClubLogoScreen: React.FC<IClubLogoScreenProps> = React.memo(
               )}
             </View>
 
-            <Text style={styles.heroCaption}>
-              {isRevealed
-                ? `🛡️ ${targetClubName}`
+            <Text style={[styles.heroCaption, isRevealed && [styles.heroCaptionSolved, { color: primaryColor }]]}>
+              {gameStatus === 'won'
+                ? `🛡️ TEBRİKLER! BİLDİNİZ: ${targetClubName.toUpperCase()}`
+                : isRevealed
+                ? `🛡️ HEDEF KULÜP: ${targetClubName.toUpperCase()}`
                 : 'Her yanlış tahminde kulüp arması biraz daha netleşir!'}
             </Text>
           </Animated.View>
@@ -279,12 +300,12 @@ export const ClubLogoScreen: React.FC<IClubLogoScreenProps> = React.memo(
         {gameStatus === 'playing' ? (
           <View style={styles.bottomBar}>
             <TouchableOpacity
-              style={styles.guessBtn}
+              style={[styles.guessBtn, { backgroundColor: primaryColor }]}
               activeOpacity={0.7}
               onPress={openSearch}
               hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
             >
-              <Text style={styles.guessBtnText}>🛡️ Kulüp Tahmin Et</Text>
+              <Text style={[styles.guessBtnText, { color: onPrimaryTextColor }]}>🛡️ Kulüp Tahmin Et</Text>
             </TouchableOpacity>
           </View>
         ) : isDaily ? (
@@ -294,7 +315,25 @@ export const ClubLogoScreen: React.FC<IClubLogoScreenProps> = React.memo(
             maxAttempts={maxAttempts}
             onOpenResultModal={() => setIsResultModalVisible(true)}
           />
-        ) : null}
+        ) : (
+          <View style={styles.solvedActionBanner}>
+            <View>
+              <Text style={[styles.solvedActionTitle, { color: primaryColor }]}>
+                {gameStatus === 'won' ? '✓ BİLDİNİZ!' : '🏁 OYUN BİTTİ'}
+              </Text>
+              <Text style={styles.solvedActionSubtitle}>
+                {targetClubName} • {guesses.length}/{maxAttempts} Deneme
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={styles.reopenModalBtn}
+              onPress={() => setIsResultModalVisible(true)}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.reopenModalBtnText}>📊 Sonuç Ekranı</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
         <OfflineClubSearchModal
           visible={isSearchModalVisible}
@@ -371,29 +410,40 @@ const styles = StyleSheet.create({
     margin: Spacing.md,
     padding: Spacing.lg,
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
-    borderWidth: 1,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
     alignItems: 'center',
   },
   clarityBadge: {
     backgroundColor: Colors.surfaceLight,
     paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: BorderRadius.full,
+    paddingVertical: 3,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
     marginBottom: Spacing.md,
   },
+  clarityBadgeSolved: {
+    backgroundColor: Colors.accentPrimary,
+    borderColor: Colors.accentPrimary,
+  },
   clarityText: {
-    color: Colors.primary,
-    fontSize: 12,
+    ...Typography.monoMeta,
+    color: Colors.accentPrimary,
+    fontSize: 11,
     fontWeight: '700',
+  },
+  clarityTextSolved: {
+    color: '#090909',
+    fontWeight: '800',
   },
   crestCircle: {
     width: 148,
     height: 148,
-    borderRadius: 74,
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    borderWidth: 2,
+    borderRadius: BorderRadius.sharp,
+    backgroundColor: Colors.surfaceLight,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
@@ -405,9 +455,15 @@ const styles = StyleSheet.create({
     height: 108,
   },
   heroCaption: {
-    ...Typography.caption,
-    color: Colors.textSecondary,
+    ...Typography.statBadge,
+    color: Colors.textMuted,
     textAlign: 'center',
+    fontSize: 10,
+    letterSpacing: 0.6,
+  },
+  heroCaptionSolved: {
+    color: Colors.accentPrimary,
+    fontWeight: '800',
   },
   hintContainer: {
     paddingHorizontal: Spacing.md,
@@ -418,21 +474,24 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xs,
   },
   sectionTitle: {
-    ...Typography.bodyBold,
-    color: Colors.textPrimary,
+    ...Typography.statBadge,
+    color: Colors.textMuted,
     marginBottom: Spacing.sm,
+    fontSize: 10,
+    letterSpacing: 0.8,
   },
   emptyBox: {
     backgroundColor: Colors.surface,
     padding: Spacing.lg,
-    borderRadius: BorderRadius.md,
-    borderWidth: 1,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
     alignItems: 'center',
   },
   emptyText: {
-    color: Colors.textSecondary,
-    fontSize: 13,
+    ...Typography.caption,
+    color: Colors.textMuted,
+    fontSize: 12,
     textAlign: 'center',
   },
   guessRow: {
@@ -440,13 +499,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: Spacing.md,
-    borderRadius: BorderRadius.md,
-    marginBottom: Spacing.sm,
-    borderWidth: 1,
+    borderRadius: BorderRadius.sharp,
+    marginBottom: Spacing.xs + 2,
+    borderWidth: Borders.thin,
   },
   guessRowCorrect: {
-    backgroundColor: 'rgba(16, 185, 129, 0.14)',
-    borderColor: Colors.primary,
+    backgroundColor: Colors.surfaceLight,
+    borderColor: Colors.success,
   },
   guessRowWrong: {
     backgroundColor: Colors.surface,
@@ -458,55 +517,95 @@ const styles = StyleSheet.create({
   guessClubName: {
     ...Typography.bodyBold,
     color: Colors.textPrimary,
-    fontSize: 15,
+    fontSize: 14,
+    letterSpacing: -0.2,
   },
   guessSub: {
     ...Typography.caption,
-    color: Colors.textSecondary,
+    color: Colors.textMuted,
     marginTop: 2,
+    fontSize: 11,
   },
   leaguePill: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: BorderRadius.full,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
   },
   pillSuccess: {
-    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+    backgroundColor: Colors.surfaceLight,
+    borderColor: Colors.success,
   },
   pillWrong: {
-    backgroundColor: 'rgba(239, 68, 68, 0.2)',
+    backgroundColor: Colors.surfaceLight,
+    borderColor: Colors.border,
   },
   pillText: {
+    ...Typography.statBadge,
     color: Colors.textPrimary,
-    fontSize: 11,
-    fontWeight: '700',
+    fontSize: 9.5,
   },
   bottomBar: {
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.sm,
     paddingBottom: Platform.OS === 'android' ? 44 : Spacing.md,
-    borderTopWidth: 1,
+    borderTopWidth: Borders.thin,
     borderTopColor: Colors.border,
     backgroundColor: Colors.surface,
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
   },
   guessBtn: {
-    backgroundColor: Colors.primary,
-    minHeight: 52,
+    backgroundColor: Colors.accentPrimary,
+    minHeight: 48,
     justifyContent: 'center',
-    borderRadius: 12,
+    borderRadius: BorderRadius.sharp,
     alignItems: 'center',
     marginBottom: Platform.OS === 'android' ? 4 : 0,
   },
   guessBtnText: {
-    ...Typography.bodyBold,
-    color: Colors.background,
-    fontSize: 16,
+    ...Typography.statBadge,
+    color: '#090909',
+    fontSize: 13,
+    letterSpacing: 0.8,
     fontWeight: '800',
+  },
+  solvedActionBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm + 2,
+    marginHorizontal: Spacing.md,
+    marginBottom: Platform.OS === 'android' ? 44 : Spacing.md,
+    backgroundColor: Colors.surface,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
+    borderRadius: BorderRadius.sharp,
+  },
+  solvedActionTitle: {
+    ...Typography.statBadge,
+    color: Colors.accentPrimary,
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  solvedActionSubtitle: {
+    ...Typography.caption,
+    color: Colors.textMuted,
+    fontSize: 11,
+    marginTop: 2,
+  },
+  reopenModalBtn: {
+    backgroundColor: Colors.surfaceLight,
+    borderWidth: Borders.thin,
+    borderColor: Colors.borderLight,
+    paddingVertical: 6,
+    paddingHorizontal: Spacing.sm,
+    borderRadius: BorderRadius.sharp,
+  },
+  reopenModalBtnText: {
+    ...Typography.statBadge,
+    color: Colors.textPrimary,
+    fontSize: 11,
   },
 });
 
@@ -535,10 +634,11 @@ import { HintWithAdButton } from '../features/monetization/components/HintWithAd
 import { useInterstitialAd } from '../features/monetization/hooks/useInterstitialAd';
 import { WhoAreYaWinModal } from '../features/whoAreYa/components/WhoAreYaWinModal';
 import { useChallengeDataLoader } from '../hooks/useChallengeDataLoader';
+import { useActiveTheme } from '../hooks/useActiveTheme';
 import { getAuthoritativeUtcDate } from '../services/authoritativeTime';
 import { shareService } from '../services/shareService';
 import { Colors } from '../theme/colors';
-import { Spacing } from '../theme/spacing';
+import { Spacing, Borders } from '../theme/spacing';
 import { Typography } from '../theme/typography';
 
 interface IFootballBingoScreenProps {
@@ -551,6 +651,7 @@ interface IFootballBingoScreenProps {
 
 export const FootballBingoScreen: React.FC<IFootballBingoScreenProps> = React.memo(
   ({ isDaily = false, initialLevel, isReplay = false, onBack, onOpenMap }) => {
+    const { primaryColor } = useActiveTheme();
     const {
       isLoading,
       currentLevel,
@@ -618,7 +719,7 @@ export const FootballBingoScreen: React.FC<IFootballBingoScreenProps> = React.me
     if (isLoading) {
       return (
         <SafeAreaView style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={Colors.primary} />
+          <ActivityIndicator size="large" color={primaryColor} />
           <Text style={styles.loadingText}>Bingo Tahtası & Deste Hazırlanıyor...</Text>
         </SafeAreaView>
       );
@@ -628,6 +729,7 @@ export const FootballBingoScreen: React.FC<IFootballBingoScreenProps> = React.me
 
     return (
       <SafeAreaView style={styles.safeArea}>
+        <View style={{ height: Borders.thick, width: '100%', backgroundColor: primaryColor }} />
         <GameNavbar
           title={navTitle}
           isReplay={isCurrentReplay && !isDaily}
@@ -782,10 +884,11 @@ import { HintWithAdButton } from '../features/monetization/components/HintWithAd
 import { useInterstitialAd } from '../features/monetization/hooks/useInterstitialAd';
 import { WhoAreYaWinModal } from '../features/whoAreYa/components/WhoAreYaWinModal';
 import { useChallengeDataLoader } from '../hooks/useChallengeDataLoader';
+import { useActiveTheme } from '../hooks/useActiveTheme';
 import { getAuthoritativeUtcDate } from '../services/authoritativeTime';
 import { shareService } from '../services/shareService';
 import { Colors } from '../theme/colors';
-import { Spacing, BorderRadius } from '../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../theme/spacing';
 import { Typography } from '../theme/typography';
 
 interface ITicTacToeScreenProps {
@@ -798,6 +901,7 @@ interface ITicTacToeScreenProps {
 
 export const TicTacToeScreen: React.FC<ITicTacToeScreenProps> = React.memo(
   ({ isDaily = false, initialLevel, isReplay = false, onBack, onOpenMap }) => {
+    const { primaryColor, onPrimaryTextColor } = useActiveTheme();
     const {
       isLoading,
       currentLevel,
@@ -868,7 +972,7 @@ export const TicTacToeScreen: React.FC<ITicTacToeScreenProps> = React.memo(
     if (isLoading) {
       return (
         <SafeAreaView style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={Colors.primary} />
+          <ActivityIndicator size="large" color={primaryColor} />
           <Text style={styles.loadingText}>Tiki-Taka Hazırlanıyor...</Text>
         </SafeAreaView>
       );
@@ -878,6 +982,7 @@ export const TicTacToeScreen: React.FC<ITicTacToeScreenProps> = React.memo(
 
     return (
       <SafeAreaView style={styles.safeArea}>
+        <View style={{ height: Borders.thick, width: '100%', backgroundColor: primaryColor }} />
         <GameNavbar
           title={navTitle}
           isReplay={isCurrentReplay && !isDaily}
@@ -900,21 +1005,29 @@ export const TicTacToeScreen: React.FC<ITicTacToeScreenProps> = React.memo(
           <View style={styles.metaRow}>
             <View style={styles.progressPill}>
               <Text style={styles.progressText}>
-                Doldurulan: <Text style={styles.progressHighlight}>{filledCount}/9</Text>
+                Doldurulan: <Text style={[styles.progressHighlight, { color: primaryColor }]}>{filledCount}/9</Text>
               </Text>
             </View>
+            <View style={styles.attemptsPill}>
+              <Text style={styles.attemptsText}>
+                Kalan Hak: <Text style={styles.attemptsHighlight}>{attemptsLeft}</Text>
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.actionContainer}>
             <TouchableOpacity
-              style={styles.jokerSearchBtn}
+              style={[styles.directSearchBtn, { borderColor: primaryColor }]}
               activeOpacity={0.8}
               onPress={openGeneralSearch}
               disabled={gameStatus !== 'playing'}
             >
-              <Text style={styles.jokerSearchText}>⚡ Serbest Oyuncu Ara</Text>
+              <Text style={[styles.directSearchText, { color: primaryColor }]}>🔍 FUTBOLCU ARA & DOLDUR</Text>
+              <Text style={styles.directSearchSubtext}>
+                Tek aramada uyan tüm açık kutuları (1-3 kutu) birden doldurur
+              </Text>
             </TouchableOpacity>
           </View>
-          <Text style={styles.rulesHintSub}>
-            Kutu seçebilir veya yukarıdan bir futbolcu aratarak birden fazla kutuyu birden doldurabilirsin!
-          </Text>
 
           {lastFeedback && (
             <View style={styles.feedbackBanner}>
@@ -1036,59 +1149,80 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
     paddingVertical: 3,
     paddingHorizontal: Spacing.sm,
-    borderRadius: BorderRadius.sm,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
   },
   progressText: {
-    ...Typography.caption,
-    color: Colors.textSecondary,
+    ...Typography.monoMeta,
+    color: Colors.textMuted,
+    fontSize: 11,
   },
   progressHighlight: {
-    color: Colors.primary,
-    fontWeight: '700',
+    color: Colors.accentPrimary,
+    fontWeight: '800',
   },
-  rulesHint: {
+  attemptsPill: {
+    backgroundColor: Colors.surface,
+    paddingVertical: 3,
+    paddingHorizontal: Spacing.sm,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
+  },
+  attemptsText: {
+    ...Typography.monoMeta,
+    color: Colors.textMuted,
+    fontSize: 11,
+  },
+  attemptsHighlight: {
+    color: Colors.textPrimary,
+    fontWeight: '800',
+  },
+  actionContainer: {
+    paddingHorizontal: Spacing.md,
+    marginTop: Spacing.xs,
+    marginBottom: Spacing.xs,
+  },
+  directSearchBtn: {
+    backgroundColor: Colors.surfaceLight,
+    borderWidth: Borders.thin,
+    borderColor: Colors.accentPrimary,
+    paddingVertical: Spacing.sm + 2,
+    paddingHorizontal: Spacing.md,
+    borderRadius: BorderRadius.sharp,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  directSearchText: {
+    ...Typography.statBadge,
+    color: Colors.accentPrimary,
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+  },
+  directSearchSubtext: {
     ...Typography.caption,
     color: Colors.textMuted,
     fontSize: 10,
-  },
-  rulesHintSub: {
-    ...Typography.caption,
-    color: Colors.textMuted,
-    fontSize: 11,
-    paddingHorizontal: Spacing.md,
-    marginBottom: Spacing.xs,
-  },
-  jokerSearchBtn: {
-    backgroundColor: 'rgba(59, 130, 246, 0.18)',
-    borderWidth: 1,
-    borderColor: 'rgba(59, 130, 246, 0.5)',
-    paddingVertical: 5,
-    paddingHorizontal: Spacing.sm,
-    borderRadius: BorderRadius.md,
-  },
-  jokerSearchText: {
-    ...Typography.caption,
-    color: '#60A5FA',
-    fontWeight: '700',
-    fontSize: 11,
+    marginTop: 2,
   },
   feedbackBanner: {
     backgroundColor: Colors.surfaceLight,
-    paddingVertical: 5,
+    paddingVertical: 6,
     paddingHorizontal: Spacing.md,
     marginHorizontal: Spacing.md,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.sharp,
     marginBottom: Spacing.xs,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
   },
   feedbackBannerText: {
-    ...Typography.captionBold,
+    ...Typography.statBadge,
     color: Colors.textPrimary,
     textAlign: 'center',
     fontSize: 11,
+    letterSpacing: 0.5,
   },
   hintContainer: {
     paddingHorizontal: Spacing.md,
@@ -1101,16 +1235,17 @@ const styles = StyleSheet.create({
 DOSYA: mobile\src\screens\HomeScreen.tsx
 ==============================
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
+  TouchableOpacity,
   SafeAreaView,
   StatusBar,
-  TouchableOpacity,
   Platform,
+  Image,
 } from 'react-native';
 import { GameModeType } from '../api/dailyApi';
 import { useGameStore } from '../stores/useGameStore';
@@ -1120,11 +1255,19 @@ import { getAuthoritativeUtcDate } from '../services/authoritativeTime';
 import { PlayerStatsModal } from '../features/stats/components/PlayerStatsModal';
 import { ScoutShopModal } from '../features/shop/components/ScoutShopModal';
 import { getCosmeticById } from '../features/shop/catalog';
-import { HomeGameCard } from '../features/home/components/HomeGameCard';
-import { HomeBottomNav } from '../features/home/components/HomeBottomNav';
 import { SettingsModal } from '../features/settings/components/SettingsModal';
+import { HomeGameCard } from '../features/home/components/HomeGameCard';
+import { HomeBottomNav, HomeNavTab } from '../features/home/components/HomeBottomNav';
+import {
+  ScanFace,
+  Route,
+  Shield,
+  Flame,
+  Grid3x3,
+  LayoutGrid,
+} from 'lucide-react-native';
 import { Colors } from '../theme/colors';
-import { Spacing, BorderRadius } from '../theme/spacing';
+import { Spacing, BorderRadius, Borders } from '../theme/spacing';
 import { Typography } from '../theme/typography';
 
 export type AppScreenType =
@@ -1138,18 +1281,15 @@ export type AppScreenType =
   | 'levelMap';
 
 interface IHomeScreenProps {
-  onNavigate: (
-    screen: AppScreenType,
-    isDaily?: boolean,
-    gameMode?: GameModeType
-  ) => void;
+  onNavigate: (screen: AppScreenType, isDaily?: boolean, mode?: GameModeType) => void;
 }
 
 export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }) => {
   const coins = useGameStore((s) => s.coins);
-  const xp = useGameStore((s) => s.xp);
   const currentStreak = useGameStore((s) => s.currentStreak);
   const isDailyCompleted = useGameStore((s) => s.isDailyCompleted);
+  const xp = useGameStore((s) => s.xp);
+
   const selectedLeagueMode = useSettingsStore((s) => s.selectedLeagueMode);
   const setLeagueMode = useSettingsStore((s) => s.setLeagueMode);
 
@@ -1157,7 +1297,7 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
   const [isShopModalVisible, setIsShopModalVisible] = useState(false);
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
 
-  const activeTab = useMemo<'play' | 'shop' | 'stats' | 'settings'>(() => {
+  const activeTab: HomeNavTab = useMemo(() => {
     if (isShopModalVisible) return 'shop';
     if (isStatsModalVisible) return 'stats';
     if (isSettingsModalVisible) return 'settings';
@@ -1201,7 +1341,8 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
     theme.primaryColor === '#FBBF24' ||
     theme.primaryColor === '#FFFFFF' ||
     theme.primaryColor === '#F4F4F5' ||
-    theme.primaryColor === '#EAB308';
+    theme.primaryColor === '#EAB308' ||
+    theme.primaryColor === '#00D084';
 
   const rankInfo = useMemo(() => getRankByXp(xp), [xp]);
   const todayDate = useMemo(() => getAuthoritativeUtcDate(), []);
@@ -1222,16 +1363,27 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="light-content" backgroundColor={Colors.background} />
+
+      {/* Industrial Architectural Top Edge Accent */}
       <View
-        style={[styles.ambientGlow, { backgroundColor: theme.accentGlow }]}
+        style={[styles.topAccentBar, { backgroundColor: theme.primaryColor }]}
         pointerEvents="none"
       />
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.container}>
+        {/* Brand Header */}
         <View style={styles.header}>
           <View style={styles.brandCol}>
-            <Text style={[styles.brandTitle, { color: theme.primaryColor }]}>PENALTY</Text>
-            <Text style={styles.brandSubtitle}>Futbol Oyun Portalı</Text>
+            <View style={styles.brandTitleRow}>
+              <Image
+                source={require('../assets/doksandakika.png')}
+                style={styles.brandLogo}
+                resizeMode="contain"
+              />
+              <Text style={styles.brandTitleMain}>DOKSAN DAKİKA</Text>
+              <View style={[styles.brandDot, { backgroundColor: theme.primaryColor }]} />
+            </View>
+            <Text style={styles.brandSubtitle}>ENDÜSTRİYEL FUTBOL TRIVIA SİSTEMİ</Text>
           </View>
 
           <View style={styles.currencyRow}>
@@ -1245,31 +1397,30 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
             </TouchableOpacity>
 
             <View style={styles.currencyBadge}>
-              <Text style={styles.currencyText}>🪙 {coins}</Text>
+              <Text style={[styles.currencyText, { color: theme.primaryColor }]}>🪙 {coins}</Text>
             </View>
           </View>
         </View>
 
+        {/* Hero Scout & Fan Card */}
         <TouchableOpacity
           style={[
             styles.heroScoutCard,
             {
-              borderColor: theme.cardBorder,
+              borderColor: theme.cardBorder || Colors.border,
               borderLeftColor: theme.primaryColor,
-              shadowColor: theme.primaryColor,
             },
           ]}
           activeOpacity={0.88}
           onPress={() => setIsStatsModalVisible(true)}
         >
-          {/* Üst Kısım: Avatar + Rütbe & Kozmetik Başlık + İlerleme Yüzdesi */}
           <View style={styles.heroScoutHeader}>
             <View
               style={[
-                styles.heroAvatarCircle,
+                styles.heroAvatarSquare,
                 {
                   borderColor: theme.primaryColor,
-                  shadowColor: theme.primaryColor,
+                  backgroundColor: theme.accentGlow || Colors.surfaceLight,
                 },
               ]}
             >
@@ -1283,11 +1434,14 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
                 </Text>
                 <View
                   style={[
-                    styles.heroCosmeticPill,
-                    { backgroundColor: equippedCosmetic.themeGlowColor },
+                    styles.heroCosmeticBadge,
+                    {
+                      borderColor: theme.primaryColor,
+                      backgroundColor: theme.accentGlow || Colors.surfaceLight,
+                    },
                   ]}
                 >
-                  <Text style={[styles.heroCosmeticPillText, { color: theme.primaryColor }]}>
+                  <Text style={[styles.heroCosmeticBadgeText, { color: theme.primaryColor }]}>
                     {theme.teamBadgeEmojis} {equippedCosmetic.titleBadge}
                   </Text>
                 </View>
@@ -1295,13 +1449,13 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
 
               <View style={styles.heroScoutMetaRow}>
                 <Text style={styles.heroStadiumText}>
-                  🏟️ {theme.stadiumName}
+                  {theme.stadiumName}
                 </Text>
-                <Text style={styles.heroMetaDot}>•</Text>
+                <Text style={styles.heroMetaDot}>|</Text>
                 <Text style={styles.heroXpText}>
                   {rankInfo.tier === 4
-                    ? 'Zirve Rütbe'
-                    : `${rankInfo.xpNeededForNext} XP kaldı`}
+                    ? 'MAKSİMUM RÜTBE'
+                    : `${rankInfo.xpNeededForNext} XP KALDI`}
                 </Text>
               </View>
             </View>
@@ -1310,11 +1464,11 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
               <Text style={[styles.heroProgressPercent, { color: theme.primaryColor }]}>
                 %{rankInfo.currentProgressInTier}
               </Text>
-              <Text style={styles.heroStatsHint}>İstatistik ➔</Text>
+              <Text style={styles.heroStatsHint}>DETAY ➔</Text>
             </View>
           </View>
 
-          {/* İlerleme Çubuğu */}
+          {/* Precision Industrial Progress Line */}
           <View style={styles.heroProgressBarBg}>
             <View
               style={[
@@ -1327,16 +1481,18 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
             />
           </View>
 
-          {/* Alt Kısım: Canlı Tribün Tezahüratı Şeridi */}
-          <View style={[styles.heroAtmosphereStrip, { backgroundColor: theme.accentGlow }]}>
-            <View style={[styles.pulseDot, { backgroundColor: theme.primaryColor }]} />
+          {/* Fan Atmosphere Banner */}
+          <View style={[styles.heroAtmosphereStrip, { borderColor: theme.cardBorder || Colors.border }]}>
+            <View style={[styles.pulseSquare, { backgroundColor: theme.primaryColor }]} />
             <Text style={styles.heroChantText} numberOfLines={1}>
               {theme.anthemChant}
             </Text>
           </View>
         </TouchableOpacity>
+
+        {/* Mode Switcher Container */}
         <View style={styles.modeSwitcherContainer}>
-          <Text style={styles.sectionTitle}>Lig Modu Seçimi</Text>
+          <Text style={styles.sectionTitle}>LİG KAPSAMI</Text>
           <View style={styles.tabContainer}>
             <TouchableOpacity
               style={[
@@ -1350,12 +1506,12 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
                 style={[
                   styles.tabText,
                   isSuperLig && {
-                    color: isLightPrimary ? '#0B0E14' : '#FFFFFF',
-                    fontWeight: '900',
+                    color: isLightPrimary ? '#090909' : '#FFFFFF',
+                    fontWeight: '800',
                   },
                 ]}
               >
-                🇹🇷 Süper Lig
+                🇹🇷 SÜPER LİG
               </Text>
             </TouchableOpacity>
 
@@ -1371,21 +1527,23 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
                 style={[
                   styles.tabText,
                   !isSuperLig && {
-                    color: isLightPrimary ? '#0B0E14' : '#FFFFFF',
-                    fontWeight: '900',
+                    color: isLightPrimary ? '#090909' : '#FFFFFF',
+                    fontWeight: '800',
                   },
                 ]}
               >
-                🌍 5 Büyük Lig (Global)
+                🌍 5 BÜYÜK LİG (GLOBAL)
               </Text>
             </TouchableOpacity>
           </View>
         </View>
+
+        {/* Game Mode Cards */}
         <HomeGameCard
-          emoji="🕵️‍♂️"
+          icon={<ScanFace size={22} color={theme.primaryColor} strokeWidth={2.2} />}
           title="Kim Bu Yıldız?"
           subtitle="Bulanık fotoğraftan ve ipuçlarından futbolcuyu tahmin et"
-          dailyBtnText={isWhoAreYaDailyCompleted ? '✅ Günün Sorusu (Çözüldü)' : '📅 Günün Sorusu'}
+          dailyBtnText={isWhoAreYaDailyCompleted ? '✓ GÜNÜN SORUSU' : '📅 GÜNÜN SORUSU'}
           themePrimaryColor={theme.primaryColor}
           themeBorderColor={theme.cardBorder}
           onPressDaily={() => onNavigate('whoAreYa', true, 'whoAreYa')}
@@ -1393,10 +1551,10 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
         />
 
         <HomeGameCard
-          emoji="🧭"
+          icon={<Route size={22} color={theme.primaryColor} strokeWidth={2.2} />}
           title="Transfer Rotası"
           subtitle="Kariyerinde oynadığı kulüpleri takip ederek yıldızı bul"
-          dailyBtnText={isCareerDailyCompleted ? '✅ Günün Sorusu (Çözüldü)' : '📅 Günün Sorusu'}
+          dailyBtnText={isCareerDailyCompleted ? '✓ GÜNÜN SORUSU' : '📅 GÜNÜN SORUSU'}
           themePrimaryColor={theme.primaryColor}
           themeBorderColor={theme.cardBorder}
           onPressDaily={() => onNavigate('careerPath', true, 'careerPath')}
@@ -1404,10 +1562,10 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
         />
 
         <HomeGameCard
-          emoji="🛡️"
+          icon={<Shield size={22} color={theme.primaryColor} strokeWidth={2.2} />}
           title="Arma Avcısı"
-          subtitle="Gizlenmiş ve bulanıklaştırılmış kulüp armasından takımı bul"
-          dailyBtnText={isClubLogoDailyCompleted ? '✅ Günün Sorusu (Çözüldü)' : '📅 Günün Sorusu'}
+          subtitle="Gizlenmiş ve netleştirilen kulüp armasından takımı bul"
+          dailyBtnText={isClubLogoDailyCompleted ? '✓ GÜNÜN SORUSU' : '📅 GÜNÜN SORUSU'}
           themePrimaryColor={theme.primaryColor}
           themeBorderColor={theme.cardBorder}
           onPressDaily={() => onNavigate('clubLogo', true, 'clubLogo')}
@@ -1415,10 +1573,10 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
         />
 
         <HomeGameCard
-          emoji="🔥"
+          icon={<Flame size={22} color={theme.primaryColor} strokeWidth={2.2} />}
           title="Sıcak Temas"
-          subtitle="Sıcak-soğuk benzerlik sinyallerini takip ederek #1 numaralı yıldızı bul"
-          dailyBtnText={isContextinhoDailyCompleted ? '✅ Günün Sorusu (Çözüldü)' : '📅 Günün Sorusu'}
+          subtitle="Sıcak-soğuk benzerlik sinyalleriyle #1 numaralı yıldızı bul"
+          dailyBtnText={isContextinhoDailyCompleted ? '✓ GÜNÜN SORUSU' : '📅 GÜNÜN SORUSU'}
           themePrimaryColor={theme.primaryColor}
           themeBorderColor={theme.cardBorder}
           onPressDaily={() => onNavigate('contextinho', true, 'contextinho')}
@@ -1426,10 +1584,10 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
         />
 
         <HomeGameCard
-          emoji="🎯"
+          icon={<Grid3x3 size={22} color={theme.primaryColor} strokeWidth={2.2} />}
           title="Tiki-Taka (3x3)"
           subtitle="Kriter kesişimlerine (Kulüp × Mevki/Uyruk) uyan futbolcuları bul"
-          dailyBtnText={isTicTacToeDailyCompleted ? '✅ Günün Sorusu (Çözüldü)' : '📅 Günün Sorusu'}
+          dailyBtnText={isTicTacToeDailyCompleted ? '✓ GÜNÜN SORUSU' : '📅 GÜNÜN SORUSU'}
           themePrimaryColor={theme.primaryColor}
           themeBorderColor={theme.cardBorder}
           onPressDaily={() => onNavigate('ticTacToe', true, 'ticTacToe')}
@@ -1437,10 +1595,10 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
         />
 
         <HomeGameCard
-          emoji="🔢"
+          icon={<LayoutGrid size={22} color={theme.primaryColor} strokeWidth={2.2} />}
           title="Futbol Bingo (4x4)"
-          subtitle="42 kişilik desteden gelen futbolcuları doğru kriter kutularına yerleştir"
-          dailyBtnText={isBingoDailyCompleted ? '✅ Günün Sorusu (Çözüldü)' : '📅 Günün Sorusu'}
+          subtitle="42 kişilik desteden gelen futbolcuları doğru kriterlere yerleştir"
+          dailyBtnText={isBingoDailyCompleted ? '✓ GÜNÜN SORUSU' : '📅 GÜNÜN SORUSU'}
           themePrimaryColor={theme.primaryColor}
           themeBorderColor={theme.cardBorder}
           onPressDaily={() => onNavigate('footballBingo', true, 'footballBingo')}
@@ -1448,6 +1606,7 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
         />
       </ScrollView>
 
+      {/* Industrial Bottom Navigation */}
       <HomeBottomNav
         primaryColor={theme.primaryColor}
         activeTab={activeTab}
@@ -1481,17 +1640,11 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: Colors.background,
-    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) + Spacing.xs : 0,
+    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) : 0,
   },
-  ambientGlow: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 320,
-    opacity: 0.65,
-    borderBottomLeftRadius: 100,
-    borderBottomRightRadius: 100,
+  topAccentBar: {
+    height: Borders.thick,
+    width: '100%',
   },
   scrollView: {
     flex: 1,
@@ -1504,101 +1657,94 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: Spacing.sm,
+    marginBottom: Spacing.md,
+    paddingTop: Spacing.xs,
   },
   brandCol: {
     justifyContent: 'center',
   },
-  brandTitle: {
-    ...Typography.h1,
-    fontWeight: '900',
+  brandTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  brandLogo: {
+    width: 26,
+    height: 26,
+    borderRadius: BorderRadius.sharp,
+  },
+  brandTitleMain: {
+    ...Typography.hero,
+    fontSize: 20,
+    lineHeight: 24,
+    color: Colors.textPrimary,
     letterSpacing: 1.2,
-    fontSize: 22,
+  },
+  brandDot: {
+    width: 6,
+    height: 6,
+    borderRadius: BorderRadius.none,
   },
   brandSubtitle: {
-    ...Typography.caption,
-    color: Colors.textSecondary,
-    fontSize: 10,
-    marginTop: 1,
+    ...Typography.statBadge,
+    fontSize: 9,
+    color: Colors.textMuted,
+    marginTop: 2,
+    letterSpacing: 1.2,
   },
   currencyRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    gap: 6,
   },
   currencyBadge: {
     backgroundColor: Colors.surface,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    minHeight: 30,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+    minHeight: 28,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: BorderRadius.full,
-    borderWidth: 1,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
   },
   streakBadge: {
     borderColor: Colors.warning,
-    backgroundColor: 'rgba(245, 158, 11, 0.15)',
+    backgroundColor: 'rgba(234, 179, 8, 0.08)',
   },
   streakText: {
-    ...Typography.bodyBold,
+    ...Typography.statBadge,
     color: Colors.warning,
-    fontSize: 12,
+    fontSize: 11,
   },
   currencyText: {
-    ...Typography.bodyBold,
-    color: Colors.accent,
-    fontSize: 12,
-  },
-  statsBtn: {
-    borderColor: Colors.secondary,
-    backgroundColor: 'rgba(59, 130, 246, 0.15)',
-    paddingHorizontal: 7,
-  },
-  statsIconText: {
-    fontSize: 13,
-  },
-  shopBtn: {
-    backgroundColor: 'rgba(234, 179, 8, 0.15)',
-    paddingHorizontal: 8,
-  },
-  shopBtnText: {
-    ...Typography.bodyBold,
+    ...Typography.statBadge,
+    color: Colors.accentPrimary,
     fontSize: 11,
   },
   heroScoutCard: {
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.sm + 2,
-    borderWidth: 1,
-    borderLeftWidth: 4,
-    marginBottom: Spacing.sm,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 4,
+    borderRadius: BorderRadius.sharp,
+    padding: Spacing.sm + 4,
+    borderWidth: Borders.thin,
+    borderLeftWidth: Borders.thick + 1,
+    marginBottom: Spacing.md,
   },
   heroScoutHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm,
+    gap: Spacing.sm + 2,
   },
-  heroAvatarCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 2,
-    backgroundColor: Colors.surfaceLight,
+  heroAvatarSquare: {
+    width: 38,
+    height: 38,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 4,
-    elevation: 3,
   },
   heroAvatarEmoji: {
-    fontSize: 20,
+    fontSize: 18,
   },
   heroScoutInfoCol: {
     flex: 1,
@@ -1614,115 +1760,118 @@ const styles = StyleSheet.create({
     ...Typography.bodyBold,
     color: Colors.textPrimary,
     fontSize: 13,
+    letterSpacing: -0.2,
   },
-  heroCosmeticPill: {
+  heroCosmeticBadge: {
     paddingVertical: 1,
-    paddingHorizontal: 6,
-    borderRadius: BorderRadius.xs,
+    paddingHorizontal: 5,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
   },
-  heroCosmeticPillText: {
-    fontSize: 9,
-    fontWeight: '800',
-    textTransform: 'uppercase',
+  heroCosmeticBadgeText: {
+    ...Typography.statBadge,
+    fontSize: 8.5,
+    letterSpacing: 0.4,
   },
   heroScoutMetaRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    marginTop: 2,
+    marginTop: 3,
   },
   heroStadiumText: {
-    ...Typography.caption,
+    ...Typography.monoMeta,
     color: Colors.textSecondary,
-    fontSize: 10,
-    fontWeight: '600',
+    fontSize: 9.5,
   },
   heroMetaDot: {
-    ...Typography.caption,
-    color: Colors.textMuted,
-    fontSize: 10,
+    ...Typography.monoMeta,
+    color: Colors.borderLight,
+    fontSize: 9,
   },
   heroXpText: {
-    ...Typography.caption,
+    ...Typography.monoMeta,
     color: Colors.textMuted,
-    fontSize: 10,
+    fontSize: 9.5,
   },
   heroProgressCol: {
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
   heroProgressPercent: {
-    ...Typography.captionBold,
-    fontSize: 14,
-    fontWeight: '900',
+    ...Typography.monoLarge,
+    fontSize: 15,
   },
   heroStatsHint: {
-    fontSize: 9,
-    color: Colors.textSecondary,
-    fontWeight: '700',
-    marginTop: 1,
+    ...Typography.statBadge,
+    fontSize: 8.5,
+    color: Colors.textMuted,
+    marginTop: 2,
   },
   heroProgressBarBg: {
-    height: 5,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: BorderRadius.full,
+    height: 3,
+    backgroundColor: Colors.surfaceHighlight,
+    borderRadius: BorderRadius.none,
     overflow: 'hidden',
-    marginTop: 8,
-    marginBottom: 6,
+    marginTop: 10,
+    marginBottom: 8,
   },
   heroProgressBarFill: {
     height: '100%',
-    borderRadius: BorderRadius.full,
+    borderRadius: BorderRadius.none,
   },
   heroAtmosphereStrip: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 3,
-    paddingHorizontal: 8,
-    borderRadius: 6,
+    paddingVertical: 4,
+    paddingHorizontal: Spacing.sm,
+    backgroundColor: Colors.surfaceLight,
+    borderRadius: BorderRadius.sharp,
+    borderWidth: Borders.thin,
     gap: 6,
   },
-  pulseDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+  pulseSquare: {
+    width: 5,
+    height: 5,
+    borderRadius: BorderRadius.none,
   },
   heroChantText: {
-    ...Typography.captionBold,
-    color: Colors.textPrimary,
+    ...Typography.caption,
+    color: Colors.textSecondary,
     fontSize: 10,
-    fontStyle: 'italic',
     flex: 1,
   },
   modeSwitcherContainer: {
     marginBottom: Spacing.md,
   },
   sectionTitle: {
-    ...Typography.caption,
-    color: Colors.textSecondary,
-    marginBottom: Spacing.xs,
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
+    ...Typography.statBadge,
+    color: Colors.textMuted,
+    marginBottom: Spacing.xs + 2,
+    fontSize: 10,
+    letterSpacing: 1.2,
   },
   tabContainer: {
     flexDirection: 'row',
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
-    padding: 4,
-    borderWidth: 1,
+    borderRadius: BorderRadius.sharp,
+    padding: 2,
+    borderWidth: Borders.thin,
     borderColor: Colors.border,
   },
   tabBtn: {
     flex: 1,
-    minHeight: 42,
+    minHeight: 38,
     justifyContent: 'center',
-    paddingVertical: Spacing.sm,
+    paddingVertical: Spacing.xs + 2,
     alignItems: 'center',
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.sharp,
   },
   tabText: {
-    ...Typography.bodyBold,
-    color: Colors.textSecondary,
+    ...Typography.statBadge,
+    color: Colors.textMuted,
+    fontSize: 11,
+    letterSpacing: 0.6,
   },
 });
 
@@ -2168,6 +2317,7 @@ import { appStorage, StorageKeys } from './src/storage/mmkv';
 import { useGameStore } from './src/stores/useGameStore';
 import { useSettingsStore } from './src/stores/useSettingsStore';
 import { Colors } from './src/theme/colors';
+import { BorderRadius, Borders } from './src/theme/spacing';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -2393,7 +2543,7 @@ function App() {
 const styles = StyleSheet.create({
   outerWrapper: {
     flex: 1,
-    backgroundColor: '#050811',
+    backgroundColor: Colors.background,
     alignItems: 'center',
   },
   container: {
@@ -2410,31 +2560,34 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   errorEmoji: {
-    fontSize: 48,
+    fontSize: 40,
     marginBottom: 16,
   },
   errorTitle: {
-    fontSize: 20,
-    fontWeight: '700',
+    fontSize: 18,
+    fontWeight: '800',
     color: Colors.textPrimary,
+    letterSpacing: 0.5,
     marginBottom: 8,
   },
   errorDetails: {
-    fontSize: 13,
-    color: Colors.textSecondary,
+    fontSize: 12,
+    color: Colors.textMuted,
     textAlign: 'center',
     marginBottom: 24,
+    lineHeight: 18,
   },
   resetBtn: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.accentPrimary,
     paddingHorizontal: 24,
     paddingVertical: 12,
-    borderRadius: 12,
+    borderRadius: BorderRadius.sharp,
   },
   resetBtnText: {
-    color: '#0F172A',
-    fontWeight: '700',
-    fontSize: 15,
+    color: '#090909',
+    fontWeight: '800',
+    fontSize: 14,
+    letterSpacing: 0.6,
   },
 });
 

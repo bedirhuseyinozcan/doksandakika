@@ -160,7 +160,7 @@ export const SettingsModal: React.FC<ISettingsModalProps> = React.memo(
               </View>
 
               <Text style={styles.versionText}>
-                Penalty Futbol Oyun Portalı v1.0.0 • 2026-27 Sezonu
+                Doksan Dakika Futbol Oyun Portalı v1.0.0 • 2026-27 Sezonu
               </Text>
             </ScrollView>
 

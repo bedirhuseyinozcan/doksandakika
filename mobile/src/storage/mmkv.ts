@@ -38,7 +38,7 @@ class UniversalStorage implements IAppStorage {
     try {
       const { MMKV } = require('react-native-mmkv');
       this.nativeMMKV = new MMKV({
-        id: 'penalty-storage',
+        id: 'doksan-dakika-storage',
       });
       this.nativeMMKV.set('__mmkv_health_check__', 'ok');
       if (this.nativeMMKV.getString('__mmkv_health_check__') !== 'ok') {
@@ -57,9 +57,9 @@ class UniversalStorage implements IAppStorage {
     }
     try {
       const keys = await AsyncStorage.getAllKeys();
-      const penaltyKeys = keys.filter((k) => k.startsWith('penalty_'));
-      if (penaltyKeys.length > 0) {
-        const pairs = await AsyncStorage.multiGet(penaltyKeys);
+      const appKeys = keys.filter((k) => k.startsWith('doksan_') || k.startsWith('penalty_'));
+      if (appKeys.length > 0) {
+        const pairs = await AsyncStorage.multiGet(appKeys);
         for (const [k, v] of pairs) {
           if (k && v !== null) {
             this.memory.set(k, v);
@@ -74,19 +74,34 @@ class UniversalStorage implements IAppStorage {
   }
 
   getString(key: string): string | undefined {
+    let result: string | undefined;
+
     if (this.nativeMMKV) {
       try {
         const val = this.nativeMMKV.getString(key);
-        if (val !== undefined) return val;
+        if (val !== undefined) result = val;
       } catch {}
     }
-    if (Platform.OS === 'web' && typeof window !== 'undefined' && window.localStorage) {
+    if (result === undefined && Platform.OS === 'web' && typeof window !== 'undefined' && window.localStorage) {
       try {
         const val = localStorage.getItem(key);
-        return val === null ? undefined : val;
+        if (val !== null) result = val;
       } catch {}
     }
-    return this.memory.get(key);
+    if (result === undefined) {
+      result = this.memory.get(key);
+    }
+
+    if (result === undefined && key.startsWith('doksan_')) {
+      const legacyKey = key.replace('doksan_', 'penalty_');
+      const legacyVal = this.getString(legacyKey);
+      if (legacyVal !== undefined) {
+        this.set(key, legacyVal);
+        return legacyVal;
+      }
+    }
+
+    return result;
   }
 
   set(key: string, value: string | boolean | number): void {
@@ -167,23 +182,23 @@ class UniversalStorage implements IAppStorage {
 export const appStorage = new UniversalStorage();
 
 export const StorageKeys = {
-  USER_COINS: 'penalty_user_coins',
-  USER_XP: 'penalty_user_xp',
-  UNLOCKED_LEVELS: 'penalty_unlocked_levels',
-  UNLOCKED_COSMETICS: 'penalty_unlocked_cosmetics',
-  EQUIPPED_COSMETIC_ID: 'penalty_equipped_cosmetic_id',
-  SEARCH_INDEX_CACHE: 'penalty_search_index_cache_v9_2627',
-  SEARCH_INDEX_TIMESTAMP: 'penalty_search_index_timestamp',
-  SELECTED_LEAGUE_MODE: 'penalty_selected_league_mode',
-  SOUND_ENABLED: 'penalty_sound_enabled',
-  HAPTICS_ENABLED: 'penalty_haptics_enabled',
-  DAILY_COMPLETED_PREFIX: 'penalty_daily_completed_',
-  DAILY_SESSION_PREFIX: 'penalty_daily_session_',
-  LEVEL_CACHE_PREFIX: 'penalty_level_cache_v6_2627_',
-  CURRENT_STREAK: 'penalty_current_streak',
-  MAX_STREAK: 'penalty_max_streak',
-  LAST_COMPLETED_DATE: 'penalty_last_completed_date',
-  GAME_STATS: 'penalty_game_stats',
-  SERVER_TIME_OFFSET_MS: 'penalty_server_time_offset_ms',
-  LAST_SERVER_UTC_DATE: 'penalty_last_server_utc_date',
+  USER_COINS: 'doksan_user_coins',
+  USER_XP: 'doksan_user_xp',
+  UNLOCKED_LEVELS: 'doksan_unlocked_levels',
+  UNLOCKED_COSMETICS: 'doksan_unlocked_cosmetics',
+  EQUIPPED_COSMETIC_ID: 'doksan_equipped_cosmetic_id',
+  SEARCH_INDEX_CACHE: 'doksan_search_index_cache_v9_2627',
+  SEARCH_INDEX_TIMESTAMP: 'doksan_search_index_timestamp',
+  SELECTED_LEAGUE_MODE: 'doksan_selected_league_mode',
+  SOUND_ENABLED: 'doksan_sound_enabled',
+  HAPTICS_ENABLED: 'doksan_haptics_enabled',
+  DAILY_COMPLETED_PREFIX: 'doksan_daily_completed_',
+  DAILY_SESSION_PREFIX: 'doksan_daily_session_',
+  LEVEL_CACHE_PREFIX: 'doksan_level_cache_v6_2627_',
+  CURRENT_STREAK: 'doksan_current_streak',
+  MAX_STREAK: 'doksan_max_streak',
+  LAST_COMPLETED_DATE: 'doksan_last_completed_date',
+  GAME_STATS: 'doksan_game_stats',
+  SERVER_TIME_OFFSET_MS: 'doksan_server_time_offset_ms',
+  LAST_SERVER_UTC_DATE: 'doksan_last_server_utc_date',
 } as const;

@@ -1,5 +1,5 @@
 import { useState, useEffect, Component, ErrorInfo, ReactNode } from 'react';
-import { View, StyleSheet, StatusBar, Text, TouchableOpacity, BackHandler } from 'react-native';
+import { View, StyleSheet, StatusBar, Text, TouchableOpacity, BackHandler, Platform } from 'react-native';
 import { HomeScreen, AppScreenType } from './src/screens/HomeScreen';
 import { WhoAreYaScreen } from './src/screens/WhoAreYaScreen';
 import { CareerPathScreen } from './src/screens/CareerPathScreen';
@@ -93,6 +93,16 @@ function App() {
     };
 
     bootstrap();
+  }, []);
+
+  useEffect(() => {
+    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      document.title = 'Doksan Dakika';
+      const existingFavicon = document.querySelector("link[rel*='icon']") as HTMLLinkElement | null;
+      if (existingFavicon) {
+        existingFavicon.href = '/src/assets/doksandakika.png';
+      }
+    }
   }, []);
 
   // Hardware Back Button handler for Android

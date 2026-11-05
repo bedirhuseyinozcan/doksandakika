@@ -67,18 +67,18 @@ class ShareService {
     const grid = this.generateWhoAreYaGrid(guesses);
 
     const message = [
-      `⚽ PENALTY - Kim Bu Yıldız?${leagueHeader}`,
+      `⚽ DOKSAN DAKİKA - Kim Bu Yıldız?${leagueHeader}`,
       `🕵️‍♂️ ${outcomeText}`,
       currentStreak > 0 ? `🔥 Güncel Seri: ${currentStreak}` : '',
       '',
       grid,
       '',
-      'Sen de tahmin et! 📲 penalty.app',
+      'Sen de tahmin et! 📲 doksandakika.app',
     ]
       .filter((line) => line !== '')
       .join('\n');
 
-    return this.openShareDialog(message, 'Penalty - Günün Yıldızı');
+    return this.openShareDialog(message, 'Doksan Dakika - Günün Yıldızı');
   }
 
   public async shareGeneral(params: IShareGeneralParams): Promise<boolean> {
@@ -86,7 +86,7 @@ class ShareService {
     const outcomeText = isWon ? `${attemptsUsed}/${maxAttempts} Tahmin` : `X/${maxAttempts}`;
 
     const lines = [
-      `⚽ PENALTY - ${gameTitle}`,
+      `⚽ DOKSAN DAKİKA - ${gameTitle}`,
       `🎯 ${outcomeText}`,
       currentStreak > 0 ? `🔥 Güncel Seri: ${currentStreak}` : '',
     ];
@@ -97,10 +97,10 @@ class ShareService {
     }
 
     lines.push('');
-    lines.push('Sen de oyna! 📲 penalty.app');
+    lines.push('Sen de oyna! 📲 doksandakika.app');
 
     const message = lines.filter((line) => line !== '').join('\n');
-    return this.openShareDialog(message, `Penalty - ${gameTitle}`);
+    return this.openShareDialog(message, `Doksan Dakika - ${gameTitle}`);
   }
 
   private async openShareDialog(message: string, title: string): Promise<boolean> {
