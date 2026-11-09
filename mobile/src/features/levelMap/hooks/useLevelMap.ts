@@ -23,7 +23,7 @@ interface IUseLevelMapProps {
 
 export const useLevelMap = ({ gameMode, onSelectLevel }: IUseLevelMapProps) => {
   const selectedLeagueMode = useSettingsStore((s) => s.selectedLeagueMode);
-  const getUnlockedLevel = useGameStore((s) => s.getUnlockedLevel);
+  const unlockedLevels = useGameStore((s) => s.unlockedLevels);
   const coins = useGameStore((s) => s.coins);
   const xp = useGameStore((s) => s.xp);
 
@@ -31,8 +31,9 @@ export const useLevelMap = ({ gameMode, onSelectLevel }: IUseLevelMapProps) => {
   const [lockedAlertLevel, setLockedAlertLevel] = useState<number | null>(null);
 
   const unlockedLevel = useMemo(() => {
-    return getUnlockedLevel(gameMode, selectedLeagueMode);
-  }, [gameMode, selectedLeagueMode, getUnlockedLevel]);
+    const key = `${gameMode}_${selectedLeagueMode}`;
+    return unlockedLevels[key] ?? 1;
+  }, [gameMode, selectedLeagueMode, unlockedLevels]);
 
   const isSuperLig = selectedLeagueMode === 'super_lig';
   const meta = GAME_META[gameMode] || GAME_META.whoAreYa;

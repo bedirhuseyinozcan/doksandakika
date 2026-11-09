@@ -57,12 +57,14 @@ export const TicTacToeScreen: React.FC<ITicTacToeScreenProps> = React.memo(
     const [hintUnlocked, setHintUnlocked] = useState(false);
     const [hintText, setHintText] = useState('');
 
-    const todayDate = useMemo(() => getAuthoritativeUtcDate(), []);
+    const todayDate = useMemo(() => getAuthoritativeUtcDate(), [dailyKey]);
     const seedKey = useMemo(() => {
-      return isDaily
+      return isDaily && dailyKey
+        ? dailyKey
+        : isDaily
         ? `${todayDate}_ticTacToe_${selectedLeagueMode}`
         : `level_${currentLevel}_ticTacToe_${selectedLeagueMode}`;
-    }, [isDaily, todayDate, selectedLeagueMode, currentLevel]);
+    }, [isDaily, dailyKey, todayDate, selectedLeagueMode, currentLevel]);
 
     const {
       rows,

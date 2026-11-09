@@ -56,12 +56,14 @@ export const FootballBingoScreen: React.FC<IFootballBingoScreenProps> = React.me
     const [hintUnlocked, setHintUnlocked] = useState(false);
     const [hintText, setHintText] = useState('');
 
-    const todayDate = useMemo(() => getAuthoritativeUtcDate(), []);
+    const todayDate = useMemo(() => getAuthoritativeUtcDate(), [dailyKey]);
     const seedKey = useMemo(() => {
-      return isDaily
+      return isDaily && dailyKey
+        ? dailyKey
+        : isDaily
         ? `${todayDate}_footballBingo_${selectedLeagueMode}`
         : `level_${currentLevel}_footballBingo_${selectedLeagueMode}`;
-    }, [isDaily, todayDate, selectedLeagueMode, currentLevel]);
+    }, [isDaily, dailyKey, todayDate, selectedLeagueMode, currentLevel]);
 
     const {
       tiles,

@@ -6,6 +6,10 @@ class AuthoritativeTimeService {
   private isSynchronized: boolean = false;
 
   constructor() {
+    this.hydrateFromStorage();
+  }
+
+  public hydrateFromStorage(): void {
     const cachedOffset = appStorage.getNumber(StorageKeys.SERVER_TIME_OFFSET_MS);
     if (cachedOffset !== undefined && !isNaN(cachedOffset)) {
       this.offsetMs = cachedOffset;

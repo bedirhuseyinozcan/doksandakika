@@ -13,6 +13,7 @@ interface IGameStore {
   xp: number;
   unlockedLevels: Record<string, number>;
   completedDailyDates: string[];
+  authoritativeDate: string;
   currentStreak: number;
   maxStreak: number;
   lastCompletedDate: string | null;
@@ -38,6 +39,7 @@ interface IGameStore {
   unlockCosmetic: (id: string, cost: number) => boolean;
   equipCosmetic: (id: string) => void;
   isCosmeticUnlocked: (id: string) => boolean;
+  syncAuthoritativeDate: (dateStr?: string) => void;
   hydrateFromStorage: () => void;
 }
 
@@ -90,13 +92,35 @@ const loadInitialStats = (): IGameStats => {
   };
 };
 
+const loadInitialCompletedDailyDates = (): string[] => {
+  const prefix = StorageKeys.DAILY_COMPLETED_PREFIX;
+  const legacyPrefix = prefix.replace('doksan_', 'penalty_');
+  const keys = [
+    ...appStorage.getKeysWithPrefix(prefix),
+    ...appStorage.getKeysWithPrefix(legacyPrefix),
+  ];
+  const completed = new Set<string>();
+  for (const fullKey of keys) {
+    if (appStorage.getBoolean(fullKey)) {
+      const dailyKey = fullKey.startsWith(prefix)
+        ? fullKey.slice(prefix.length)
+        : fullKey.slice(legacyPrefix.length);
+      if (dailyKey) {
+        completed.add(dailyKey);
+      }
+    }
+  }
+  return Array.from(completed);
+};
+
 const initialStats = loadInitialStats();
 
 export const useGameStore = create<IGameStore>((set, get) => ({
   coins: loadInitialCoins(),
   xp: loadInitialXp(),
   unlockedLevels: loadInitialLevels(),
-  completedDailyDates: [],
+  completedDailyDates: loadInitialCompletedDailyDates(),
+  authoritativeDate: getAuthoritativeUtcDate(),
   currentStreak: appStorage.getNumber(StorageKeys.CURRENT_STREAK) ?? 0,
   maxStreak: appStorage.getNumber(StorageKeys.MAX_STREAK) ?? 0,
   lastCompletedDate: appStorage.getString(StorageKeys.LAST_COMPLETED_DATE) ?? null,
@@ -158,9 +182,7 @@ export const useGameStore = create<IGameStore>((set, get) => ({
     let streakBonusCoins = 0;
     let newStreak = state.currentStreak;
 
-    if (!state.completedDailyDates.includes(dailyKey)) {
-      appStorage.set(`${StorageKeys.DAILY_COMPLETED_PREFIX}${dailyKey}`, true);
-    }
+    appStorage.set(`${StorageKeys.DAILY_COMPLETED_PREFIX}${dailyKey}`, true);
 
     if (!isWon) {
       newStreak = 0;
@@ -291,12 +313,19 @@ export const useGameStore = create<IGameStore>((set, get) => ({
     return get().unlockedCosmetics.includes(id);
   },
 
+  syncAuthoritativeDate: (dateStr?: string) => {
+    const nextDate = dateStr || getAuthoritativeUtcDate();
+    set({ authoritativeDate: nextDate });
+  },
+
   hydrateFromStorage: () => {
     const freshStats = loadInitialStats();
     set({
       coins: loadInitialCoins(),
       xp: loadInitialXp(),
       unlockedLevels: loadInitialLevels(),
+      completedDailyDates: loadInitialCompletedDailyDates(),
+      authoritativeDate: getAuthoritativeUtcDate(),
       currentStreak: appStorage.getNumber(StorageKeys.CURRENT_STREAK) ?? 0,
       maxStreak: appStorage.getNumber(StorageKeys.MAX_STREAK) ?? 0,
       lastCompletedDate: appStorage.getString(StorageKeys.LAST_COMPLETED_DATE) ?? null,

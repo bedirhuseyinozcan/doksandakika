@@ -50,6 +50,8 @@ interface IHomeScreenProps {
 export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }) => {
   const coins = useGameStore((s) => s.coins);
   const currentStreak = useGameStore((s) => s.currentStreak);
+  const completedDailyDates = useGameStore((s) => s.completedDailyDates);
+  const authoritativeDate = useGameStore((s) => s.authoritativeDate);
   const isDailyCompleted = useGameStore((s) => s.isDailyCompleted);
   const xp = useGameStore((s) => s.xp);
 
@@ -109,13 +111,25 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
     theme.primaryColor === '#C7FB07';
 
   const rankInfo = useMemo(() => getRankByXp(xp), [xp]);
-  const todayDate = useMemo(() => getAuthoritativeUtcDate(), []);
-  const isWhoAreYaDailyCompleted = isDailyCompleted(`${todayDate}_whoAreYa_${selectedLeagueMode}`);
-  const isCareerDailyCompleted = isDailyCompleted(`${todayDate}_careerPath_${selectedLeagueMode}`);
-  const isClubLogoDailyCompleted = isDailyCompleted(`${todayDate}_clubLogo_${selectedLeagueMode}`);
-  const isContextinhoDailyCompleted = isDailyCompleted(`${todayDate}_contextinho_${selectedLeagueMode}`);
-  const isTicTacToeDailyCompleted = isDailyCompleted(`${todayDate}_ticTacToe_${selectedLeagueMode}`);
-  const isBingoDailyCompleted = isDailyCompleted(`${todayDate}_footballBingo_${selectedLeagueMode}`);
+  const todayDate = authoritativeDate || getAuthoritativeUtcDate();
+  const isWhoAreYaDailyCompleted =
+    completedDailyDates.includes(`${todayDate}_whoAreYa_${selectedLeagueMode}`) ||
+    isDailyCompleted(`${todayDate}_whoAreYa_${selectedLeagueMode}`);
+  const isCareerDailyCompleted =
+    completedDailyDates.includes(`${todayDate}_careerPath_${selectedLeagueMode}`) ||
+    isDailyCompleted(`${todayDate}_careerPath_${selectedLeagueMode}`);
+  const isClubLogoDailyCompleted =
+    completedDailyDates.includes(`${todayDate}_clubLogo_${selectedLeagueMode}`) ||
+    isDailyCompleted(`${todayDate}_clubLogo_${selectedLeagueMode}`);
+  const isContextinhoDailyCompleted =
+    completedDailyDates.includes(`${todayDate}_contextinho_${selectedLeagueMode}`) ||
+    isDailyCompleted(`${todayDate}_contextinho_${selectedLeagueMode}`);
+  const isTicTacToeDailyCompleted =
+    completedDailyDates.includes(`${todayDate}_ticTacToe_${selectedLeagueMode}`) ||
+    isDailyCompleted(`${todayDate}_ticTacToe_${selectedLeagueMode}`);
+  const isBingoDailyCompleted =
+    completedDailyDates.includes(`${todayDate}_footballBingo_${selectedLeagueMode}`) ||
+    isDailyCompleted(`${todayDate}_footballBingo_${selectedLeagueMode}`);
 
   const handleSelectMode = useCallback(
     (mode: LeagueMode) => {

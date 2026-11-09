@@ -39,6 +39,9 @@ export const useChallengeDataLoader = ({
   isReplay = false,
 }: IUseChallengeDataLoaderProps) => {
   const selectedLeagueMode = useSettingsStore((s) => s.selectedLeagueMode);
+  const unlockedLevels = useGameStore((s) => s.unlockedLevels);
+  const completedDailyDates = useGameStore((s) => s.completedDailyDates);
+  const authoritativeDate = useGameStore((s) => s.authoritativeDate);
   const getUnlockedLevel = useGameStore((s) => s.getUnlockedLevel);
   const isDailyCompleted = useGameStore((s) => s.isDailyCompleted);
   const { showInterstitialIfDue } = useInterstitialAd();
@@ -46,8 +49,12 @@ export const useChallengeDataLoader = ({
   const [isLoading, setIsLoading] = useState(true);
   const [challengeData, setChallengeData] = useState<IUnifiedChallengeData | null>(null);
 
+  const unlockedLevelForMode =
+    unlockedLevels[`${gameMode}_${selectedLeagueMode}`] ??
+    getUnlockedLevel(gameMode, selectedLeagueMode);
+
   const [currentLevel, setCurrentLevel] = useState(() =>
-    initialLevel ?? getUnlockedLevel(gameMode, selectedLeagueMode)
+    initialLevel ?? unlockedLevelForMode
   );
   const [isCurrentReplay, setIsCurrentReplay] = useState(isReplay);
 
@@ -56,14 +63,15 @@ export const useChallengeDataLoader = ({
       setCurrentLevel(initialLevel);
       setIsCurrentReplay(isReplay);
     } else {
-      setCurrentLevel(getUnlockedLevel(gameMode, selectedLeagueMode));
+      setCurrentLevel(useGameStore.getState().getUnlockedLevel(gameMode, selectedLeagueMode));
       setIsCurrentReplay(false);
     }
-  }, [initialLevel, isReplay, selectedLeagueMode, getUnlockedLevel, gameMode]);
+  }, [initialLevel, isReplay, selectedLeagueMode, gameMode]);
 
-  const todayDate = useMemo(() => getAuthoritativeUtcDate(), []);
+  const todayDate = authoritativeDate || getAuthoritativeUtcDate();
   const dailyKey = `${todayDate}_${gameMode}_${selectedLeagueMode}`;
-  const alreadyCompleted = isDaily && isDailyCompleted(dailyKey);
+  const alreadyCompleted =
+    isDaily && (completedDailyDates.includes(dailyKey) || isDailyCompleted(dailyKey));
 
   const loadData = useCallback(async () => {
     if (gameMode === 'ticTacToe' || gameMode === 'footballBingo') {
@@ -94,6 +102,12 @@ export const useChallengeDataLoader = ({
     try {
       if (isDaily) {
         const data = await dailyApi.getTodayChallenge(gameMode, selectedLeagueMode);
+        if (data.date) {
+          useGameStore.getState().syncAuthoritativeDate(data.date);
+        }
+        const resolvedDailyKey = data.date
+          ? `${data.date}_${gameMode}_${selectedLeagueMode}`
+          : dailyKey;
         setChallengeData({
           targetPlayerId: data.targetPlayerId || data.id,
           playerName: data.playerName,
@@ -101,7 +115,7 @@ export const useChallengeDataLoader = ({
           imageUrl: data.imageUrl || data.initialBlurImageUrl,
           blurImages: data.blurImages || [],
           careerPath: data.careerPath || [],
-          dailyKey,
+          dailyKey: resolvedDailyKey,
         });
       } else {
         const data = await levelApi.getLevel(currentLevel, gameMode, selectedLeagueMode);

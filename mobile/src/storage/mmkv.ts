@@ -8,13 +8,18 @@ export interface IAppStorage {
   getNumber(key: string): number | undefined;
   delete(key: string): void;
   clearAll(): void;
+  getKeysWithPrefix(prefix: string): string[];
   hydrateFromDisk(): Promise<void>;
 }
+
+const MAX_ASYNC_STORAGE_VALUE_LENGTH = 500_000;
+const HYDRATION_TIMEOUT_MS = 3500;
 
 class UniversalStorage implements IAppStorage {
   private memory = new Map<string, string>();
   private nativeMMKV: any = null;
   private isHydrated = false;
+  private hydrationPromise: Promise<void> | null = null;
 
   constructor() {
     this.initNativeMMKV();
@@ -31,22 +36,63 @@ class UniversalStorage implements IAppStorage {
       this.isHydrated = true;
       return;
     }
-    try {
-      const keys = await AsyncStorage.getAllKeys();
-      const appKeys = keys.filter((k) => k.startsWith('doksan_') || k.startsWith('penalty_'));
-      if (appKeys.length > 0) {
-        const pairs = await AsyncStorage.multiGet(appKeys);
-        for (const [k, v] of pairs) {
-          if (k && v !== null) {
-            this.memory.set(k, v);
+    if (this.hydrationPromise) {
+      return this.hydrationPromise;
+    }
+
+    const performHydration = async () => {
+      try {
+        const keys = await AsyncStorage.getAllKeys();
+        const allAppKeys = keys.filter((k) => k.startsWith('doksan_') || k.startsWith('penalty_'));
+
+        const oversizedCacheKeys = allAppKeys.filter((k) => k.includes('search_index_cache'));
+        if (oversizedCacheKeys.length > 0) {
+          try {
+            await AsyncStorage.multiRemove(oversizedCacheKeys);
+          } catch {}
+        }
+
+        const appKeys = allAppKeys.filter((k) => !k.includes('search_index_cache'));
+
+        if (appKeys.length > 0) {
+          try {
+            const pairs = await AsyncStorage.multiGet(appKeys);
+            for (const [k, v] of pairs) {
+              if (k && v !== null) {
+                this.memory.set(k, v);
+              }
+            }
+          } catch (multiGetErr) {
+            console.warn('multiGet fallback to individual getItem:', multiGetErr);
+            for (const k of appKeys) {
+              try {
+                const v = await AsyncStorage.getItem(k);
+                if (v !== null) {
+                  this.memory.set(k, v);
+                }
+              } catch (keyErr) {
+                console.warn(`[Storage] Skipping unreadable key "${k}":`, keyErr);
+              }
+            }
           }
         }
+      } catch (e) {
+        console.warn('Disk hydration warning:', e);
       }
-    } catch (e) {
-      console.warn('Disk hydration warning:', e);
-    } finally {
+    };
+
+    const timeoutPromise = new Promise<void>((resolve) => {
+      setTimeout(() => {
+        console.warn('[Storage] hydrateFromDisk timed out after 3500ms, proceeding with available memory.');
+        resolve();
+      }, HYDRATION_TIMEOUT_MS);
+    });
+
+    this.hydrationPromise = Promise.race([performHydration(), timeoutPromise]).finally(() => {
       this.isHydrated = true;
-    }
+    });
+
+    return this.hydrationPromise;
   }
 
   getString(key: string): string | undefined {
@@ -97,7 +143,35 @@ class UniversalStorage implements IAppStorage {
       return;
     }
 
+    
+    if (key.includes('search_index_cache') || strVal.length > MAX_ASYNC_STORAGE_VALUE_LENGTH) {
+      console.warn(
+        `[Storage] Skipping disk write for "${key}" (${strVal.length} chars exceeds ${MAX_ASYNC_STORAGE_VALUE_LENGTH} limit)`
+      );
+      return;
+    }
+
     AsyncStorage.setItem(key, strVal).catch(() => {});
+  }
+
+  getKeysWithPrefix(prefix: string): string[] {
+    const matched = new Set<string>();
+    for (const k of this.memory.keys()) {
+      if (k.startsWith(prefix)) {
+        matched.add(k);
+      }
+    }
+    if (Platform.OS === 'web' && typeof window !== 'undefined' && window.localStorage) {
+      try {
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith(prefix)) {
+            matched.add(k);
+          }
+        }
+      } catch {}
+    }
+    return Array.from(matched);
   }
 
   getBoolean(key: string): boolean | undefined {

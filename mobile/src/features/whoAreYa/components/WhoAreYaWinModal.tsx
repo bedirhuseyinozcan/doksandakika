@@ -217,7 +217,6 @@ export const WhoAreYaWinModal: React.FC<IWhoAreYaWinModalProps> = React.memo(
       const success = spendCoins(150);
       if (success) {
         hapticsService.success();
-        onClose();
         onRevive();
       } else {
         Alert.alert(
@@ -230,7 +229,6 @@ export const WhoAreYaWinModal: React.FC<IWhoAreYaWinModalProps> = React.memo(
               onPress: () => {
                 showRewardedAd('Serini Kurtar (+2 Hak)', () => {
                   hapticsService.success();
-                  onClose();
                   onRevive();
                 });
               },
@@ -238,16 +236,15 @@ export const WhoAreYaWinModal: React.FC<IWhoAreYaWinModalProps> = React.memo(
           ]
         );
       }
-    }, [onRevive, spendCoins, onClose, coins, showRewardedAd]);
+    }, [onRevive, spendCoins, coins, showRewardedAd]);
 
     const handleReviveWithAd = useCallback(() => {
       if (!onRevive) return;
       showRewardedAd('Serini Kurtar (+2 Hak)', () => {
         hapticsService.success();
-        onClose();
         onRevive();
       });
-    }, [onRevive, showRewardedAd, onClose]);
+    }, [onRevive, showRewardedAd]);
 
     const handleDoubleRewardWithAd = useCallback(() => {
       if (isDoubled) return;

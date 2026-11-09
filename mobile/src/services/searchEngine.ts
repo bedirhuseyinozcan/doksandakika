@@ -66,31 +66,10 @@ class SearchEngineService {
   private isInitialized = false;
 
   public initialize(customData?: ILightPlayer[]): void {
-    let rawList: ILightPlayer[];
-    if (customData && customData.length > 0) {
-      rawList = customData;
-    } else {
-      const cached = appStorage.getString(StorageKeys.SEARCH_INDEX_CACHE);
-      const bundledList = defaultPlayersData as ILightPlayer[];
-      if (cached) {
-        try {
-          const parsed = JSON.parse(cached);
-          if (
-            Array.isArray(parsed) &&
-            parsed.length >= bundledList.length &&
-            parsed.some((p: ILightPlayer) => p.isLegend && Array.isArray(p.leagues))
-          ) {
-            rawList = parsed;
-          } else {
-            rawList = bundledList;
-          }
-        } catch {
-          rawList = bundledList;
-        }
-      } else {
-        rawList = bundledList;
-      }
-    }
+    const rawList: ILightPlayer[] =
+      customData && customData.length > 0
+        ? customData
+        : (defaultPlayersData as ILightPlayer[]);
 
     const seen = new Set<string>();
     const uniquePlayers: ILightPlayer[] = [];
@@ -163,7 +142,6 @@ class SearchEngineService {
   public updateIndex(newPlayers: ILightPlayer[]): void {
     if (!newPlayers || newPlayers.length === 0) return;
     this.players = newPlayers;
-    appStorage.set(StorageKeys.SEARCH_INDEX_CACHE, JSON.stringify(newPlayers));
     appStorage.set(StorageKeys.SEARCH_INDEX_TIMESTAMP, Date.now());
     this.initialize(newPlayers);
   }

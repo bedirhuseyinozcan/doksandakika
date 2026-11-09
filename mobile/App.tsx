@@ -63,6 +63,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 }
 
 function App() {
+  const [isStorageHydrated, setIsStorageHydrated] = useState<boolean>(Platform.OS === 'web');
   const [currentScreen, setCurrentScreen] = useState<AppScreenType>('home');
   const [isDailySelected, setIsDailySelected] = useState<boolean>(false);
   const [activeGameMode, setActiveGameMode] = useState<GameModeType>('whoAreYa');
@@ -73,10 +74,13 @@ function App() {
     const bootstrap = async () => {
       try {
         await appStorage.hydrateFromDisk();
+        authoritativeTime.hydrateFromStorage();
         useGameStore.getState().hydrateFromStorage();
         useSettingsStore.getState().hydrateSettings();
       } catch (e) {
         console.warn('Storage hydration warning:', e);
+      } finally {
+        setIsStorageHydrated(true);
       }
 
       try {
@@ -88,9 +92,14 @@ function App() {
         console.warn('Search engine init warning:', e);
       }
 
-      authoritativeTime.sync().catch((e) => {
-        console.warn('Authoritative time sync warning:', e);
-      });
+      authoritativeTime
+        .sync()
+        .then((serverUtcDate) => {
+          useGameStore.getState().syncAuthoritativeDate(serverUtcDate);
+        })
+        .catch((e) => {
+          console.warn('Authoritative time sync warning:', e);
+        });
 
       admobService.initialize().catch((e) => {
         console.warn('AdMob bootstrap warning:', e);
@@ -179,6 +188,14 @@ function App() {
   const handleBackToHome = () => {
     setCurrentScreen('home');
   };
+
+  if (!isStorageHydrated) {
+    return (
+      <View style={styles.outerWrapper}>
+        <StatusBar barStyle="light-content" backgroundColor={Colors.background} />
+      </View>
+    );
+  }
 
   return (
     <ErrorBoundary>

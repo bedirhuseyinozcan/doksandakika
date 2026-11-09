@@ -672,12 +672,14 @@ export const FootballBingoScreen: React.FC<IFootballBingoScreenProps> = React.me
     const [hintUnlocked, setHintUnlocked] = useState(false);
     const [hintText, setHintText] = useState('');
 
-    const todayDate = useMemo(() => getAuthoritativeUtcDate(), []);
+    const todayDate = useMemo(() => getAuthoritativeUtcDate(), [dailyKey]);
     const seedKey = useMemo(() => {
-      return isDaily
+      return isDaily && dailyKey
+        ? dailyKey
+        : isDaily
         ? `${todayDate}_footballBingo_${selectedLeagueMode}`
         : `level_${currentLevel}_footballBingo_${selectedLeagueMode}`;
-    }, [isDaily, todayDate, selectedLeagueMode, currentLevel]);
+    }, [isDaily, dailyKey, todayDate, selectedLeagueMode, currentLevel]);
 
     const {
       tiles,
@@ -922,12 +924,14 @@ export const TicTacToeScreen: React.FC<ITicTacToeScreenProps> = React.memo(
     const [hintUnlocked, setHintUnlocked] = useState(false);
     const [hintText, setHintText] = useState('');
 
-    const todayDate = useMemo(() => getAuthoritativeUtcDate(), []);
+    const todayDate = useMemo(() => getAuthoritativeUtcDate(), [dailyKey]);
     const seedKey = useMemo(() => {
-      return isDaily
+      return isDaily && dailyKey
+        ? dailyKey
+        : isDaily
         ? `${todayDate}_ticTacToe_${selectedLeagueMode}`
         : `level_${currentLevel}_ticTacToe_${selectedLeagueMode}`;
-    }, [isDaily, todayDate, selectedLeagueMode, currentLevel]);
+    }, [isDaily, dailyKey, todayDate, selectedLeagueMode, currentLevel]);
 
     const {
       rows,
@@ -1287,6 +1291,8 @@ interface IHomeScreenProps {
 export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }) => {
   const coins = useGameStore((s) => s.coins);
   const currentStreak = useGameStore((s) => s.currentStreak);
+  const completedDailyDates = useGameStore((s) => s.completedDailyDates);
+  const authoritativeDate = useGameStore((s) => s.authoritativeDate);
   const isDailyCompleted = useGameStore((s) => s.isDailyCompleted);
   const xp = useGameStore((s) => s.xp);
 
@@ -1346,13 +1352,25 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
     theme.primaryColor === '#C7FB07';
 
   const rankInfo = useMemo(() => getRankByXp(xp), [xp]);
-  const todayDate = useMemo(() => getAuthoritativeUtcDate(), []);
-  const isWhoAreYaDailyCompleted = isDailyCompleted(`${todayDate}_whoAreYa_${selectedLeagueMode}`);
-  const isCareerDailyCompleted = isDailyCompleted(`${todayDate}_careerPath_${selectedLeagueMode}`);
-  const isClubLogoDailyCompleted = isDailyCompleted(`${todayDate}_clubLogo_${selectedLeagueMode}`);
-  const isContextinhoDailyCompleted = isDailyCompleted(`${todayDate}_contextinho_${selectedLeagueMode}`);
-  const isTicTacToeDailyCompleted = isDailyCompleted(`${todayDate}_ticTacToe_${selectedLeagueMode}`);
-  const isBingoDailyCompleted = isDailyCompleted(`${todayDate}_footballBingo_${selectedLeagueMode}`);
+  const todayDate = authoritativeDate || getAuthoritativeUtcDate();
+  const isWhoAreYaDailyCompleted =
+    completedDailyDates.includes(`${todayDate}_whoAreYa_${selectedLeagueMode}`) ||
+    isDailyCompleted(`${todayDate}_whoAreYa_${selectedLeagueMode}`);
+  const isCareerDailyCompleted =
+    completedDailyDates.includes(`${todayDate}_careerPath_${selectedLeagueMode}`) ||
+    isDailyCompleted(`${todayDate}_careerPath_${selectedLeagueMode}`);
+  const isClubLogoDailyCompleted =
+    completedDailyDates.includes(`${todayDate}_clubLogo_${selectedLeagueMode}`) ||
+    isDailyCompleted(`${todayDate}_clubLogo_${selectedLeagueMode}`);
+  const isContextinhoDailyCompleted =
+    completedDailyDates.includes(`${todayDate}_contextinho_${selectedLeagueMode}`) ||
+    isDailyCompleted(`${todayDate}_contextinho_${selectedLeagueMode}`);
+  const isTicTacToeDailyCompleted =
+    completedDailyDates.includes(`${todayDate}_ticTacToe_${selectedLeagueMode}`) ||
+    isDailyCompleted(`${todayDate}_ticTacToe_${selectedLeagueMode}`);
+  const isBingoDailyCompleted =
+    completedDailyDates.includes(`${todayDate}_footballBingo_${selectedLeagueMode}`) ||
+    isDailyCompleted(`${todayDate}_footballBingo_${selectedLeagueMode}`);
 
   const handleSelectMode = useCallback(
     (mode: LeagueMode) => {
@@ -2000,6 +2018,7 @@ interface IGameStore {
   xp: number;
   unlockedLevels: Record<string, number>;
   completedDailyDates: string[];
+  authoritativeDate: string;
   currentStreak: number;
   maxStreak: number;
   lastCompletedDate: string | null;
@@ -2025,6 +2044,7 @@ interface IGameStore {
   unlockCosmetic: (id: string, cost: number) => boolean;
   equipCosmetic: (id: string) => void;
   isCosmeticUnlocked: (id: string) => boolean;
+  syncAuthoritativeDate: (dateStr?: string) => void;
   hydrateFromStorage: () => void;
 }
 
@@ -2077,13 +2097,35 @@ const loadInitialStats = (): IGameStats => {
   };
 };
 
+const loadInitialCompletedDailyDates = (): string[] => {
+  const prefix = StorageKeys.DAILY_COMPLETED_PREFIX;
+  const legacyPrefix = prefix.replace('doksan_', 'penalty_');
+  const keys = [
+    ...appStorage.getKeysWithPrefix(prefix),
+    ...appStorage.getKeysWithPrefix(legacyPrefix),
+  ];
+  const completed = new Set<string>();
+  for (const fullKey of keys) {
+    if (appStorage.getBoolean(fullKey)) {
+      const dailyKey = fullKey.startsWith(prefix)
+        ? fullKey.slice(prefix.length)
+        : fullKey.slice(legacyPrefix.length);
+      if (dailyKey) {
+        completed.add(dailyKey);
+      }
+    }
+  }
+  return Array.from(completed);
+};
+
 const initialStats = loadInitialStats();
 
 export const useGameStore = create<IGameStore>((set, get) => ({
   coins: loadInitialCoins(),
   xp: loadInitialXp(),
   unlockedLevels: loadInitialLevels(),
-  completedDailyDates: [],
+  completedDailyDates: loadInitialCompletedDailyDates(),
+  authoritativeDate: getAuthoritativeUtcDate(),
   currentStreak: appStorage.getNumber(StorageKeys.CURRENT_STREAK) ?? 0,
   maxStreak: appStorage.getNumber(StorageKeys.MAX_STREAK) ?? 0,
   lastCompletedDate: appStorage.getString(StorageKeys.LAST_COMPLETED_DATE) ?? null,
@@ -2145,9 +2187,7 @@ export const useGameStore = create<IGameStore>((set, get) => ({
     let streakBonusCoins = 0;
     let newStreak = state.currentStreak;
 
-    if (!state.completedDailyDates.includes(dailyKey)) {
-      appStorage.set(`${StorageKeys.DAILY_COMPLETED_PREFIX}${dailyKey}`, true);
-    }
+    appStorage.set(`${StorageKeys.DAILY_COMPLETED_PREFIX}${dailyKey}`, true);
 
     if (!isWon) {
       newStreak = 0;
@@ -2278,12 +2318,19 @@ export const useGameStore = create<IGameStore>((set, get) => ({
     return get().unlockedCosmetics.includes(id);
   },
 
+  syncAuthoritativeDate: (dateStr?: string) => {
+    const nextDate = dateStr || getAuthoritativeUtcDate();
+    set({ authoritativeDate: nextDate });
+  },
+
   hydrateFromStorage: () => {
     const freshStats = loadInitialStats();
     set({
       coins: loadInitialCoins(),
       xp: loadInitialXp(),
       unlockedLevels: loadInitialLevels(),
+      completedDailyDates: loadInitialCompletedDailyDates(),
+      authoritativeDate: getAuthoritativeUtcDate(),
       currentStreak: appStorage.getNumber(StorageKeys.CURRENT_STREAK) ?? 0,
       maxStreak: appStorage.getNumber(StorageKeys.MAX_STREAK) ?? 0,
       lastCompletedDate: appStorage.getString(StorageKeys.LAST_COMPLETED_DATE) ?? null,
@@ -2366,6 +2413,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 }
 
 function App() {
+  const [isStorageHydrated, setIsStorageHydrated] = useState<boolean>(Platform.OS === 'web');
   const [currentScreen, setCurrentScreen] = useState<AppScreenType>('home');
   const [isDailySelected, setIsDailySelected] = useState<boolean>(false);
   const [activeGameMode, setActiveGameMode] = useState<GameModeType>('whoAreYa');
@@ -2376,10 +2424,13 @@ function App() {
     const bootstrap = async () => {
       try {
         await appStorage.hydrateFromDisk();
+        authoritativeTime.hydrateFromStorage();
         useGameStore.getState().hydrateFromStorage();
         useSettingsStore.getState().hydrateSettings();
       } catch (e) {
         console.warn('Storage hydration warning:', e);
+      } finally {
+        setIsStorageHydrated(true);
       }
 
       try {
@@ -2391,9 +2442,14 @@ function App() {
         console.warn('Search engine init warning:', e);
       }
 
-      authoritativeTime.sync().catch((e) => {
-        console.warn('Authoritative time sync warning:', e);
-      });
+      authoritativeTime
+        .sync()
+        .then((serverUtcDate) => {
+          useGameStore.getState().syncAuthoritativeDate(serverUtcDate);
+        })
+        .catch((e) => {
+          console.warn('Authoritative time sync warning:', e);
+        });
 
       admobService.initialize().catch((e) => {
         console.warn('AdMob bootstrap warning:', e);
@@ -2482,6 +2538,14 @@ function App() {
   const handleBackToHome = () => {
     setCurrentScreen('home');
   };
+
+  if (!isStorageHydrated) {
+    return (
+      <View style={styles.outerWrapper}>
+        <StatusBar barStyle="light-content" backgroundColor={Colors.background} />
+      </View>
+    );
+  }
 
   return (
     <ErrorBoundary>
