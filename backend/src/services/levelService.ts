@@ -56,7 +56,7 @@ export class LevelService {
     if (!player) {
       if (gameMode === 'clubLogo') {
         const stars = await PlayerModel.find({ isActive: true, ...leagueFilter })
-          .sort({ marketValueEur: -1 })
+          .sort({ marketValueEur: -1, playerId: 1 })
           .select('playerId name currentClub nationality position age originalImageUrl')
           .lean();
 
@@ -79,7 +79,7 @@ export class LevelService {
         if (gameMode === 'careerPath' && levelNumber % 3 === 0) {
           const legendFilter =
             leagueMode === 'super_lig'
-              ? { isLegend: true, 'currentClub.league': 'super_lig' }
+              ? { isLegend: true, $or: [{ 'currentClub.league': 'super_lig' }, { leagues: 'super_lig' }] }
               : { isLegend: true };
           const legends = await PlayerModel.find(legendFilter)
             .sort({ playerId: 1 })
@@ -93,7 +93,7 @@ export class LevelService {
 
         if (!player) {
           const stars = await PlayerModel.find({ isActive: true, ...leagueFilter })
-            .sort({ marketValueEur: -1 })
+            .sort({ marketValueEur: -1, playerId: 1 })
             .limit(topPoolSize)
             .lean();
 
@@ -190,9 +190,10 @@ export class LevelService {
         ? { 'currentClub.league': 'super_lig' }
         : { 'currentClub.league': { $ne: 'super_lig' } };
 
+    const topPoolSize = 250;
     const activePlayers = await PlayerModel.find({ isActive: true, ...leagueFilter })
-      .sort({ marketValueEur: -1 })
-      .limit(300)
+      .sort({ marketValueEur: -1, playerId: 1 })
+      .limit(topPoolSize)
       .select('playerId name currentClub nationality position age careerPath blurImages originalImageUrl isLegend')
       .lean();
 
@@ -204,11 +205,11 @@ export class LevelService {
     if (gameMode === 'careerPath') {
       const legendFilter =
         leagueMode === 'super_lig'
-          ? { isLegend: true, 'currentClub.league': 'super_lig' }
+          ? { isLegend: true, $or: [{ 'currentClub.league': 'super_lig' }, { leagues: 'super_lig' }] }
           : { isLegend: true };
       legends = await PlayerModel.find(legendFilter)
         .sort({ playerId: 1 })
-        .limit(300)
+        .limit(topPoolSize)
         .select('playerId name currentClub nationality position age careerPath blurImages originalImageUrl isLegend')
         .lean();
     }

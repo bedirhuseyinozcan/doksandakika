@@ -73,7 +73,7 @@ export class DailyChallengeService {
           : { 'currentClub.league': { $ne: 'super_lig' } };
 
       const activePlayers = await PlayerModel.find({ isActive: true, ...leagueFilter })
-        .sort({ marketValueEur: -1 })
+        .sort({ marketValueEur: -1, playerId: 1 })
         .limit(180)
         .select('playerId name currentClub nationality position age careerPath blurImages originalImageUrl')
         .lean();

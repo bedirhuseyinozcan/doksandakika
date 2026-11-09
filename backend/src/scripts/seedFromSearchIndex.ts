@@ -20,7 +20,7 @@ export async function seedFromSearchIndex(): Promise<void> {
   const players = JSON.parse(raw);
   console.log(`⚽ Toplam ${players.length} oyuncu/efsane MongoDB Atlas için hazırlanıyor...`);
 
-  const bulkOps = players.map((p: any) => {
+  const bulkOps = players.map((p: any, index: number) => {
     const isLegend = Boolean(p.isLegend);
     const currentClub = {
       id: isLegend ? 'legend' : p.clubId ? String(p.clubId) : '0',
@@ -28,6 +28,13 @@ export async function seedFromSearchIndex(): Promise<void> {
       logoUrl: isLegend ? '' : p.logoUrl || undefined,
       league: p.league || (isLegend ? 'legend' : 'other'),
     };
+
+    // search-index.json sırasını MongoDB'de birebir korumak için indeks bazlı azalan piyasa değeri
+    const deterministicMarketValue =
+      p.marketValueEur ||
+      (isLegend
+        ? 150_000_000 - index
+        : Math.max(100_000, 100_000_000 - index * 20_000));
 
     return {
       updateOne: {
@@ -42,7 +49,7 @@ export async function seedFromSearchIndex(): Promise<void> {
             position: p.position || 'CM',
             age: p.age || 27,
             ...(p.shirtNumber ? { shirtNumber: p.shirtNumber } : {}),
-            marketValueEur: p.marketValueEur || (isLegend ? 100000000 : 15000000),
+            marketValueEur: deterministicMarketValue,
             careerPath: p.careerPath || [],
             blurImages: p.blurImages || [],
             originalImageUrl: p.imageUrl || undefined,

@@ -80,7 +80,7 @@ export const useChallengeDataLoader = ({
     }
 
     if (!isDaily) {
-      const cached = levelCacheService.getLevel(currentLevel, gameMode, selectedLeagueMode);
+      const cached = levelCacheService.getCachedLevel(currentLevel, gameMode, selectedLeagueMode);
       if (cached) {
         setChallengeData({
           targetPlayerId: cached.targetPlayerId || `level_${currentLevel}`,
@@ -92,9 +92,18 @@ export const useChallengeDataLoader = ({
           careerPath: cached.careerPath || [],
         });
         setIsLoading(false);
-      } else {
-        setIsLoading(true);
+
+        if (currentLevel === 1 || currentLevel % 10 === 0) {
+          levelCacheService.syncLevelPack(
+            gameMode,
+            selectedLeagueMode,
+            currentLevel,
+            currentLevel + 19
+          );
+        }
+        return;
       }
+      setIsLoading(true);
     } else {
       setIsLoading(true);
     }

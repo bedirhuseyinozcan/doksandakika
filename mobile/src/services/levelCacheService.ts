@@ -35,14 +35,23 @@ class LevelCacheService {
     }
   }
 
-  public getLevel(
+  public getCachedLevel(
     levelNumber: number,
     gameMode: GameModeType,
     leagueMode: 'global' | 'super_lig'
   ): ILevelData | null {
     const memory = this.loadCacheFromStorage(gameMode, leagueMode);
-    if (memory[levelNumber]) {
-      return memory[levelNumber];
+    return memory[levelNumber] || null;
+  }
+
+  public getLevel(
+    levelNumber: number,
+    gameMode: GameModeType,
+    leagueMode: 'global' | 'super_lig'
+  ): ILevelData | null {
+    const cached = this.getCachedLevel(levelNumber, gameMode, leagueMode);
+    if (cached) {
+      return cached;
     }
 
   

@@ -244,7 +244,7 @@ export const StorageKeys = {
   HAPTICS_ENABLED: 'doksan_haptics_enabled',
   DAILY_COMPLETED_PREFIX: 'doksan_daily_completed_',
   DAILY_SESSION_PREFIX: 'doksan_daily_session_',
-  LEVEL_CACHE_PREFIX: 'doksan_level_cache_v6_2627_',
+  LEVEL_CACHE_PREFIX: 'doksan_level_cache_v7_2627_',
   CURRENT_STREAK: 'doksan_current_streak',
   MAX_STREAK: 'doksan_max_streak',
   LAST_COMPLETED_DATE: 'doksan_last_completed_date',
