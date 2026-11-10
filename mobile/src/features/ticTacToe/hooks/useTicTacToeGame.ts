@@ -118,18 +118,34 @@ export const useTicTacToeGame = ({
         return;
       }
 
-      // Find all empty cells that match this player's attributes across the board
-      const emptyCells = cells.filter((c) => !c.isFilled);
-      const matchingIndices = emptyCells
-        .filter((c) => {
-          const rowCrit = board.rows[c.row];
-          const colCrit = board.cols[c.col];
-          return (
+      let matchingIndices: number[] = [];
+
+      if (selectedCellIndex !== null) {
+        const targetCell = cells[selectedCellIndex];
+        if (targetCell && !targetCell.isFilled) {
+          const rowCrit = board.rows[targetCell.row];
+          const colCrit = board.cols[targetCell.col];
+          if (
             doesPlayerMatchCriterion(player, rowCrit) &&
             doesPlayerMatchCriterion(player, colCrit)
-          );
-        })
-        .map((c) => c.cellIndex);
+          ) {
+            matchingIndices = [targetCell.cellIndex];
+          }
+        }
+      } else {
+        // "Futbolcu Ara & Doldur" butonundan arandıysa uyan tüm açık kutuları doldur
+        const emptyCells = cells.filter((c) => !c.isFilled);
+        matchingIndices = emptyCells
+          .filter((c) => {
+            const rowCrit = board.rows[c.row];
+            const colCrit = board.cols[c.col];
+            return (
+              doesPlayerMatchCriterion(player, rowCrit) &&
+              doesPlayerMatchCriterion(player, colCrit)
+            );
+          })
+          .map((c) => c.cellIndex);
+      }
 
       const nextAttempts = attemptsUsed + 1;
       setAttemptsUsed(nextAttempts);
@@ -189,7 +205,7 @@ export const useTicTacToeGame = ({
           const rLabel = board.rows[targetCell.row].label;
           const cLabel = board.cols[targetCell.col].label;
           setLastFeedback(
-            `❌ ${player.name}, seçili (${rLabel} × ${cLabel}) veya diğer açık kutu kriterlerine uymuyor.`
+            `❌ ${player.name}, seçili (${rLabel} × ${cLabel}) kutusu kriterlerine uymuyor.`
           );
         } else {
           setLastFeedback(`❌ ${player.name} tahtadaki hiçbir açık kutu kriterine uymuyor.`);

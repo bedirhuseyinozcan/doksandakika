@@ -39,6 +39,7 @@
       }
     },
     "plugins": [
+      "./plugins/withCustomSplash.js",
       [
         "react-native-google-mobile-ads",
         {

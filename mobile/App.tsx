@@ -8,6 +8,7 @@ import { ContextinhoScreen } from './src/screens/ContextinhoScreen';
 import { TicTacToeScreen } from './src/screens/TicTacToeScreen';
 import { FootballBingoScreen } from './src/screens/FootballBingoScreen';
 import { LevelMapScreen } from './src/screens/LevelMapScreen';
+import { LaunchSplashScreen } from './src/components/common/LaunchSplashScreen';
 import { GameModeType } from './src/api/dailyApi';
 import { searchEngine } from './src/services/searchEngine';
 import { authoritativeTime } from './src/services/authoritativeTime';
@@ -64,6 +65,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
 function App() {
   const [isStorageHydrated, setIsStorageHydrated] = useState<boolean>(Platform.OS === 'web');
+  const [isSplashFinished, setIsSplashFinished] = useState<boolean>(false);
   const [currentScreen, setCurrentScreen] = useState<AppScreenType>('home');
   const [isDailySelected, setIsDailySelected] = useState<boolean>(false);
   const [activeGameMode, setActiveGameMode] = useState<GameModeType>('whoAreYa');
@@ -189,79 +191,81 @@ function App() {
     setCurrentScreen('home');
   };
 
-  if (!isStorageHydrated) {
-    return (
-      <View style={styles.outerWrapper}>
-        <StatusBar barStyle="light-content" backgroundColor={Colors.background} />
-      </View>
-    );
-  }
-
   return (
     <ErrorBoundary>
       <View style={styles.outerWrapper}>
         <View style={styles.container}>
           <StatusBar barStyle="light-content" backgroundColor={Colors.background} />
-          {currentScreen === 'home' && <HomeScreen onNavigate={handleNavigate} />}
-          {currentScreen === 'levelMap' && (
-            <LevelMapScreen
-              gameMode={activeGameMode}
-              onSelectLevel={handleSelectLevelFromMap}
-              onBack={handleBackToHome}
-            />
+          {isStorageHydrated && (
+            <>
+              {currentScreen === 'home' && <HomeScreen onNavigate={handleNavigate} />}
+              {currentScreen === 'levelMap' && (
+                <LevelMapScreen
+                  gameMode={activeGameMode}
+                  onSelectLevel={handleSelectLevelFromMap}
+                  onBack={handleBackToHome}
+                />
+              )}
+              {currentScreen === 'whoAreYa' && (
+                <WhoAreYaScreen
+                  isDaily={isDailySelected}
+                  initialLevel={selectedLevel}
+                  isReplay={isReplayMode}
+                  onBack={handleBackFromGame}
+                  onOpenMap={handleOpenMapFromGame}
+                />
+              )}
+              {currentScreen === 'careerPath' && (
+                <CareerPathScreen
+                  isDaily={isDailySelected}
+                  initialLevel={selectedLevel}
+                  isReplay={isReplayMode}
+                  onBack={handleBackFromGame}
+                  onOpenMap={handleOpenMapFromGame}
+                />
+              )}
+              {currentScreen === 'clubLogo' && (
+                <ClubLogoScreen
+                  isDaily={isDailySelected}
+                  initialLevel={selectedLevel}
+                  isReplay={isReplayMode}
+                  onBack={handleBackFromGame}
+                  onOpenMap={handleOpenMapFromGame}
+                />
+              )}
+              {currentScreen === 'contextinho' && (
+                <ContextinhoScreen
+                  isDaily={isDailySelected}
+                  initialLevel={selectedLevel}
+                  isReplay={isReplayMode}
+                  onBack={handleBackFromGame}
+                  onOpenMap={handleOpenMapFromGame}
+                />
+              )}
+              {currentScreen === 'ticTacToe' && (
+                <TicTacToeScreen
+                  isDaily={isDailySelected}
+                  initialLevel={selectedLevel}
+                  isReplay={isReplayMode}
+                  onBack={handleBackFromGame}
+                  onOpenMap={handleOpenMapFromGame}
+                />
+              )}
+              {currentScreen === 'footballBingo' && (
+                <FootballBingoScreen
+                  isDaily={isDailySelected}
+                  initialLevel={selectedLevel}
+                  isReplay={isReplayMode}
+                  onBack={handleBackFromGame}
+                  onOpenMap={handleOpenMapFromGame}
+                />
+              )}
+            </>
           )}
-          {currentScreen === 'whoAreYa' && (
-            <WhoAreYaScreen
-              isDaily={isDailySelected}
-              initialLevel={selectedLevel}
-              isReplay={isReplayMode}
-              onBack={handleBackFromGame}
-              onOpenMap={handleOpenMapFromGame}
-            />
-          )}
-          {currentScreen === 'careerPath' && (
-            <CareerPathScreen
-              isDaily={isDailySelected}
-              initialLevel={selectedLevel}
-              isReplay={isReplayMode}
-              onBack={handleBackFromGame}
-              onOpenMap={handleOpenMapFromGame}
-            />
-          )}
-          {currentScreen === 'clubLogo' && (
-            <ClubLogoScreen
-              isDaily={isDailySelected}
-              initialLevel={selectedLevel}
-              isReplay={isReplayMode}
-              onBack={handleBackFromGame}
-              onOpenMap={handleOpenMapFromGame}
-            />
-          )}
-          {currentScreen === 'contextinho' && (
-            <ContextinhoScreen
-              isDaily={isDailySelected}
-              initialLevel={selectedLevel}
-              isReplay={isReplayMode}
-              onBack={handleBackFromGame}
-              onOpenMap={handleOpenMapFromGame}
-            />
-          )}
-          {currentScreen === 'ticTacToe' && (
-            <TicTacToeScreen
-              isDaily={isDailySelected}
-              initialLevel={selectedLevel}
-              isReplay={isReplayMode}
-              onBack={handleBackFromGame}
-              onOpenMap={handleOpenMapFromGame}
-            />
-          )}
-          {currentScreen === 'footballBingo' && (
-            <FootballBingoScreen
-              isDaily={isDailySelected}
-              initialLevel={selectedLevel}
-              isReplay={isReplayMode}
-              onBack={handleBackFromGame}
-              onOpenMap={handleOpenMapFromGame}
+          {!isSplashFinished && (
+            <LaunchSplashScreen
+              isReady={isStorageHydrated}
+              onFinish={() => setIsSplashFinished(true)}
             />
           )}
         </View>
