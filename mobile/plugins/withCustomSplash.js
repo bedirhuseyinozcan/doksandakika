@@ -4,11 +4,7 @@ const {
   withDangerousMod,
   AndroidConfig,
 } = require('@expo/config-plugins');
-const {
-  generateImageAsync,
-  generateImageBackgroundAsync,
-  compositeImagesAsync,
-} = require('@expo/image-utils');
+const { generateImageAsync } = require('@expo/image-utils');
 const fs = require('fs');
 const path = require('path');
 
@@ -44,24 +40,24 @@ function withCustomSplash(config) {
     };
 
     modConfig.modResults = AndroidConfig.Styles.assignStylesValue(modConfig.modResults, {
-      add: true,
+      add: false,
       parent: splashThemeParent,
       name: 'windowSplashScreenBackground',
-      value: '@color/splashscreen_background',
+      value: null,
     });
 
     modConfig.modResults = AndroidConfig.Styles.assignStylesValue(modConfig.modResults, {
-      add: true,
+      add: false,
       parent: splashThemeParent,
       name: 'windowSplashScreenAnimatedIcon',
-      value: '@drawable/splashscreen_logo',
+      value: null,
     });
 
     modConfig.modResults = AndroidConfig.Styles.assignStylesValue(modConfig.modResults, {
       add: true,
       parent: splashThemeParent,
       name: 'android:windowBackground',
-      value: '@color/splashscreen_background',
+      value: '@drawable/splashscreen_logo',
     });
 
     return modConfig;
@@ -72,58 +68,80 @@ function withCustomSplash(config) {
     async (modConfig) => {
       const projectRoot = modConfig.modRequest.projectRoot;
       const resRoot = path.resolve(projectRoot, 'android/app/src/main/res');
+      const drawableRoot = path.resolve(resRoot, 'drawable');
       const logoSrcPath = path.resolve(projectRoot, SPLASH_LOGO_REL_PATH);
 
-      if (!fs.existsSync(logoSrcPath)) {
-        return modConfig;
-      }
-
-      for (const { folder, scale } of DPI_MAP) {
-        const targetDir = path.resolve(resRoot, folder);
-        await fs.promises.mkdir(targetDir, { recursive: true });
-
-        // Android 12+ SplashScreen icon canvas is 288dp x 288dp, inner safe circle is ~160dp
-        const canvasSize = Math.round(288 * scale);
-        const logoSize = Math.round(148 * scale);
-        const offset = Math.round((canvasSize - logoSize) / 2);
-
-        const bgBuffer = await generateImageBackgroundAsync({
-          width: canvasSize,
-          height: canvasSize,
-          backgroundColor: SPLASH_BG_COLOR,
-        });
-
-        const { source: fgBuffer } = await generateImageAsync(
-          { projectRoot, cacheType: 'custom-android-splash-logo' },
-          {
-            src: logoSrcPath,
-            width: logoSize,
-            height: logoSize,
-            resizeMode: 'contain',
-            backgroundColor: SPLASH_BG_COLOR,
+      await fs.promises.mkdir(drawableRoot, { recursive: true });
+      
+      const allDrawableFolders = ['drawable', ...DPI_MAP.map((d) => d.folder)];
+      for (const folder of allDrawableFolders) {
+        for (const ext of ['png', 'webp', 'xml']) {
+          const candidate = path.resolve(resRoot, folder, `splashscreen_logo.${ext}`);
+          if (fs.existsSync(candidate)) {
+            await fs.promises.rm(candidate, { force: true });
           }
-        );
-
-        const composedBuffer = await compositeImagesAsync({
-          background: bgBuffer,
-          foreground: fgBuffer,
-          x: offset,
-          y: offset,
-        });
-
-        const outPath = path.resolve(targetDir, 'splashscreen_logo.png');
-        await fs.promises.writeFile(outPath, composedBuffer);
-      }
-
-      const legacyGridDrawables = [
-        path.resolve(resRoot, 'drawable/ic_launcher_background.xml'),
-        path.resolve(resRoot, 'drawable/splashscreen_logo.xml'),
-      ];
-      for (const legacyFile of legacyGridDrawables) {
-        if (fs.existsSync(legacyFile)) {
-          await fs.promises.rm(legacyFile, { force: true });
         }
       }
+
+      if (fs.existsSync(logoSrcPath)) {
+        for (const { folder, scale } of DPI_MAP) {
+          const targetDir = path.resolve(resRoot, folder);
+          await fs.promises.mkdir(targetDir, { recursive: true });
+
+          const logoSize = Math.round(148 * scale);
+          const { source: fgBuffer } = await generateImageAsync(
+            { projectRoot, cacheType: 'custom-android-splash-logo' },
+            {
+              src: logoSrcPath,
+              width: logoSize,
+              height: logoSize,
+              resizeMode: 'contain',
+              backgroundColor: SPLASH_BG_COLOR,
+            }
+          );
+
+          const outPath = path.resolve(targetDir, 'splash_inset_logo.png');
+          await fs.promises.writeFile(outPath, fgBuffer);
+        }
+
+        const splashLayerListXml = `<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/splashscreen_background"/>
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/splash_inset_logo"/>
+    </item>
+</layer-list>
+`;
+        await fs.promises.writeFile(
+          path.resolve(drawableRoot, 'splashscreen_logo.xml'),
+          splashLayerListXml,
+          'utf8'
+        );
+      } else {
+        const solidSplashXml = `<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/splashscreen_background"/>
+</layer-list>
+`;
+        await fs.promises.writeFile(
+          path.resolve(drawableRoot, 'splashscreen_logo.xml'),
+          solidSplashXml,
+          'utf8'
+        );
+      }
+
+      const launcherBgXml = `<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/splashscreen_background"/>
+</layer-list>
+`;
+      await fs.promises.writeFile(
+        path.resolve(drawableRoot, 'ic_launcher_background.xml'),
+        launcherBgXml,
+        'utf8'
+      );
 
       return modConfig;
     },
