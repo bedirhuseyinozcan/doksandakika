@@ -8,6 +8,21 @@ import {
   StyleSheet,
   Switch,
 } from 'react-native';
+import {
+  Settings,
+  X,
+  Volume2,
+  VolumeX,
+  Vibrate,
+  RefreshCw,
+  BookOpen,
+  ScanFace,
+  Route,
+  Shield,
+  Flame,
+  Grid3x3,
+  LayoutGrid,
+} from 'lucide-react-native';
 import { useSettingsStore } from '../../../stores/useSettingsStore';
 import { hapticsService } from '../../../services/hapticsService';
 import { searchEngine } from '../../../services/searchEngine';
@@ -62,14 +77,17 @@ export const SettingsModal: React.FC<ISettingsModalProps> = React.memo(
             onPress={(e) => e.stopPropagation?.()}
           >
             <View style={styles.headerRow}>
-              <Text style={styles.headerTitle}>⚙️ Ayarlar & Oyun Rehberi</Text>
+              <View style={styles.headerTitleWrap}>
+                <Settings size={15} color={primaryColor} strokeWidth={2.4} />
+                <Text style={styles.headerTitle}>AYARLAR & OYUN REHBERİ</Text>
+              </View>
               <TouchableOpacity
                 onPress={onClose}
                 style={styles.closeBtn}
                 activeOpacity={0.7}
                 hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
               >
-                <Text style={styles.closeText}>✕</Text>
+                <X size={20} color={Colors.textMuted} strokeWidth={2.4} />
               </TouchableOpacity>
             </View>
 
@@ -81,8 +99,15 @@ export const SettingsModal: React.FC<ISettingsModalProps> = React.memo(
               <Text style={[styles.sectionTitle, { color: primaryColor }]}>Tercihler</Text>
 
               <View style={styles.settingRow}>
+                <View style={styles.settingIconBox}>
+                  {soundEnabled ? (
+                    <Volume2 size={18} color={primaryColor} strokeWidth={2.2} />
+                  ) : (
+                    <VolumeX size={18} color={Colors.textMuted} strokeWidth={2.2} />
+                  )}
+                </View>
                 <View style={styles.settingInfo}>
-                  <Text style={styles.settingLabel}>🔊 Stadyum & Oyun Sesleri</Text>
+                  <Text style={styles.settingLabel}>Stadyum & Oyun Sesleri</Text>
                   <Text style={styles.settingSub}>
                     Doğru/yanlış tahmin ve zafer ses efektleri
                   </Text>
@@ -99,8 +124,15 @@ export const SettingsModal: React.FC<ISettingsModalProps> = React.memo(
               </View>
 
               <View style={styles.settingRow}>
+                <View style={styles.settingIconBox}>
+                  <Vibrate
+                    size={18}
+                    color={hapticsEnabled ? primaryColor : Colors.textMuted}
+                    strokeWidth={2.2}
+                  />
+                </View>
                 <View style={styles.settingInfo}>
-                  <Text style={styles.settingLabel}>📳 Dokunsal Titreşim (Haptics)</Text>
+                  <Text style={styles.settingLabel}>Dokunsal Titreşim (Haptics)</Text>
                   <Text style={styles.settingSub}>
                     Tahminlerde ve butonlarda titreşim geri bildirimi
                   </Text>
@@ -119,8 +151,9 @@ export const SettingsModal: React.FC<ISettingsModalProps> = React.memo(
                 activeOpacity={0.8}
                 onPress={handleSyncDatabase}
               >
+                <RefreshCw size={14} color={primaryColor} strokeWidth={2.4} />
                 <Text style={[styles.syncBtnText, { color: primaryColor }]}>
-                  🔄 Oyuncu Veritabanını Senkronize Et
+                  OYUNCU VERİTABANINI SENKRONİZE ET
                 </Text>
               </TouchableOpacity>
               {syncStatus ? (
@@ -128,35 +161,73 @@ export const SettingsModal: React.FC<ISettingsModalProps> = React.memo(
               ) : null}
 
               {/* Nasıl Oynanır? */}
-              <Text style={[styles.sectionTitle, { color: primaryColor, marginTop: Spacing.md }]}>
-                📖 Oyun Modları Rehberi
-              </Text>
+              <View style={styles.sectionHeaderRow}>
+                <BookOpen size={13} color={primaryColor} strokeWidth={2.4} />
+                <Text style={[styles.sectionTitle, { color: primaryColor, marginBottom: 0 }]}>
+                  Oyun Modları Rehberi
+                </Text>
+              </View>
 
               <View style={styles.guideBox}>
-                <Text style={styles.guideItem}>
-                  <Text style={styles.guideBold}>🕵️‍♂️ Kim Bu Yıldız?: </Text>
-                  Bulanık fotoğraftan ve renkli ipucu kutularından (Yeşil = Tam Eşleşme) yıldızı 8 denemede bul.
-                </Text>
-                <Text style={styles.guideItem}>
-                  <Text style={styles.guideBold}>🧭 Transfer Rotası: </Text>
-                  Kronolojik kulüp geçmişini takip et. Her 3 seviyede bir 👑 Efsane İkon sorulur!
-                </Text>
-                <Text style={styles.guideItem}>
-                  <Text style={styles.guideBold}>🛡️ Arma Avcısı: </Text>
-                  Bulanık kulüp armasından takımı tahmin et.
-                </Text>
-                <Text style={styles.guideItem}>
-                  <Text style={styles.guideBold}>🔥 Sıcak Temas: </Text>
-                  Tahmin ettiğin oyuncunun hedefe yakınlık sırasına (#1 en sıcak) göre yıldızı bul.
-                </Text>
-                <Text style={styles.guideItem}>
-                  <Text style={styles.guideBold}>🎯 Tiki-Taka (3x3): </Text>
-                  Satır ve sütun kesişimlerine uyan oyuncuları yerleştir. Serbest arama ile çoklu kombo yapabilirsin!
-                </Text>
-                <Text style={styles.guideItem}>
-                  <Text style={styles.guideBold}>🔢 Futbol Bingo (4x4): </Text>
-                  42 kişilik desteden sırayla gelen oyuncuları 16 kriter kutusuna yerleştir. Yanlış kutu -2 deste cezası verir!
-                </Text>
+                <View style={styles.guideRow}>
+                  <View style={styles.guideIconWrap}>
+                    <ScanFace size={15} color={primaryColor} strokeWidth={2.2} />
+                  </View>
+                  <Text style={styles.guideItem}>
+                    <Text style={styles.guideBold}>Kim Bu Yıldız?: </Text>
+                    Bulanık fotoğraftan ve renkli ipucu kutularından (Yeşil = Tam Eşleşme) yıldızı 8 denemede bul.
+                  </Text>
+                </View>
+
+                <View style={styles.guideRow}>
+                  <View style={styles.guideIconWrap}>
+                    <Route size={15} color={primaryColor} strokeWidth={2.2} />
+                  </View>
+                  <Text style={styles.guideItem}>
+                    <Text style={styles.guideBold}>Transfer Rotası: </Text>
+                    Kronolojik kulüp geçmişini takip et. Her 3 seviyede bir Efsane İkon sorulur!
+                  </Text>
+                </View>
+
+                <View style={styles.guideRow}>
+                  <View style={styles.guideIconWrap}>
+                    <Shield size={15} color={primaryColor} strokeWidth={2.2} />
+                  </View>
+                  <Text style={styles.guideItem}>
+                    <Text style={styles.guideBold}>Arma Avcısı: </Text>
+                    Bulanık kulüp armasından takımı tahmin et.
+                  </Text>
+                </View>
+
+                <View style={styles.guideRow}>
+                  <View style={styles.guideIconWrap}>
+                    <Flame size={15} color={primaryColor} strokeWidth={2.2} />
+                  </View>
+                  <Text style={styles.guideItem}>
+                    <Text style={styles.guideBold}>Sıcak Temas: </Text>
+                    Tahmin ettiğin oyuncunun hedefe yakınlık sırasına (#1 en sıcak) göre yıldızı bul.
+                  </Text>
+                </View>
+
+                <View style={styles.guideRow}>
+                  <View style={styles.guideIconWrap}>
+                    <Grid3x3 size={15} color={primaryColor} strokeWidth={2.2} />
+                  </View>
+                  <Text style={styles.guideItem}>
+                    <Text style={styles.guideBold}>Tiki-Taka (3x3): </Text>
+                    Satır ve sütun kesişimlerine uyan oyuncuları yerleştir. Serbest arama ile çoklu kombo yapabilirsin!
+                  </Text>
+                </View>
+
+                <View style={styles.guideRow}>
+                  <View style={styles.guideIconWrap}>
+                    <LayoutGrid size={15} color={primaryColor} strokeWidth={2.2} />
+                  </View>
+                  <Text style={styles.guideItem}>
+                    <Text style={styles.guideBold}>Futbol Bingo (4x4): </Text>
+                    42 kişilik desteden sırayla gelen oyuncuları 16 kriter kutusuna yerleştir. Yanlış kutu -2 deste cezası verir!
+                  </Text>
+                </View>
               </View>
 
               <Text style={styles.versionText}>
@@ -207,6 +278,11 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.border,
     paddingBottom: Spacing.sm,
   },
+  headerTitleWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   headerTitle: {
     ...Typography.statBadge,
     color: Colors.textPrimary,
@@ -218,14 +294,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  closeText: {
-    fontSize: 22,
-    color: Colors.textMuted,
-    fontWeight: '700',
-    lineHeight: 24,
-  },
   scroll: {
     paddingBottom: Spacing.sm,
+  },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.xs,
   },
   sectionTitle: {
     ...Typography.statBadge,
@@ -246,6 +323,17 @@ const styles = StyleSheet.create({
     borderWidth: Borders.thin,
     borderColor: Colors.border,
   },
+  settingIconBox: {
+    width: 34,
+    height: 34,
+    borderRadius: BorderRadius.sharp,
+    backgroundColor: Colors.surface,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: Spacing.sm,
+  },
   settingInfo: {
     flex: 1,
     marginRight: Spacing.sm,
@@ -262,6 +350,9 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   syncBtn: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 8,
     backgroundColor: Colors.surface,
     borderWidth: Borders.thin,
     borderColor: Colors.accentPrimary,
@@ -289,9 +380,26 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sharp,
     borderWidth: Borders.thin,
     borderColor: Colors.border,
+    gap: 10,
+  },
+  guideRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
     gap: 8,
   },
+  guideIconWrap: {
+    width: 24,
+    height: 24,
+    borderRadius: BorderRadius.sharp,
+    backgroundColor: Colors.surface,
+    borderWidth: Borders.thin,
+    borderColor: Colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 1,
+  },
   guideItem: {
+    flex: 1,
     ...Typography.caption,
     color: Colors.textSecondary,
     lineHeight: 16,

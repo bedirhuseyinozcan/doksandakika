@@ -8,6 +8,12 @@ import {
   Dimensions,
   StatusBar,
 } from 'react-native';
+import {
+  Gamepad2,
+  ShoppingBag,
+  BarChart3,
+  Settings,
+} from 'lucide-react-native';
 import { hapticsService } from '../../../services/hapticsService';
 import { Colors } from '../../../theme/colors';
 import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
@@ -64,7 +70,13 @@ export const HomeBottomNav: React.FC<IHomeBottomNavProps> = React.memo(
                 ]}
               />
             )}
-            <Text style={styles.navEmoji}>⚽</Text>
+            <View style={styles.navIconWrap}>
+              <Gamepad2
+                size={18}
+                color={activeTab === 'play' ? primaryColor : Colors.textMuted}
+                strokeWidth={activeTab === 'play' ? 2.4 : 2}
+              />
+            </View>
             <Text
               style={[
                 styles.navLabel,
@@ -93,7 +105,13 @@ export const HomeBottomNav: React.FC<IHomeBottomNavProps> = React.memo(
                 ]}
               />
             )}
-            <Text style={styles.navEmoji}>🛍️</Text>
+            <View style={styles.navIconWrap}>
+              <ShoppingBag
+                size={18}
+                color={activeTab === 'shop' ? primaryColor : Colors.textMuted}
+                strokeWidth={activeTab === 'shop' ? 2.4 : 2}
+              />
+            </View>
             <Text
               style={[
                 styles.navLabel,
@@ -122,7 +140,13 @@ export const HomeBottomNav: React.FC<IHomeBottomNavProps> = React.memo(
                 ]}
               />
             )}
-            <Text style={styles.navEmoji}>📊</Text>
+            <View style={styles.navIconWrap}>
+              <BarChart3
+                size={18}
+                color={activeTab === 'stats' ? primaryColor : Colors.textMuted}
+                strokeWidth={activeTab === 'stats' ? 2.4 : 2}
+              />
+            </View>
             <Text
               style={[
                 styles.navLabel,
@@ -151,7 +175,13 @@ export const HomeBottomNav: React.FC<IHomeBottomNavProps> = React.memo(
                 ]}
               />
             )}
-            <Text style={styles.navEmoji}>⚙️</Text>
+            <View style={styles.navIconWrap}>
+              <Settings
+                size={18}
+                color={activeTab === 'settings' ? primaryColor : Colors.textMuted}
+                strokeWidth={activeTab === 'settings' ? 2.4 : 2}
+              />
+            </View>
             <Text
               style={[
                 styles.navLabel,
@@ -206,9 +236,10 @@ const styles = StyleSheet.create({
     height: 2,
     borderRadius: BorderRadius.none,
   },
-  navEmoji: {
-    fontSize: 16,
-    marginBottom: 2,
+  navIconWrap: {
+    marginBottom: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   navLabel: {
     ...Typography.statBadge,
