@@ -1,9 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import { View, Text, Modal, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { BarChart3, ShoppingBag, X } from 'lucide-react-native';
 import { useGameStore } from '../../../stores/useGameStore';
 import { getRankByXp } from '../utils/rankUtils';
 import { getCosmeticById } from '../../shop/catalog';
 import { ScoutShopModal } from '../../shop/components/ScoutShopModal';
+import { CosmeticVectorIcon, TeamCrestBadgeIcon } from '../../shop/components/CosmeticVectorIcon';
 import { useActiveTheme } from '../../../hooks/useActiveTheme';
 import { Colors } from '../../../theme/colors';
 import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
@@ -55,14 +57,17 @@ export const PlayerStatsModal: React.FC<IPlayerStatsModalProps> = React.memo(
             onPress={(e) => e.stopPropagation?.()}
           >
             <View style={styles.headerRow}>
-              <Text style={styles.headerTitle}>📊 Oyuncu İstatistikleri</Text>
+              <View style={styles.headerTitleInline}>
+                <BarChart3 size={15} color={primaryColor} strokeWidth={2.4} />
+                <Text style={styles.headerTitle}>OYUNCU İSTATİSTİKLERİ</Text>
+              </View>
               <TouchableOpacity
                 onPress={onClose}
                 style={styles.closeBtn}
                 activeOpacity={0.7}
                 hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
               >
-                <Text style={styles.closeText}>✕</Text>
+                <X size={20} color={Colors.textMuted} strokeWidth={2.4} />
               </TouchableOpacity>
             </View>
 
@@ -86,7 +91,7 @@ export const PlayerStatsModal: React.FC<IPlayerStatsModalProps> = React.memo(
                       },
                     ]}
                   >
-                    <Text style={styles.avatarEmojiText}>{equippedCosmetic.avatarEmoji}</Text>
+                    <CosmeticVectorIcon cosmeticId={equippedCosmetic.id} size={24} />
                   </View>
 
                   <View style={{ flex: 1 }}>
@@ -128,15 +133,21 @@ export const PlayerStatsModal: React.FC<IPlayerStatsModalProps> = React.memo(
                     },
                   ]}
                 >
-                  <Text
-                    style={[
-                      styles.statsAtmosphereText,
-                      { color: equippedCosmetic.themeConfig.primaryColor },
-                    ]}
-                  >
-                    {equippedCosmetic.themeConfig.teamBadgeEmojis}{' '}
-                    {equippedCosmetic.themeConfig.stadiumName}
-                  </Text>
+                  <View style={styles.statsAtmosphereInline}>
+                    <TeamCrestBadgeIcon
+                      primaryColor={equippedCosmetic.themeConfig.primaryColor}
+                      secondaryColor={equippedCosmetic.themeConfig.secondaryColor}
+                      size={12}
+                    />
+                    <Text
+                      style={[
+                        styles.statsAtmosphereText,
+                        { color: equippedCosmetic.themeConfig.primaryColor },
+                      ]}
+                    >
+                      {equippedCosmetic.themeConfig.stadiumName}
+                    </Text>
+                  </View>
                   <Text style={styles.statsChantText}>
                     {equippedCosmetic.themeConfig.anthemChant}
                   </Text>
@@ -162,14 +173,21 @@ export const PlayerStatsModal: React.FC<IPlayerStatsModalProps> = React.memo(
                   activeOpacity={0.8}
                   onPress={() => setIsShopModalVisible(true)}
                 >
-                  <Text
-                    style={[
-                      styles.shopShortcutBtnText,
-                      { color: equippedCosmetic.themeConfig.primaryColor },
-                    ]}
-                  >
-                    🛍️ Scout & Taraftar Dükkanı • Tema & Çerçeve Değiştir
-                  </Text>
+                  <View style={styles.statsAtmosphereInline}>
+                    <ShoppingBag
+                      size={13}
+                      color={equippedCosmetic.themeConfig.primaryColor}
+                      strokeWidth={2.3}
+                    />
+                    <Text
+                      style={[
+                        styles.shopShortcutBtnText,
+                        { color: equippedCosmetic.themeConfig.primaryColor },
+                      ]}
+                    >
+                      Scout & Taraftar Dükkanı • Tema & Çerçeve Değiştir
+                    </Text>
+                  </View>
                 </TouchableOpacity>
               </View>
 
@@ -281,6 +299,17 @@ const styles = StyleSheet.create({
     borderBottomWidth: Borders.thin,
     borderBottomColor: Colors.border,
     paddingBottom: Spacing.sm,
+  },
+  headerTitleInline: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  statsAtmosphereInline: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
   },
   headerTitle: {
     ...Typography.statBadge,

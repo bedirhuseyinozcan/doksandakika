@@ -17,6 +17,7 @@ import { getRankByXp } from '../features/stats/utils/rankUtils';
 import { getAuthoritativeUtcDate } from '../services/authoritativeTime';
 import { PlayerStatsModal } from '../features/stats/components/PlayerStatsModal';
 import { ScoutShopModal } from '../features/shop/components/ScoutShopModal';
+import { CosmeticVectorIcon, TeamCrestBadgeIcon } from '../features/shop/components/CosmeticVectorIcon';
 import { getCosmeticById } from '../features/shop/catalog';
 import { SettingsModal } from '../features/settings/components/SettingsModal';
 import { HomeGameCard } from '../features/home/components/HomeGameCard';
@@ -202,7 +203,7 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
                 },
               ]}
             >
-              <Text style={styles.heroAvatarEmoji}>{equippedCosmetic.avatarEmoji}</Text>
+              <CosmeticVectorIcon cosmeticId={equippedCosmetic.id} size={26} />
             </View>
 
             <View style={styles.heroScoutInfoCol}>
@@ -216,11 +217,19 @@ export const HomeScreen: React.FC<IHomeScreenProps> = React.memo(({ onNavigate }
                     {
                       borderColor: theme.primaryColor,
                       backgroundColor: theme.accentGlow || Colors.surfaceLight,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: 4,
                     },
                   ]}
                 >
+                  <TeamCrestBadgeIcon
+                    primaryColor={theme.primaryColor}
+                    secondaryColor={theme.secondaryColor}
+                    size={11}
+                  />
                   <Text style={[styles.heroCosmeticBadgeText, { color: theme.primaryColor }]}>
-                    {theme.teamBadgeEmojis} {equippedCosmetic.titleBadge}
+                    {equippedCosmetic.titleBadge}
                   </Text>
                 </View>
               </View>

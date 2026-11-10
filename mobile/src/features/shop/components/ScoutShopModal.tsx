@@ -8,6 +8,13 @@ import {
   StyleSheet,
   Platform,
 } from 'react-native';
+import {
+  ShoppingBag,
+  ShieldHalf,
+  Award,
+  ShieldCheck,
+  X,
+} from 'lucide-react-native';
 import { useGameStore } from '../../../stores/useGameStore';
 import { hapticsService } from '../../../services/hapticsService';
 import { Colors } from '../../../theme/colors';
@@ -15,6 +22,7 @@ import { Spacing, BorderRadius, Borders } from '../../../theme/spacing';
 import { Typography } from '../../../theme/typography';
 import { COSMETIC_CATALOG, getCosmeticById } from '../catalog';
 import { ICosmeticItem, CosmeticCategory } from '../types';
+import { CosmeticVectorIcon, TeamCrestBadgeIcon } from './CosmeticVectorIcon';
 import { useRewardedAd } from '../../monetization/hooks/useRewardedAd';
 import { useActiveTheme } from '../../../hooks/useActiveTheme';
 
@@ -146,7 +154,10 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
           {/* Header */}
           <View style={styles.headerRow}>
             <View style={styles.headerTitleCol}>
-              <Text style={styles.headerTitle}>🛍️ Kulüp & Scout Mağazası</Text>
+              <View style={styles.headerTitleInline}>
+                <ShoppingBag size={14} color={primaryColor} strokeWidth={2.4} />
+                <Text style={styles.headerTitle}>KULÜP & SCOUT MAĞAZASI</Text>
+              </View>
               <Text style={styles.headerSubtitle}>Kozmetik Çerçeveler & Setler</Text>
             </View>
 
@@ -162,7 +173,7 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
                 onPress={__DEV__ ? handleClaimFreeCoins : handleWatchAdForCoins}
               >
                 <Text style={[styles.addCoinsHeaderText, { color: primaryColor }]}>
-                  {__DEV__ ? '+500 ⚙️' : '+ 🎬 Altın'}
+                  {__DEV__ ? '+500 TEST' : '+ ALTIN'}
                 </Text>
               </TouchableOpacity>
 
@@ -172,7 +183,7 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
                 activeOpacity={0.7}
                 hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
               >
-                <Text style={styles.closeText}>✕</Text>
+                <X size={20} color={Colors.textMuted} strokeWidth={2.4} />
               </TouchableOpacity>
             </View>
           </View>
@@ -189,14 +200,21 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
                 setActiveTab('fan_bundle');
               }}
             >
-              <Text
-                style={[
-                  styles.tabButtonText,
-                  activeTab === 'fan_bundle' && [styles.activeTabButtonText, { color: onPrimaryTextColor }],
-                ]}
-              >
-                🏟️ Taraftar Paketleri
-              </Text>
+              <View style={styles.tabBtnContent}>
+                <ShieldHalf
+                  size={13}
+                  color={activeTab === 'fan_bundle' ? onPrimaryTextColor : Colors.textMuted}
+                  strokeWidth={2.3}
+                />
+                <Text
+                  style={[
+                    styles.tabButtonText,
+                    activeTab === 'fan_bundle' && [styles.activeTabButtonText, { color: onPrimaryTextColor }],
+                  ]}
+                >
+                  Taraftar Paketleri
+                </Text>
+              </View>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -209,14 +227,21 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
                 setActiveTab('scout');
               }}
             >
-              <Text
-                style={[
-                  styles.tabButtonText,
-                  activeTab === 'scout' && [styles.activeTabButtonText, { color: onPrimaryTextColor }],
-                ]}
-              >
-                🎭 Scout Rozetleri
-              </Text>
+              <View style={styles.tabBtnContent}>
+                <Award
+                  size={13}
+                  color={activeTab === 'scout' ? onPrimaryTextColor : Colors.textMuted}
+                  strokeWidth={2.3}
+                />
+                <Text
+                  style={[
+                    styles.tabButtonText,
+                    activeTab === 'scout' && [styles.activeTabButtonText, { color: onPrimaryTextColor }],
+                  ]}
+                >
+                  Scout Rozetleri
+                </Text>
+              </View>
             </TouchableOpacity>
           </View>
 
@@ -228,7 +253,7 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
           >
             {bonusSuccessMsg ? (
               <View style={[styles.bonusBanner, { borderColor: primaryColor }]}>
-                <Text style={[styles.bonusBannerText, { color: primaryColor }]}>🎉 {bonusSuccessMsg}</Text>
+                <Text style={[styles.bonusBannerText, { color: primaryColor }]}>{bonusSuccessMsg}</Text>
               </View>
             ) : null}
 
@@ -243,7 +268,7 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
                     },
                   ]}
                 >
-                  <Text style={styles.showcaseAvatarEmoji}>{previewItem.avatarEmoji}</Text>
+                  <CosmeticVectorIcon cosmeticId={previewItem.id} size={30} />
                 </View>
 
                 <View style={styles.showcaseInfo}>
@@ -267,9 +292,16 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
                   </Text>
 
                   <View style={styles.showcaseThemeDetails}>
-                    <Text style={[styles.showcaseStadiumText, { color: previewItem.themeConfig.primaryColor }]}>
-                      {previewItem.themeConfig.teamBadgeEmojis} {previewItem.themeConfig.stadiumName}
-                    </Text>
+                    <View style={styles.showcaseStadiumRow}>
+                      <TeamCrestBadgeIcon
+                        primaryColor={previewItem.themeConfig.primaryColor}
+                        secondaryColor={previewItem.themeConfig.secondaryColor}
+                        size={12}
+                      />
+                      <Text style={[styles.showcaseStadiumText, { color: previewItem.themeConfig.primaryColor }]}>
+                        {previewItem.themeConfig.stadiumName}
+                      </Text>
+                    </View>
                     <Text style={styles.showcaseChantText} numberOfLines={1}>
                       {previewItem.themeConfig.anthemChant}
                     </Text>
@@ -291,7 +323,12 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
                       equipCosmetic(previewItem.id);
                     }}
                   >
-                    <Text style={[styles.showcaseEquipBtnText, { color: onPrimaryTextColor }]}>🛡️ Kuşan & Profilde Göster</Text>
+                    <View style={styles.tabBtnContent}>
+                      <ShieldCheck size={14} color={onPrimaryTextColor} strokeWidth={2.4} />
+                      <Text style={[styles.showcaseEquipBtnText, { color: onPrimaryTextColor }]}>
+                        Kuşan & Profilde Göster
+                      </Text>
+                    </View>
                   </TouchableOpacity>
                 ) : (
                   <TouchableOpacity
@@ -356,7 +393,7 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
                         },
                       ]}
                     >
-                      <Text style={styles.itemEmoji}>{item.avatarEmoji}</Text>
+                      <CosmeticVectorIcon cosmeticId={item.id} size={24} />
                     </View>
 
                     <View style={styles.itemInfoCol}>
@@ -413,7 +450,7 @@ export const ScoutShopModal: React.FC<IScoutShopModalProps> = React.memo(({ visi
                     },
                   ]}
                 >
-                  <Text style={styles.dialogAvatarEmoji}>{confirmItem.avatarEmoji}</Text>
+                  <CosmeticVectorIcon cosmeticId={confirmItem.id} size={32} />
                 </View>
 
                 <Text style={styles.dialogTitle}>Satın Alma Onayı</Text>
@@ -533,6 +570,11 @@ const styles = StyleSheet.create({
   headerTitleCol: {
     flex: 1,
     marginRight: Spacing.xs,
+  },
+  headerTitleInline: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
   },
   headerTitle: {
     ...Typography.statBadge,
@@ -675,11 +717,22 @@ const styles = StyleSheet.create({
     borderTopWidth: Borders.thin,
     borderTopColor: Colors.border,
   },
+  showcaseStadiumRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
   showcaseStadiumText: {
     ...Typography.statBadge,
     fontSize: 10,
     color: Colors.textSecondary,
     letterSpacing: 0.5,
+  },
+  tabBtnContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 5,
   },
   showcaseChantText: {
     ...Typography.caption,
