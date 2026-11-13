@@ -10,6 +10,7 @@ const envSchema = z.object({
   CORS_ORIGIN: z.string().default('*'),
   CDN_BASE_URL: z.string().default('https://assets.doksandakika.com'),
   BLUR_STORAGE_PATH: z.string().default('./data/blurred'),
+  ADMIN_API_KEY: z.string().default('kora-doksandakika-admin-2026'),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

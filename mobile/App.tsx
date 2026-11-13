@@ -10,6 +10,7 @@ import { FootballBingoScreen } from './src/screens/FootballBingoScreen';
 import { LevelMapScreen } from './src/screens/LevelMapScreen';
 import { LaunchSplashScreen } from './src/components/common/LaunchSplashScreen';
 import { GameModeType } from './src/api/dailyApi';
+import { systemApi, IRemoteConfigData } from './src/api/systemApi';
 import { searchEngine } from './src/services/searchEngine';
 import { authoritativeTime } from './src/services/authoritativeTime';
 import { appStorage, StorageKeys } from './src/storage/mmkv';
@@ -71,6 +72,7 @@ function App() {
   const [activeGameMode, setActiveGameMode] = useState<GameModeType>('whoAreYa');
   const [selectedLevel, setSelectedLevel] = useState<number | undefined>(undefined);
   const [isReplayMode, setIsReplayMode] = useState<boolean>(false);
+  const [remoteConfig, setRemoteConfig] = useState<IRemoteConfigData | null>(null);
 
   useEffect(() => {
     const bootstrap = async () => {
@@ -106,6 +108,13 @@ function App() {
       admobService.initialize().catch((e) => {
         console.warn('AdMob bootstrap warning:', e);
       });
+
+      systemApi
+        .getRemoteConfig()
+        .then((cfg) => {
+          if (cfg) setRemoteConfig(cfg);
+        })
+        .catch(() => {});
     };
 
     bootstrap();
@@ -196,7 +205,29 @@ function App() {
       <View style={styles.outerWrapper}>
         <View style={styles.container}>
           <StatusBar barStyle="light-content" backgroundColor={Colors.background} />
-          {isStorageHydrated && (
+          {remoteConfig?.maintenance_mode ? (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorEmoji}>🛠️</Text>
+              <Text style={styles.errorTitle}>
+                {remoteConfig.announcement_title || 'PLANLI SUNUCU BAKIMI'}
+              </Text>
+              <Text style={styles.errorDetails}>
+                {remoteConfig.announcement_message ||
+                  'Doksan Dakika sunucularında bakım çalışması yapılmaktadır. Lütfen kısa süre sonra tekrar deneyin.'}
+              </Text>
+              <TouchableOpacity
+                style={styles.resetBtn}
+                onPress={() => {
+                  systemApi.getRemoteConfig().then((cfg) => {
+                    if (cfg) setRemoteConfig(cfg);
+                  });
+                }}
+              >
+                <Text style={styles.resetBtnText}>DURUMU KONTROL ET</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            isStorageHydrated && (
             <>
               {currentScreen === 'home' && <HomeScreen onNavigate={handleNavigate} />}
               {currentScreen === 'levelMap' && (
@@ -261,6 +292,7 @@ function App() {
                 />
               )}
             </>
+          )
           )}
           {!isSplashFinished && (
             <LaunchSplashScreen
